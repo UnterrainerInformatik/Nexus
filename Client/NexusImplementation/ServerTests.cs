@@ -25,7 +25,6 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Json;
@@ -33,7 +32,9 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Newtonsoft.Json;
-using NexusImplementation.NexusServer;
+using NexusServer;
+using NexusServer.DTOs;
+using NexusServer.JSONs;
 using NUnit.Framework;
 
 namespace NexusImplementation
@@ -43,6 +44,7 @@ namespace NexusImplementation
     public class ServerTests
     {
         public const string URL_CONNECTION = "http://localhost:58500/Connection.svc";
+
         /// <summary>
         ///     Initializes this instance.
         /// </summary>
@@ -99,12 +101,8 @@ namespace NexusImplementation
             var response = streamReader.ReadToEnd();
 
             PingJson r = JsonConvert.DeserializeObject<PingJson>(response);
-            Assert.AreEqual("Pong", r.PingResult);
+            PingDto d = Static.Mapper.Map<PingDto>(r);
+            Assert.AreEqual("Pong", d.PingResult);
         }
-    }
-
-    public class PingJson
-    {
-        public string PingResult { get; set; }
     }
 }
