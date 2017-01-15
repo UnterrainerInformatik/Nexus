@@ -32,6 +32,7 @@ using System.Runtime.Serialization.Json;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Newtonsoft.Json;
 using NexusImplementation.NexusServer;
 using NUnit.Framework;
 
@@ -60,19 +61,50 @@ namespace NexusImplementation
 
         [Test]
         [System.ComponentModel.Category("REST.Simple")]
-        public void TestMessage()
+        public void TestMessageString()
         {
             WebClient p = new WebClient();
             var url = URL_CONNECTION + "/ping";
             byte[] data = p.DownloadData(url);
             Stream stream = new MemoryStream(data);
-            //var streamReader = new StreamReader(stream);
-            //var response = streamReader.ReadToEnd();
+            var streamReader = new StreamReader(stream);
+            var response = streamReader.ReadToEnd();
+            Assert.AreEqual("{\"PingResult\":\"Pong\"}", response);
+        }
+
+        [Test]
+        [System.ComponentModel.Category("REST.Simple")]
+        public void TestMessageJsonReader()
+        {
+            WebClient p = new WebClient();
+            var url = URL_CONNECTION + "/ping";
+            byte[] data = p.DownloadData(url);
+            Stream stream = new MemoryStream(data);
             XmlReader r = JsonReaderWriterFactory.CreateJsonReader(stream, new XmlDictionaryReaderQuotas());
-            
+
             XElement root = XElement.Load(r);
             XElement result = root.XPathSelectElement("//PingResult");
             Assert.AreEqual("Pong", result.Value);
         }
+
+        [Test]
+        [System.ComponentModel.Category("REST.Simple")]
+        public void TestMessageJsonObject()
+        {
+            WebClient p = new WebClient();
+            var url = URL_CONNECTION + "/ping";
+            byte[] data = p.DownloadData(url);
+            Stream stream = new MemoryStream(data);
+            var streamReader = new StreamReader(stream);
+            var response = streamReader.ReadToEnd();
+
+            PingJson r = JsonConvert.DeserializeObject<PingJson>(response);
+            Assert.AreEqual("Pong", r.PingResult);
+        }
+    }
+
+    public class PingJson
+    {
+        public string PingResult { get; set; }
     }
 }
