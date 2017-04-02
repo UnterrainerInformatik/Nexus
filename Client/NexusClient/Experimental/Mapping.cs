@@ -49,6 +49,16 @@ namespace NexusClient.Experimental
             Mappings.Add(m);
         }
 
+        public TObject ReadFrom(BinaryReader reader, object obj)
+        {
+            return ReadFrom(reader, default(TObject), obj);
+        }
+
+        public void WriteTo(BinaryWriter writer, object obj)
+        {
+            WriteTo(writer, default(TObject), obj);
+        }
+
         public virtual TObject ReadFrom(BinaryReader reader, TObject obj, object parent)
         {
             TField f;

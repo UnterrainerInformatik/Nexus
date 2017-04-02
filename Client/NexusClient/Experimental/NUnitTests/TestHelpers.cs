@@ -68,7 +68,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryReader r = new BinaryReader(s))
                 {
-                    t = mapping.ReadFrom(r, null, t);
+                    t = mapping.ReadFrom(r, t);
                 }
                 return t;
             }
@@ -109,7 +109,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    mapping.WriteTo(w, null, t);
+                    mapping.WriteTo(w, t);
                 }
                 s.Flush();
                 return s.GetBuffer();
@@ -122,7 +122,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryReader r = new BinaryReader(s))
                 {
-                    h = mapping.ReadFrom(r, null, h);
+                    h = mapping.ReadFrom(r, h);
                 }
                 return h;
             }
@@ -158,7 +158,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryReader r = new BinaryReader(s))
                 {
-                    l = mapping.ReadFrom(r, null, l);
+                    l = mapping.ReadFrom(r, l);
                 }
                 return l;
             }
@@ -195,7 +195,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    mapping.WriteTo(w, null, h);
+                    mapping.WriteTo(w, h);
                 }
                 s.Flush();
                 return s.GetBuffer();
@@ -208,7 +208,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    mapping.WriteTo(w, null, l);
+                    mapping.WriteTo(w, l);
                 }
                 s.Flush();
                 return s.GetBuffer();

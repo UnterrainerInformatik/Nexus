@@ -28,7 +28,6 @@
 using System.Linq;
 using NexusClient.Experimental.NUnitTests.Mappings;
 using NUnit.Framework;
-using Ploeh.SemanticComparison;
 
 namespace NexusClient.Experimental.NUnitTests
 {
