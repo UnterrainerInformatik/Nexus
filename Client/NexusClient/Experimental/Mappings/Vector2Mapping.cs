@@ -33,21 +33,21 @@ using Microsoft.Xna.Framework;
 namespace NexusClient.Experimental.Mappings
 {
     [PublicAPI]
-    public class Vector2Mapping<T> : FieldMapping<Vector2, T>
+    public class Vector2Mapping<T> : Mapping<Vector2, T>
     {
         public Vector2Mapping(Func<T, Vector2> readDelegate, Func<Vector2, T, T> writeDelegate) : base(readDelegate, writeDelegate)
         {
         }
 
-        public override Vector2 From(BinaryReader reader)
+        protected override Vector2 From(BinaryReader reader, T instance, Vector2 field)
         {
             return new Vector2(reader.ReadSingle(), reader.ReadSingle());
         }
 
-        public override void To(BinaryWriter writer, Vector2 instance)
+        protected override void To(BinaryWriter writer, T instance, Vector2 field)
         {
-            writer.Write(instance.X);
-            writer.Write(instance.Y);
+            writer.Write(field.X);
+            writer.Write(field.Y);
         }
     }
 }

@@ -25,13 +25,14 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using NexusClient.Experimental.Mappings;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class TimerMapping : ObjectMapping<Timer>
+    public class TimerMapping<T> : Mapping<Timer, T>
     {
-        public TimerMapping()
+        public TimerMapping(Func<T, Timer> readDelegate, Func<Timer, T, T> writeDelegate) : base(readDelegate, writeDelegate)
         {
             Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
             {

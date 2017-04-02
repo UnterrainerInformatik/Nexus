@@ -32,20 +32,20 @@ using JetBrains.Annotations;
 namespace NexusClient.Experimental.Mappings
 {
     [PublicAPI]
-    public class BoolMapping<T> : FieldMapping<bool, T>
+    public class BoolMapping<T> : Mapping<bool, T>
     {
         public BoolMapping(Func<T, bool> readDelegate, Func<bool, T, T> writeDelegate) : base(readDelegate, writeDelegate)
         {
         }
 
-        public override bool From(BinaryReader reader)
+        protected override bool From(BinaryReader reader, T instance, bool field)
         {
             return reader.ReadBoolean();
         }
 
-        public override void To(BinaryWriter writer, bool instance)
+        protected override void To(BinaryWriter writer, T instance, bool field)
         {
-            writer.Write(instance);
+            writer.Write(field);
         }
     }
 }

@@ -26,33 +26,68 @@
 // ***************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public abstract class FieldMapping<TField, TObject> : BinarySerializable<TObject>
+    public abstract class Mapping<TField, TObject> : BinarySerializable<TObject>
     {
         public Func<TField, TObject, TObject> WriteDelegate { get; }
         public Func<TObject, TField> ReadDelegate { get; }
 
-        protected FieldMapping(Func<TObject, TField> readDelegate, Func<TField, TObject, TObject> writeDelegate)
+        private List<BinarySerializable<TField>> Mappings { get; } = new List<BinarySerializable<TField>>();
+
+        protected Mapping(Func<TObject, TField> readDelegate, Func<TField, TObject, TObject> writeDelegate)
         {
             ReadDelegate = readDelegate;
             WriteDelegate = writeDelegate;
         }
 
-        public TObject Read(BinaryReader reader, TObject instance)
+        protected void Add(BinarySerializable<TField> m)
         {
-            return WriteDelegate(From(reader), instance);
+            Mappings.Add(m);
+        }
+        
+        public virtual TObject Read(BinaryReader reader, TObject instance, object field)
+        {
+            var f = From(reader, instance, (TField)(field??default(TField)));
+            if (WriteDelegate == null)
+            {
+                return (TObject)field;
+            }
+            return WriteDelegate(f, instance);
         }
 
-        public void Write(BinaryWriter writer, TObject instance)
+        public virtual void Write(BinaryWriter writer, TObject instance, object field)
         {
-            To(writer, ReadDelegate(instance));
+            TField f;
+            if (ReadDelegate == null)
+            {
+                f = (TField)field;
+            }
+            else
+            {
+                f = ReadDelegate(instance);
+            }
+            To(writer, instance, f);
         }
 
-        public abstract TField From(BinaryReader reader);
+        protected virtual TField From(BinaryReader reader, TObject instance, TField field)
+        {
+            foreach (BinarySerializable<TField> t in Mappings)
+            {
+                t.Read(reader, field, null);
+            }
+            return field;
+        }
 
-        public abstract void To(BinaryWriter writer, TField instance);
+        protected virtual void To(BinaryWriter writer, TObject instance, TField field)
+        {
+            foreach (BinarySerializable<TField> t in Mappings)
+            {
+                t.Write(writer, field, null);
+            }
+        }
     }
 }

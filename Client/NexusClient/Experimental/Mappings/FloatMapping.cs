@@ -32,20 +32,20 @@ using JetBrains.Annotations;
 namespace NexusClient.Experimental.Mappings
 {
     [PublicAPI]
-    public class FloatMapping<T> : FieldMapping<float, T>
+    public class FloatMapping<T> : Mapping<float, T>
     {
         public FloatMapping(Func<T, float> readDelegate, Func<float, T, T> writeDelegate) : base(readDelegate, writeDelegate)
         {
         }
 
-        public override float From(BinaryReader reader)
+        protected override float From(BinaryReader reader, T instance, float field)
         {
             return reader.ReadSingle();
         }
 
-        public override void To(BinaryWriter writer, float instance)
+        protected override void To(BinaryWriter writer, T instance, float field)
         {
-            writer.Write(instance);
+            writer.Write(field);
         }
     }
 }

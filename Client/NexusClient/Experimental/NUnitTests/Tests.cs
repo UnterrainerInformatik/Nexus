@@ -39,7 +39,7 @@ namespace NexusClient.Experimental.NUnitTests
     public class Tests
     {
         private const int PERFORMANCE_COUNT = 5000000;
-        readonly TimerMapping timerMapping = new TimerMapping();
+        readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
 
         [Test]
         public void TestTimerWrite()
@@ -182,7 +182,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryReader r = new BinaryReader(s))
                 {
-                    t = timerMapping.Read(r, t);
+                    t = timerMapping.Read(r, null, t);
                 }
                 return t;
             }
@@ -223,7 +223,7 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    timerMapping.Write(w, t);
+                    timerMapping.Write(w, null, t);
                 }
                 s.Flush();
                 return s.GetBuffer();

@@ -31,7 +31,7 @@ namespace NexusClient.Experimental
 {
     public interface BinarySerializable<TObject>
     {
-        TObject Read(BinaryReader reader, TObject instance);
-        void Write(BinaryWriter writer, TObject instance);
+        TObject Read(BinaryReader reader, TObject instance, object field);
+        void Write(BinaryWriter writer, TObject instance, object field);
     }
 }

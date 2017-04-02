@@ -70,8 +70,7 @@
     <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />
     <Compile Include="Experimental\Mappings\FloatMapping.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\TimerDtoStruct.cs" />
-    <Compile Include="Experimental\ObjectMapping.cs" />
-    <Compile Include="Experimental\FieldMapping.cs" />
+    <Compile Include="Experimental\Mapping.cs" />
     <Compile Include="Experimental\NUnitTests\Hero.cs" />
     <Compile Include="Experimental\NUnitTests\Tests.cs" />
     <Compile Include="Experimental\NUnitTests\Timer.cs" />

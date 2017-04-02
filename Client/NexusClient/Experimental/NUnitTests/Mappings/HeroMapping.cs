@@ -25,13 +25,14 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using NexusClient.Experimental.Mappings;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class HeroMapping : ObjectMapping<Hero>
+    public class HeroMapping<T> : Mapping<Hero, T>
     {
-        public HeroMapping()
+        public HeroMapping(Func<T, Hero> readDelegate, Func<Hero, T, T> writeDelegate) : base(readDelegate, writeDelegate)
         {
             Add(new Vector2Mapping<Hero>(o => o.Position, (v, o) =>
             {
