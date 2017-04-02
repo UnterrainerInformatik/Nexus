@@ -65,7 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Experimental\BinarySerializableObject.cs" />
+    <Compile Include="Experimental\BinarySerializable.cs" />
     <Compile Include="Experimental\Mappings\BoolMapping.cs" />
     <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />
     <Compile Include="Experimental\Mappings\FloatMapping.cs" />
@@ -73,7 +73,6 @@
     <Compile Include="Experimental\ObjectMapping.cs" />
     <Compile Include="Experimental\FieldMapping.cs" />
     <Compile Include="Experimental\NUnitTests\Hero.cs" />
-    <Compile Include="Experimental\BinarySerializableField.cs" />
     <Compile Include="Experimental\NUnitTests\Tests.cs" />
     <Compile Include="Experimental\NUnitTests\Timer.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\HeroMapping.cs" />

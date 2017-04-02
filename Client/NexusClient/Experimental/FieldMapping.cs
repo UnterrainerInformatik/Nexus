@@ -30,7 +30,7 @@ using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public abstract class FieldMapping<TField, TObject> : BinarySerializableObject<TObject>, BinarySerializableField<TField>
+    public abstract class FieldMapping<TField, TObject> : BinarySerializable<TObject>
     {
         public Func<TField, TObject, TObject> WriteDelegate { get; }
         public Func<TObject, TField> ReadDelegate { get; }

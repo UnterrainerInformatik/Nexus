@@ -29,7 +29,7 @@ using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public interface BinarySerializableObject<TObject>
+    public interface BinarySerializable<TObject>
     {
         TObject Read(BinaryReader reader, TObject instance);
         void Write(BinaryWriter writer, TObject instance);

@@ -30,18 +30,18 @@ using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public class ObjectMapping<T> : BinarySerializableObject<T>
+    public class ObjectMapping<T> : BinarySerializable<T>
     {
-        private List<BinarySerializableObject<T>> Mappings { get; } = new List<BinarySerializableObject<T>>();
+        private List<BinarySerializable<T>> Mappings { get; } = new List<BinarySerializable<T>>();
 
-        protected void Add(BinarySerializableObject<T> m)
+        protected void Add(BinarySerializable<T> m)
         {
             Mappings.Add(m);
         }
 
         public T Read(BinaryReader reader, T instance)
         {
-            foreach (BinarySerializableObject<T> t in Mappings)
+            foreach (BinarySerializable<T> t in Mappings)
             {
                 t.Read(reader, instance);
             }
@@ -50,7 +50,7 @@ namespace NexusClient.Experimental
 
         public void Write(BinaryWriter writer, T instance)
         {
-            foreach (BinarySerializableObject<T> t in Mappings)
+            foreach (BinarySerializable<T> t in Mappings)
             {
                 t.Write(writer, instance);
             }
