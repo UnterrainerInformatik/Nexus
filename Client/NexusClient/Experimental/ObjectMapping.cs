@@ -32,27 +32,27 @@ namespace NexusClient.Experimental
 {
     public class ObjectMapping<T> : BinarySerializableObject<T>
     {
-        private List<UntypedMapping<T>> Mappings { get; } = new List<UntypedMapping<T>>();
+        private List<BinarySerializableObject<T>> Mappings { get; } = new List<BinarySerializableObject<T>>();
 
-        protected void Add(UntypedMapping<T> m)
+        protected void Add(BinarySerializableObject<T> m)
         {
             Mappings.Add(m);
         }
 
         public T Read(BinaryReader reader, T instance)
         {
-            foreach (UntypedMapping<T> t in Mappings)
+            foreach (BinarySerializableObject<T> t in Mappings)
             {
-                t.ReadUntypedFrom(reader, instance);
+                t.Read(reader, instance);
             }
             return instance;
         }
 
         public void Write(BinaryWriter writer, T instance)
         {
-            foreach (UntypedMapping<T> t in Mappings)
+            foreach (BinarySerializableObject<T> t in Mappings)
             {
-                t.WriteUntypedTo(writer, instance);
+                t.Write(writer, instance);
             }
         }
     }

@@ -30,25 +30,25 @@ using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public abstract class FieldMapping<TField, TObject> : UntypedMapping<TObject>, BinarySerializableField<TField>
+    public abstract class FieldMapping<TField, TObject> : BinarySerializableObject<TObject>, BinarySerializableField<TField>
     {
-        public Func<TField, TObject, TObject> Write { get; }
-        public Func<TObject, TField> Read { get; }
+        public Func<TField, TObject, TObject> WriteDelegate { get; }
+        public Func<TObject, TField> ReadDelegate { get; }
 
-        protected FieldMapping(Func<TObject, TField> read, Func<TField, TObject, TObject> write)
+        protected FieldMapping(Func<TObject, TField> readDelegate, Func<TField, TObject, TObject> writeDelegate)
         {
-            Read = read;
-            Write = write;
+            ReadDelegate = readDelegate;
+            WriteDelegate = writeDelegate;
         }
 
-        public override TObject ReadUntypedFrom(BinaryReader reader, TObject instance)
+        public TObject Read(BinaryReader reader, TObject instance)
         {
-            return Write(From(reader), instance);
+            return WriteDelegate(From(reader), instance);
         }
 
-        public override void WriteUntypedTo(BinaryWriter writer, TObject instance)
+        public void Write(BinaryWriter writer, TObject instance)
         {
-            To(writer, Read(instance));
+            To(writer, ReadDelegate(instance));
         }
 
         public abstract TField From(BinaryReader reader);
