@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using NexusClient.Interfaces;
 
 namespace NexusClient.Nexus
 {

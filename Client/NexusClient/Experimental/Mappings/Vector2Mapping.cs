@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+// *************************************************************************** 
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,21 +26,28 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Interfaces;
+using System.IO;
+using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental.Mappings
 {
-    public class SteamConnection : IConnection
+    [PublicAPI]
+    public class Vector2Mapping<T> : FieldMapping<Vector2, T>
     {
-        public bool ConnectToServer(out Guid userId)
+        public Vector2Mapping(Func<T, Vector2> read, Func<Vector2, T, T> write) : base(read, write)
         {
-            userId = new Guid();
-            return true;
         }
 
-        public bool DisconnectFromServer()
+        public override Vector2 From(BinaryReader reader)
         {
-            return true;
+            return new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        }
+
+        public override void To(BinaryWriter writer, Vector2 instance)
+        {
+            writer.Write(instance.X);
+            writer.Write(instance.Y);
         }
     }
 }

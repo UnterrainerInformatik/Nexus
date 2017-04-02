@@ -25,22 +25,44 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Interfaces;
+using NexusClient.Experimental.Mappings;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class SteamConnection : IConnection
+    public class HeroMapping : ObjectMapping<Hero>
     {
-        public bool ConnectToServer(out Guid userId)
+        public HeroMapping()
         {
-            userId = new Guid();
-            return true;
-        }
-
-        public bool DisconnectFromServer()
-        {
-            return true;
+            Add(new Vector2Mapping<Hero>(o => o.Position, (v, o) =>
+            {
+                o.Position = v;
+                return o;
+            }));
+            Add(new FloatMapping<Hero>(o => o.Velocity, (v, o) =>
+            {
+                o.Velocity = v;
+                return o;
+            }));
+            Add(new Vector2Mapping<Hero>(o => o.Direction, (v, o) =>
+            {
+                o.Direction = v;
+                return o;
+            }));
+            Add(new BoolMapping<Hero>(o => o.Shooting, (v, o) =>
+            {
+                o.Shooting = v;
+                return o;
+            }));
+            Add(new BoolMapping<Hero>(o => o.Running, (v, o) =>
+            {
+                o.Running = v;
+                return o;
+            }));
+            Add(new BoolMapping<Hero>(o => o.Building, (v, o) =>
+            {
+                o.Building = v;
+                return o;
+            }));
         }
     }
 }

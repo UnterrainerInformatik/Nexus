@@ -25,22 +25,35 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Interfaces;
+using System.Collections.Generic;
+using System.IO;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental
 {
-    public class SteamConnection : IConnection
+    public class ObjectMapping<T> : BinarySerializableObject<T>
     {
-        public bool ConnectToServer(out Guid userId)
+        private List<UntypedMapping<T>> Mappings { get; } = new List<UntypedMapping<T>>();
+
+        protected void Add(UntypedMapping<T> m)
         {
-            userId = new Guid();
-            return true;
+            Mappings.Add(m);
         }
 
-        public bool DisconnectFromServer()
+        public T Read(BinaryReader reader, T instance)
         {
-            return true;
+            foreach (UntypedMapping<T> t in Mappings)
+            {
+                t.ReadUntypedFrom(reader, instance);
+            }
+            return instance;
+        }
+
+        public void Write(BinaryWriter writer, T instance)
+        {
+            foreach (UntypedMapping<T> t in Mappings)
+            {
+                t.WriteUntypedTo(writer, instance);
+            }
         }
     }
 }

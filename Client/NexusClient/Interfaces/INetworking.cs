@@ -27,7 +27,7 @@
 
 using System;
 
-namespace NexusClient
+namespace NexusClient.Interfaces
 {
     public interface INetworking
     {

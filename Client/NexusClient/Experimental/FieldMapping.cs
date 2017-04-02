@@ -26,21 +26,33 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Interfaces;
+using System.IO;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental
 {
-    public class SteamConnection : IConnection
+    public abstract class FieldMapping<TField, TObject> : UntypedMapping<TObject>, BinarySerializableField<TField>
     {
-        public bool ConnectToServer(out Guid userId)
+        public Func<TField, TObject, TObject> Write { get; }
+        public Func<TObject, TField> Read { get; }
+
+        protected FieldMapping(Func<TObject, TField> read, Func<TField, TObject, TObject> write)
         {
-            userId = new Guid();
-            return true;
+            Read = read;
+            Write = write;
         }
 
-        public bool DisconnectFromServer()
+        public override TObject ReadUntypedFrom(BinaryReader reader, TObject instance)
         {
-            return true;
+            return Write(From(reader), instance);
         }
+
+        public override void WriteUntypedTo(BinaryWriter writer, TObject instance)
+        {
+            To(writer, Read(instance));
+        }
+
+        public abstract TField From(BinaryReader reader);
+
+        public abstract void To(BinaryWriter writer, TField instance);
     }
 }

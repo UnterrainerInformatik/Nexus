@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+// *************************************************************************** 
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,21 +26,26 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Interfaces;
+using System.IO;
+using JetBrains.Annotations;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental.Mappings
 {
-    public class SteamConnection : IConnection
+    [PublicAPI]
+    public class BoolMapping<T> : FieldMapping<bool, T>
     {
-        public bool ConnectToServer(out Guid userId)
+        public BoolMapping(Func<T, bool> read, Func<bool, T, T> write) : base(read, write)
         {
-            userId = new Guid();
-            return true;
         }
 
-        public bool DisconnectFromServer()
+        public override bool From(BinaryReader reader)
         {
-            return true;
+            return reader.ReadBoolean();
+        }
+
+        public override void To(BinaryWriter writer, bool instance)
+        {
+            writer.Write(instance);
         }
     }
 }

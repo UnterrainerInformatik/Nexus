@@ -51,6 +51,10 @@
       <HintPath>..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ploeh.SemanticComparison, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>..\packages\SemanticComparison.3.50.2\lib\net40\Ploeh.SemanticComparison.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,6 +65,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Experimental\BinarySerializableObject.cs" />
+    <Compile Include="Experimental\Mappings\BoolMapping.cs" />
+    <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />
+    <Compile Include="Experimental\Mappings\FloatMapping.cs" />
+    <Compile Include="Experimental\NUnitTests\Mappings\TimerDtoStruct.cs" />
+    <Compile Include="Experimental\ObjectMapping.cs" />
+    <Compile Include="Experimental\FieldMapping.cs" />
+    <Compile Include="Experimental\NUnitTests\Hero.cs" />
+    <Compile Include="Experimental\BinarySerializableField.cs" />
+    <Compile Include="Experimental\NUnitTests\Tests.cs" />
+    <Compile Include="Experimental\NUnitTests\Timer.cs" />
+    <Compile Include="Experimental\NUnitTests\Mappings\HeroMapping.cs" />
+    <Compile Include="Experimental\NUnitTests\Mappings\TimerMapping.cs" />
+    <Compile Include="Experimental\UntypedMapping.cs" />
     <Compile Include="Interfaces\IConnection.cs" />
     <Compile Include="Interfaces\INetworking.cs" />
     <Compile Include="Message.cs" />

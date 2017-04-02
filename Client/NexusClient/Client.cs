@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using NexusClient.Interfaces;
 using NexusClient.Steam;
 
 namespace NexusClient

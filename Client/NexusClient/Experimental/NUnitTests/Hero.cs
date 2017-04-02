@@ -25,22 +25,36 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Interfaces;
+using Microsoft.Xna.Framework;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental.NUnitTests
 {
-    public class SteamConnection : IConnection
+    public class Hero
     {
-        public bool ConnectToServer(out Guid userId)
-        {
-            userId = new Guid();
-            return true;
-        }
+        public Vector2 Position { get; set; }
+        public float Velocity { get; set; }
+        public Vector2 Direction { get; set; }
 
-        public bool DisconnectFromServer()
+        public bool Shooting { get; set; }
+        public bool Running { get; set; }
+        public bool Building { get; set; }
+
+        public Timer Timer { get; set; }
+        private Timer SpecialAbilityTimer { get; }
+
+        public Hero()
         {
-            return true;
+            SpecialAbilityTimer = new Timer();
+            SpecialAbilityTimer.Min = 0;
+            SpecialAbilityTimer.Max = 15;
+            SpecialAbilityTimer.Value = 10.3f;
+            SpecialAbilityTimer.Active = true;
+
+            Timer = new Timer();
+            Timer.Min = 1;
+            Timer.Max = 12;
+            Timer.Value = 5.1f;
+            Timer.Active = false;
         }
     }
 }

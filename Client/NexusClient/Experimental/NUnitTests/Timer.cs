@@ -25,22 +25,14 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Interfaces;
-
-namespace NexusClient.Steam
+namespace NexusClient.Experimental.NUnitTests
 {
-    public class SteamConnection : IConnection
+    public class Timer
     {
-        public bool ConnectToServer(out Guid userId)
-        {
-            userId = new Guid();
-            return true;
-        }
+        public float Value { get; set; }
+        public float Max { get; set; }
+        public float Min { get; set; }
 
-        public bool DisconnectFromServer()
-        {
-            return true;
-        }
+        public bool Active { get; set; }
     }
 }

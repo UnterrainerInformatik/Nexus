@@ -25,22 +25,13 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Interfaces;
+using System.IO;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental
 {
-    public class SteamConnection : IConnection
+    public interface BinarySerializableField<T>
     {
-        public bool ConnectToServer(out Guid userId)
-        {
-            userId = new Guid();
-            return true;
-        }
-
-        public bool DisconnectFromServer()
-        {
-            return true;
-        }
+        T From(BinaryReader reader);
+        void To(BinaryWriter writer, T instance);
     }
 }

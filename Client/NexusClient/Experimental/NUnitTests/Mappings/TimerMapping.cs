@@ -25,22 +25,34 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Interfaces;
+using NexusClient.Experimental.Mappings;
 
-namespace NexusClient.Steam
+namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class SteamConnection : IConnection
+    public class TimerMapping : ObjectMapping<Timer>
     {
-        public bool ConnectToServer(out Guid userId)
+        public TimerMapping()
         {
-            userId = new Guid();
-            return true;
-        }
-
-        public bool DisconnectFromServer()
-        {
-            return true;
+            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
+            {
+                o.Min = v;
+                return o;
+            }));
+            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
+            {
+                o.Max = v;
+                return o;
+            }));
+            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
+            {
+                o.Value = v;
+                return o;
+            }));
+            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
+            {
+                o.Active = v;
+                return o;
+            }));
         }
     }
 }
