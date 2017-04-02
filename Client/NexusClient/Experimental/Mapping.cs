@@ -33,51 +33,78 @@ namespace NexusClient.Experimental
 {
     public abstract class Mapping<TField, TObject> : BinarySerializable<TObject>
     {
-        public Func<TField, TObject, TObject> WriteDelegate { get; }
-        public Func<TObject, TField> ReadDelegate { get; }
+        public Func<TField, TObject, TObject> Save { get; }
+        public Func<TObject, TField> Load { get; }
 
         private List<BinarySerializable<TField>> Mappings { get; } = new List<BinarySerializable<TField>>();
 
-        protected Mapping(Func<TObject, TField> readDelegate, Func<TField, TObject, TObject> writeDelegate)
+        protected Mapping(Func<TObject, TField> load, Func<TField, TObject, TObject> save)
         {
-            ReadDelegate = readDelegate;
-            WriteDelegate = writeDelegate;
+            Load = load;
+            Save = save;
         }
 
         protected void Add(BinarySerializable<TField> m)
         {
             Mappings.Add(m);
         }
-        
-        public virtual TObject Read(BinaryReader reader, TObject instance, object field)
-        {
-            var f = From(reader, instance, (TField)(field??default(TField)));
-            if (WriteDelegate == null)
-            {
-                return (TObject)field;
-            }
-            return WriteDelegate(f, instance);
-        }
 
-        public virtual void Write(BinaryWriter writer, TObject instance, object field)
+        public virtual TObject ReadFrom(BinaryReader reader, TObject obj, object parent)
         {
             TField f;
-            if (ReadDelegate == null)
+            if (parent != null)
             {
-                f = (TField)field;
+                f = (TField) parent;
             }
             else
             {
-                f = ReadDelegate(instance);
+                if (Load == null)
+                {
+                    f = default(TField);
+                }
+                else
+                {
+                    f = Load(obj);
+                }
             }
-            To(writer, instance, f);
+            f = From(reader, obj, f);
+            if (Save == null)
+            {
+                return (TObject) parent;
+            }
+            if (obj == null)
+            {
+                return default(TObject);
+            }
+            return Save(f, obj);
+        }
+
+        public virtual void WriteTo(BinaryWriter writer, TObject obj, object parent)
+        {
+            TField f;
+            if (Load == null)
+            {
+                f = (TField) parent;
+            }
+            else
+            {
+                if (obj != null)
+                {
+                    f = Load(obj);
+                }
+                else
+                {
+                    f = default(TField);
+                }
+            }
+            To(writer, obj, f);
         }
 
         protected virtual TField From(BinaryReader reader, TObject instance, TField field)
         {
             foreach (BinarySerializable<TField> t in Mappings)
             {
-                t.Read(reader, field, null);
+                t.ReadFrom(reader, field, null);
             }
             return field;
         }
@@ -86,7 +113,7 @@ namespace NexusClient.Experimental
         {
             foreach (BinarySerializable<TField> t in Mappings)
             {
-                t.Write(writer, field, null);
+                t.WriteTo(writer, field, null);
             }
         }
     }

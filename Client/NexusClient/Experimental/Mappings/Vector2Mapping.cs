@@ -35,7 +35,7 @@ namespace NexusClient.Experimental.Mappings
     [PublicAPI]
     public class Vector2Mapping<T> : Mapping<Vector2, T>
     {
-        public Vector2Mapping(Func<T, Vector2> readDelegate, Func<Vector2, T, T> writeDelegate) : base(readDelegate, writeDelegate)
+        public Vector2Mapping(Func<T, Vector2> load, Func<Vector2, T, T> save) : base(load, save)
         {
         }
 

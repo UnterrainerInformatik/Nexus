@@ -32,7 +32,7 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
 {
     public class HeroMapping<T> : Mapping<Hero, T>
     {
-        public HeroMapping(Func<T, Hero> readDelegate, Func<Hero, T, T> writeDelegate) : base(readDelegate, writeDelegate)
+        public HeroMapping(Func<T, Hero> load, Func<Hero, T, T> save) : base(load, save)
         {
             Add(new Vector2Mapping<Hero>(o => o.Position, (v, o) =>
             {
@@ -62,6 +62,11 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
             Add(new BoolMapping<Hero>(o => o.Building, (v, o) =>
             {
                 o.Building = v;
+                return o;
+            }));
+            Add(new TimerMapping<Hero>(o => o.Timer, (v, o) =>
+            {
+                o.Timer = v;
                 return o;
             }));
         }

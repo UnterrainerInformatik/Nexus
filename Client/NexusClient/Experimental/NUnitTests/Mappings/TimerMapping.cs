@@ -32,7 +32,7 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
 {
     public class TimerMapping<T> : Mapping<Timer, T>
     {
-        public TimerMapping(Func<T, Timer> readDelegate, Func<Timer, T, T> writeDelegate) : base(readDelegate, writeDelegate)
+        public TimerMapping(Func<T, Timer> load, Func<Timer, T, T> save) : base(load, save)
         {
             Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
             {

@@ -34,7 +34,7 @@ namespace NexusClient.Experimental.Mappings
     [PublicAPI]
     public class BoolMapping<T> : Mapping<bool, T>
     {
-        public BoolMapping(Func<T, bool> readDelegate, Func<bool, T, T> writeDelegate) : base(readDelegate, writeDelegate)
+        public BoolMapping(Func<T, bool> load, Func<bool, T, T> save) : base(load, save)
         {
         }
 

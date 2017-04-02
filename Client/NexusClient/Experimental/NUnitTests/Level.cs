@@ -25,13 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
-
-namespace NexusClient.Experimental
+namespace NexusClient.Experimental.NUnitTests
 {
-    public interface BinarySerializable<TObject>
+    public class Level
     {
-        TObject ReadFrom(BinaryReader reader, TObject obj, object parent);
-        void WriteTo(BinaryWriter writer, TObject obj, object parent);
+        public int Number { get; set; }
+        public Hero Hero { get; set; }
     }
 }

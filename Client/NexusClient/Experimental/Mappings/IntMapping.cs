@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+// *************************************************************************** 
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -25,13 +25,27 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using System.IO;
+using JetBrains.Annotations;
 
-namespace NexusClient.Experimental
+namespace NexusClient.Experimental.Mappings
 {
-    public interface BinarySerializable<TObject>
+    [PublicAPI]
+    public class IntMapping<T> : Mapping<int, T>
     {
-        TObject ReadFrom(BinaryReader reader, TObject obj, object parent);
-        void WriteTo(BinaryWriter writer, TObject obj, object parent);
+        public IntMapping(Func<T, int> load, Func<int, T, T> save) : base(load, save)
+        {
+        }
+
+        protected override int From(BinaryReader reader, T instance, int field)
+        {
+            return reader.ReadInt32();
+        }
+
+        protected override void To(BinaryWriter writer, T instance, int field)
+        {
+            writer.Write(field);
+        }
     }
 }

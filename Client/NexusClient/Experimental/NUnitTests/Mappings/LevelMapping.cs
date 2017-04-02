@@ -25,13 +25,25 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
+using System;
+using NexusClient.Experimental.Mappings;
 
-namespace NexusClient.Experimental
+namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public interface BinarySerializable<TObject>
+    public class LevelMapping<T> : Mapping<Level, T>
     {
-        TObject ReadFrom(BinaryReader reader, TObject obj, object parent);
-        void WriteTo(BinaryWriter writer, TObject obj, object parent);
+        public LevelMapping(Func<T, Level> load, Func<Level, T, T> save) : base(load, save)
+        {
+            Add(new IntMapping<Level>(o => o.Number, (v, o) =>
+            {
+                o.Number = v;
+                return o;
+            }));
+            Add(new HeroMapping<Level>(o => o.Hero, (v, o) =>
+            {
+                o.Hero = v;
+                return o;
+            }));
+        }
     }
 }

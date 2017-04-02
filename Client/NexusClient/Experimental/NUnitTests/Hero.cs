@@ -49,12 +49,6 @@ namespace NexusClient.Experimental.NUnitTests
             SpecialAbilityTimer.Max = 15;
             SpecialAbilityTimer.Value = 10.3f;
             SpecialAbilityTimer.Active = true;
-
-            Timer = new Timer();
-            Timer.Min = 1;
-            Timer.Max = 12;
-            Timer.Value = 5.1f;
-            Timer.Active = false;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace NexusClient.Experimental.Mappings
     [PublicAPI]
     public class FloatMapping<T> : Mapping<float, T>
     {
-        public FloatMapping(Func<T, float> readDelegate, Func<float, T, T> writeDelegate) : base(readDelegate, writeDelegate)
+        public FloatMapping(Func<T, float> load, Func<float, T, T> save) : base(load, save)
         {
         }
 
