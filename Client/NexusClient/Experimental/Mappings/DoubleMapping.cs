@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+// *************************************************************************** 
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,24 +26,26 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Experimental.Mappings;
+using System.IO;
+using JetBrains.Annotations;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.Mappings
 {
-    public class LevelMapping<TParent> : Mapping<Level, TParent>
+    [PublicAPI]
+    public class DoubleMapping<T> : Mapping<double, T>
     {
-        public LevelMapping(Func<TParent, Level> load, Func<Level, TParent, TParent> save) : base(load, save)
+        public DoubleMapping(Func<T, double> load, Func<double, T, T> save) : base(load, save)
         {
-            Add(new IntMapping<Level>(o => o.Number, (v, o) =>
-            {
-                o.Number = v;
-                return o;
-            }));
-            Add(new HeroMapping<Level>(o => o.Hero, (v, o) =>
-            {
-                o.Hero = v;
-                return o;
-            }));
+        }
+
+        protected override double From(BinaryReader reader, T instance, double field)
+        {
+            return reader.ReadDouble();
+        }
+
+        protected override void To(BinaryWriter writer, T instance, double field)
+        {
+            writer.Write(field);
         }
     }
 }

@@ -25,9 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using NexusClient.Experimental.Mappings;
 using NexusClient.Experimental.NUnitTests.Mappings;
 
 namespace NexusClient.Experimental.NUnitTests
@@ -93,14 +95,19 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    w.Write(t.Min);
-                    w.Write(t.Max);
-                    w.Write(t.Value);
-                    w.Write(t.Active);
+                    To(w, t);
                 }
                 s.Flush();
                 return s.GetBuffer();
             }
+        }
+
+        private static void To(BinaryWriter w, Timer t)
+        {
+            w.Write(t.Min);
+            w.Write(t.Max);
+            w.Write(t.Value);
+            w.Write(t.Active);
         }
 
         public static byte[] ToByteArrayMapping(Timer t, TimerMapping<Timer> mapping)
@@ -134,22 +141,24 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    w.Write(h.Position.X);
-                    w.Write(h.Position.Y);
-                    w.Write(h.Velocity);
-                    w.Write(h.Direction.X);
-                    w.Write(h.Direction.Y);
-                    w.Write(h.Shooting);
-                    w.Write(h.Running);
-                    w.Write(h.Building);
-                    w.Write(h.Timer.Min);
-                    w.Write(h.Timer.Max);
-                    w.Write(h.Timer.Value);
-                    w.Write(h.Timer.Active);
+                    To(w, h);
                 }
                 s.Flush();
                 return s.GetBuffer();
             }
+        }
+
+        private static void To(BinaryWriter w, Hero h)
+        {
+            w.Write(h.Position.X);
+            w.Write(h.Position.Y);
+            w.Write(h.Velocity);
+            w.Write(h.Direction.X);
+            w.Write(h.Direction.Y);
+            w.Write(h.Shooting);
+            w.Write(h.Running);
+            w.Write(h.Building);
+            To(w, h.Timer);
         }
 
         public static Level FromByteArrayMapping(byte[] bytes, Level l, LevelMapping<Level> mapping)
@@ -170,23 +179,34 @@ namespace NexusClient.Experimental.NUnitTests
             {
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
-                    w.Write(l.Number);
-                    w.Write(l.Hero.Position.X);
-                    w.Write(l.Hero.Position.Y);
-                    w.Write(l.Hero.Velocity);
-                    w.Write(l.Hero.Direction.X);
-                    w.Write(l.Hero.Direction.Y);
-                    w.Write(l.Hero.Shooting);
-                    w.Write(l.Hero.Running);
-                    w.Write(l.Hero.Building);
-                    w.Write(l.Hero.Timer.Min);
-                    w.Write(l.Hero.Timer.Max);
-                    w.Write(l.Hero.Timer.Value);
-                    w.Write(l.Hero.Timer.Active);
+                    To(w, l);
                 }
                 s.Flush();
                 return s.GetBuffer();
             }
+        }
+
+        public static byte[] ToByteArrayManual(List<int> l)
+        {
+            using (MemoryStream s = new MemoryStream())
+            {
+                using (BinaryWriter w = new BinaryWriter(s))
+                {
+                    w.Write(l.Count);
+                    foreach (var i in l)
+                    {
+                        w.Write(i);
+                    }
+                }
+                s.Flush();
+                return s.GetBuffer();
+            }
+        }
+
+        public static void To(BinaryWriter w, Level l)
+        {
+            w.Write(l.Number);
+            To(w, l.Hero);
         }
 
         public static byte[] ToByteArrayMapping(Hero h, HeroMapping<Hero> mapping)
@@ -196,6 +216,31 @@ namespace NexusClient.Experimental.NUnitTests
                 using (BinaryWriter w = new BinaryWriter(s))
                 {
                     mapping.WriteTo(w, h);
+                }
+                s.Flush();
+                return s.GetBuffer();
+            }
+        }
+
+        public static List<int> FromByteArrayMapping(byte[] bytes, List<int> l, ListMapping<int, List<int>> mapping)
+        {
+            using (MemoryStream s = new MemoryStream(bytes))
+            {
+                using (BinaryReader r = new BinaryReader(s))
+                {
+                    l = mapping.ReadFrom(r, l);
+                }
+                return l;
+            }
+        }
+
+        public static byte[] ToByteArrayMapping(List<int> l, ListMapping<int, List<int>> mapping)
+        {
+            using (MemoryStream s = new MemoryStream())
+            {
+                using (BinaryWriter w = new BinaryWriter(s))
+                {
+                    mapping.WriteTo(w, l);
                 }
                 s.Flush();
                 return s.GetBuffer();

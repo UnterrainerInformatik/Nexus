@@ -62,7 +62,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Experimental\BinarySerializable.cs" />
+    <Compile Include="Experimental\Mappings\ListMapping.cs" />
     <Compile Include="Experimental\Mappings\BoolMapping.cs" />
+    <Compile Include="Experimental\Mappings\SByteMapping.cs" />
+    <Compile Include="Experimental\Mappings\DecimalMapping.cs" />
+    <Compile Include="Experimental\Mappings\CharMapping.cs" />
+    <Compile Include="Experimental\Mappings\ByteMapping.cs" />
+    <Compile Include="Experimental\Mappings\StringMapping.cs" />
+    <Compile Include="Experimental\Mappings\ULongMapping.cs" />
+    <Compile Include="Experimental\Mappings\UShortMapping.cs" />
+    <Compile Include="Experimental\Mappings\UIntMapping.cs" />
+    <Compile Include="Experimental\Mappings\DoubleMapping.cs" />
+    <Compile Include="Experimental\Mappings\LongMapping.cs" />
     <Compile Include="Experimental\Mappings\ShortMapping.cs" />
     <Compile Include="Experimental\Mappings\IntMapping.cs" />
     <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />

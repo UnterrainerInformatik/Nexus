@@ -30,9 +30,9 @@ using NexusClient.Experimental.Mappings;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class TimerMapping<T> : Mapping<Timer, T>
+    public class TimerMapping<TParent> : Mapping<Timer, TParent>
     {
-        public TimerMapping(Func<T, Timer> load, Func<Timer, T, T> save) : base(load, save)
+        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
         {
             Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
             {

@@ -30,9 +30,9 @@ using NexusClient.Experimental.Mappings;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class HeroMapping<T> : Mapping<Hero, T>
+    public class HeroMapping<TParent> : Mapping<Hero, TParent>
     {
-        public HeroMapping(Func<T, Hero> load, Func<Hero, T, T> save) : base(load, save)
+        public HeroMapping(Func<TParent, Hero> load, Func<Hero, TParent, TParent> save) : base(load, save)
         {
             Add(new Vector2Mapping<Hero>(o => o.Position, (v, o) =>
             {

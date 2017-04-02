@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+// *************************************************************************** 
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,24 +26,26 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Experimental.Mappings;
+using System.IO;
+using JetBrains.Annotations;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.Mappings
 {
-    public class LevelMapping<TParent> : Mapping<Level, TParent>
+    [PublicAPI]
+    public class SByteMapping<T> : Mapping<sbyte, T>
     {
-        public LevelMapping(Func<TParent, Level> load, Func<Level, TParent, TParent> save) : base(load, save)
+        public SByteMapping(Func<T, sbyte> load, Func<sbyte, T, T> save) : base(load, save)
         {
-            Add(new IntMapping<Level>(o => o.Number, (v, o) =>
-            {
-                o.Number = v;
-                return o;
-            }));
-            Add(new HeroMapping<Level>(o => o.Hero, (v, o) =>
-            {
-                o.Hero = v;
-                return o;
-            }));
+        }
+
+        protected override sbyte From(BinaryReader reader, T instance, sbyte field)
+        {
+            return reader.ReadSByte();
+        }
+
+        protected override void To(BinaryWriter writer, T instance, sbyte field)
+        {
+            writer.Write(field);
         }
     }
 }

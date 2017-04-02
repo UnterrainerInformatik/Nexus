@@ -25,7 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using NexusClient.Experimental.Mappings;
 using NexusClient.Experimental.NUnitTests.Mappings;
 using NUnit.Framework;
 
@@ -34,9 +37,9 @@ namespace NexusClient.Experimental.NUnitTests
     [TestFixture]
     public class Tests
     {
-        readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
-        readonly HeroMapping<Hero> heroMapping = new HeroMapping<Hero>(null, null);
-        readonly LevelMapping<Level> levelMapping = new LevelMapping<Level>(null, null);
+        private readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
+        private readonly HeroMapping<Hero> heroMapping = new HeroMapping<Hero>(null, null);
+        private readonly LevelMapping<Level> levelMapping = new LevelMapping<Level>(null, null);
 
         [Test]
         public void TestTimerWrite()
@@ -70,7 +73,7 @@ namespace NexusClient.Experimental.NUnitTests
             var template = TestHelpers.GetHero();
             var h = new Hero();
             h.Timer = new Timer();
-            
+
             h = TestHelpers.FromByteArrayMapping(TestHelpers.ToByteArrayManual(template), h, heroMapping);
 
             Assert.IsTrue(TestHelpers.Equals(template, h));
@@ -91,10 +94,32 @@ namespace NexusClient.Experimental.NUnitTests
             var l = new Level();
             l.Hero = new Hero();
             l.Hero.Timer = new Timer();
-            
+
             l = TestHelpers.FromByteArrayMapping(TestHelpers.ToByteArrayManual(template), l, levelMapping);
 
             Assert.IsTrue(TestHelpers.Equals(template, l));
+        }
+
+        [Test]
+        public void TestIntListWrite()
+        {
+            var mapping = new ListMapping<int, List<int>>(null, null);
+            List<int> l = new List<int>(new[] { 34, 5, 67, 252 });
+            
+            Assert.IsTrue(TestHelpers.ToByteArrayMapping(l, mapping)
+                .SequenceEqual(TestHelpers.ToByteArrayManual(l)));
+        }
+
+        [Test]
+        public void TestIntListRead()
+        {
+            var mapping = new ListMapping<int, List<int>>(null, null);
+            List<int> template = new List<int>(new[] { 34, 5, 67, 252 });
+            var l = new List<int>();
+            
+            l = TestHelpers.FromByteArrayMapping(TestHelpers.ToByteArrayManual(template), l, mapping);
+
+            Assert.IsTrue(template.SequenceEqual(l));
         }
     }
 }
