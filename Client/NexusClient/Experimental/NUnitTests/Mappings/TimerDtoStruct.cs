@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System.IO;
+using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
@@ -46,8 +47,8 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
         }
 
         /// <summary>
-        ///     The benefit of this method is that you may implement <see cref="From(NexusClient.Experimental.NUnitTests.Timer)" />
-        ///     and <see cref="To(NexusClient.Experimental.NUnitTests.Timer)" /> directly within your
+        ///     The benefit of this method is that you may implement <see cref="From(Timer)" />
+        ///     and <see cref="To(Timer)" /> directly within your
         ///     object you want to transfer, so you may contain private fields as well without having to expose them.
         /// </summary>
         public static TimerDtoStruct From(Timer t)
@@ -56,8 +57,8 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
         }
 
         /// <summary>
-        ///     The benefit of this method is that you may implement <see cref="From(NexusClient.Experimental.NUnitTests.Timer)" />
-        ///     and <see cref="To(NexusClient.Experimental.NUnitTests.Timer)" /> directly within your
+        ///     The benefit of this method is that you may implement <see cref="From(Timer)" />
+        ///     and <see cref="To(Timer)" /> directly within your
         ///     object you want to transfer, so you may contain private fields as well without having to expose them.
         /// </summary>
         public void To(Timer t)

@@ -31,11 +31,12 @@ using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using NexusClient.Experimental.Mappings;
 using NexusClient.Experimental.NUnitTests.Mappings;
+using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests
 {
     [PublicAPI]
-    public static class TestHelpers
+    public static class Helpers
     {
         public static Timer FromByteArrayManual(byte[] bytes, Timer t)
         {

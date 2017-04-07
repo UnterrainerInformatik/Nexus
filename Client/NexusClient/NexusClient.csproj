@@ -31,24 +31,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=5.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.5.2.0\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=6.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.0.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=10.4.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.4.0\lib\net\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1186, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -59,6 +59,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZeroFormatter, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZeroFormatter.1.6.4\lib\net45\ZeroFormatter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ZeroFormatter.Interfaces, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZeroFormatter.Interfaces.1.6.4\lib\net45\ZeroFormatter.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Experimental\BinarySerializable.cs" />
@@ -78,17 +86,24 @@
     <Compile Include="Experimental\Mappings\IntMapping.cs" />
     <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />
     <Compile Include="Experimental\Mappings\FloatMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\Level.cs" />
+    <Compile Include="Experimental\NUnitTests\TestsZeroFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\Objects\Level.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\LevelMapping.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\TimerDtoStruct.cs" />
     <Compile Include="Experimental\Mapping.cs" />
-    <Compile Include="Experimental\NUnitTests\Hero.cs" />
+    <Compile Include="Experimental\NUnitTests\Objects\Hero.cs" />
     <Compile Include="Experimental\NUnitTests\PerformanceTests.cs" />
-    <Compile Include="Experimental\NUnitTests\TestHelpers.cs" />
-    <Compile Include="Experimental\NUnitTests\Tests.cs" />
-    <Compile Include="Experimental\NUnitTests\Timer.cs" />
+    <Compile Include="Experimental\NUnitTests\Helpers.cs" />
+    <Compile Include="Experimental\NUnitTests\TestsMapping.cs" />
+    <Compile Include="Experimental\NUnitTests\Objects\Timer.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\HeroMapping.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\TimerMapping.cs" />
+    <Compile Include="Experimental\NUnitTests\ZeroFormatters\GameTimeFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\ZeroFormatters\PointFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\ZeroFormatters\ViewportFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\ZeroFormatters\RectangleFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\ZeroFormatters\Vector2Formatter.cs" />
+    <Compile Include="Experimental\NUnitTests\ZeroFormatters\ZeroFormatterHelpers.cs" />
     <Compile Include="Interfaces\IConnection.cs" />
     <Compile Include="Interfaces\INetworking.cs" />
     <Compile Include="Message.cs" />
@@ -106,8 +121,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <AdditionalFiles Include="ZeroFormatterAnalyzer.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Analyzer Include="..\packages\ZeroFormatter.Analyzer.1.1.1\analyzers\dotnet\cs\ZeroFormatterAnalyzer.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

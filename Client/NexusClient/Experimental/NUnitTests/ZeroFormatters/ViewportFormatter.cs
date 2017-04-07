@@ -25,14 +25,35 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Experimental.NUnitTests
-{
-    public class Timer
-    {
-        public float Value { get; set; }
-        public float Max { get; set; }
-        public float Min { get; set; }
+using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ZeroFormatter;
+using ZeroFormatter.Formatters;
 
-        public bool Active { get; set; }
+namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
+{
+    [PublicAPI]
+    public class ViewportFormatter<TTypeResolver> : Formatter<TTypeResolver, Viewport>
+        where TTypeResolver : ITypeResolver, new()
+    {
+        public override int? GetLength()
+        {
+            return Formatter<TTypeResolver, Rectangle>.Default.GetLength();
+        }
+
+        public override int Serialize(ref byte[] bytes, int offset, Viewport value)
+        {
+            // Formatter<T> can get child serializer.
+            return Formatter<TTypeResolver, Rectangle>.Default.Serialize(ref bytes, offset,
+                new Rectangle(value.X, value.Y, value.Width, value.Height));
+        }
+
+        public override Viewport Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
+        {
+            return
+                new Viewport(Formatter<TTypeResolver, Rectangle>.Default.Deserialize(ref bytes, offset, tracker,
+                    out byteSize));
+        }
     }
 }

@@ -26,35 +26,40 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Experimental.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
+using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
+using ZeroFormatter;
+using ZeroFormatter.Formatters;
+using ZeroFormatter.Internal;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    public class TimerMapping<TParent> : Mapping<Timer, TParent>
+    [PublicAPI]
+    public class GameTimeFormatter<TTypeResolver> : Formatter<TTypeResolver, GameTime>
+        where TTypeResolver : ITypeResolver, new()
     {
-        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
+        private const int BYTE_SIZE = 16;
+
+        public override int? GetLength()
         {
-            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
-            {
-                o.Min = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
-            {
-                o.Max = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
-            {
-                o.Value = v;
-                return o;
-            }));
-            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
-            {
-                o.Active = v;
-                return o;
-            }));
+            // If size is variable, return null.
+            return BYTE_SIZE;
+        }
+
+        public override int Serialize(ref byte[] bytes, int offset, GameTime value)
+        {
+            // Formatter<T> can get child serializer.
+            BinaryUtil.WriteDouble(ref bytes, offset, value.ElapsedGameTime.TotalMilliseconds);
+            offset += 8;
+            BinaryUtil.WriteDouble(ref bytes, offset, value.TotalGameTime.TotalMilliseconds);
+            return BYTE_SIZE;
+        }
+
+        public override GameTime Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
+        {
+            byteSize = BYTE_SIZE;
+            return new GameTime(TimeSpan.FromMilliseconds(BinaryUtil.ReadDouble(ref bytes, offset)),
+                TimeSpan.FromMilliseconds(BinaryUtil.ReadDouble(ref bytes, offset + 8)));
         }
     }
 }

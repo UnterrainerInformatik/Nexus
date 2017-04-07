@@ -25,36 +25,39 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Experimental.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
+using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
+using ZeroFormatter;
+using ZeroFormatter.Formatters;
+using ZeroFormatter.Internal;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    public class TimerMapping<TParent> : Mapping<Timer, TParent>
+    [PublicAPI]
+    public class PointFormatter<TTypeResolver> : Formatter<TTypeResolver, Point>
+        where TTypeResolver : ITypeResolver, new()
     {
-        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
+        private const int BYTE_SIZE = 8;
+
+        public override int? GetLength()
         {
-            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
-            {
-                o.Min = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
-            {
-                o.Max = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
-            {
-                o.Value = v;
-                return o;
-            }));
-            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
-            {
-                o.Active = v;
-                return o;
-            }));
+            // If size is variable, return null.
+            return BYTE_SIZE;
+        }
+
+        public override int Serialize(ref byte[] bytes, int offset, Point value)
+        {
+            // Formatter<T> can get child serializer.
+            BinaryUtil.WriteInt32(ref bytes, offset, value.X);
+            offset += 4;
+            BinaryUtil.WriteInt32(ref bytes, offset, value.Y);
+            return BYTE_SIZE;
+        }
+
+        public override Point Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
+        {
+            byteSize = BYTE_SIZE;
+            return new Point(BinaryUtil.ReadInt32(ref bytes, offset), BinaryUtil.ReadInt32(ref bytes, offset + 4));
         }
     }
 }

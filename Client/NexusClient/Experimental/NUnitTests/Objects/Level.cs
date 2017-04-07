@@ -25,36 +25,16 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Experimental.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
+using ZeroFormatter;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    public class TimerMapping<TParent> : Mapping<Timer, TParent>
+    [ZeroFormattable]
+    public class Level
     {
-        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
-        {
-            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
-            {
-                o.Min = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
-            {
-                o.Max = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
-            {
-                o.Value = v;
-                return o;
-            }));
-            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
-            {
-                o.Active = v;
-                return o;
-            }));
-        }
+        [Index(0)]
+        public virtual int Number { get; set; }
+        [Index(1)]
+        public virtual Hero Hero { get; set; }
     }
 }

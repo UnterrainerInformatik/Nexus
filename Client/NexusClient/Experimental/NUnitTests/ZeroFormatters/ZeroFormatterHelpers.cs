@@ -25,36 +25,21 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Experimental.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ZeroFormatter.Formatters;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    public class TimerMapping<TParent> : Mapping<Timer, TParent>
+    public static class ZeroFormatterHelpers
     {
-        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
+        public static void Register()
         {
-            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
-            {
-                o.Min = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
-            {
-                o.Max = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
-            {
-                o.Value = v;
-                return o;
-            }));
-            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
-            {
-                o.Active = v;
-                return o;
-            }));
+            Formatter<DefaultResolver, Vector2>.Register(new Vector2Formatter<DefaultResolver>());
+            Formatter<DefaultResolver, Point>.Register(new PointFormatter<DefaultResolver>());
+            Formatter<DefaultResolver, Rectangle>.Register(new RectangleFormatter<DefaultResolver>());
+            Formatter<DefaultResolver, Viewport>.Register(new ViewportFormatter<DefaultResolver>());
+            Formatter<DefaultResolver, GameTime>.Register(new GameTimeFormatter<DefaultResolver>());
         }
     }
 }

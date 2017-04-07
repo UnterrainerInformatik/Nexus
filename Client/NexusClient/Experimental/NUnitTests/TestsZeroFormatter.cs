@@ -25,11 +25,54 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using NexusClient.Experimental.NUnitTests.Objects;
+using NexusClient.Experimental.NUnitTests.ZeroFormatters;
+using NUnit.Framework;
+using ZeroFormatter;
+
 namespace NexusClient.Experimental.NUnitTests
 {
-    public class Level
+    [TestFixture]
+    [Category("Mappers.ZeroFormatter")]
+    public class TestsZeroFormatter
     {
-        public int Number { get; set; }
-        public Hero Hero { get; set; }
+        [SetUp]
+        public void Setup()
+        {
+            ZeroFormatterHelpers.Register();
+        }
+
+        [Test]
+        public void TestTimer()
+        {
+            var template = Helpers.GetTimer();
+
+            var b = ZeroFormatterSerializer.Serialize(template);
+            var t = ZeroFormatterSerializer.Deserialize<Timer>(b);
+
+            Assert.IsTrue(Helpers.Equals(template, t));
+        }
+
+        [Test]
+        public void TestHero()
+        {
+            var template = Helpers.GetHero();
+            
+            var b = ZeroFormatterSerializer.Serialize(template);
+            var h = ZeroFormatterSerializer.Deserialize<Hero>(b);
+
+            Assert.IsTrue(Helpers.Equals(template, h));
+        }
+
+        [Test]
+        public void TestLevel()
+        {
+            var template = Helpers.GetLevel();
+
+            var b = ZeroFormatterSerializer.Serialize(template);
+            var l = ZeroFormatterSerializer.Deserialize<Level>(b);
+
+            Assert.IsTrue(Helpers.Equals(template, l));
+        }
     }
 }

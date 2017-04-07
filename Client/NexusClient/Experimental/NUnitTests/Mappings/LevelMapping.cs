@@ -27,6 +27,7 @@
 
 using System;
 using NexusClient.Experimental.Mappings;
+using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {

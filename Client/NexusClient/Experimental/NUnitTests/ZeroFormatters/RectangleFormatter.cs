@@ -25,30 +25,44 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using ZeroFormatter;
+using ZeroFormatter.Formatters;
+using ZeroFormatter.Internal;
 
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    public class Hero
+    [PublicAPI]
+    public class RectangleFormatter<TTypeResolver> : Formatter<TTypeResolver, Rectangle>
+        where TTypeResolver : ITypeResolver, new()
     {
-        public Vector2 Position { get; set; }
-        public float Velocity { get; set; }
-        public Vector2 Direction { get; set; }
+        private const int BYTE_SIZE = 16;
 
-        public bool Shooting { get; set; }
-        public bool Running { get; set; }
-        public bool Building { get; set; }
-
-        public Timer Timer { get; set; }
-        private Timer SpecialAbilityTimer { get; }
-
-        public Hero()
+        public override int? GetLength()
         {
-            SpecialAbilityTimer = new Timer();
-            SpecialAbilityTimer.Min = 0;
-            SpecialAbilityTimer.Max = 15;
-            SpecialAbilityTimer.Value = 10.3f;
-            SpecialAbilityTimer.Active = true;
+            // If size is variable, return null.
+            return BYTE_SIZE;
+        }
+
+        public override int Serialize(ref byte[] bytes, int offset, Rectangle value)
+        {
+            // Formatter<T> can get child serializer.
+            BinaryUtil.WriteInt32(ref bytes, offset, value.X);
+            offset += 4;
+            BinaryUtil.WriteInt32(ref bytes, offset, value.Y);
+            offset += 4;
+            BinaryUtil.WriteInt32(ref bytes, offset, value.Width);
+            offset += 4;
+            BinaryUtil.WriteInt32(ref bytes, offset, value.Height);
+            return BYTE_SIZE;
+        }
+
+        public override Rectangle Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
+        {
+            byteSize = BYTE_SIZE;
+            return new Rectangle(BinaryUtil.ReadInt32(ref bytes, offset), BinaryUtil.ReadInt32(ref bytes, offset + 4),
+                BinaryUtil.ReadInt32(ref bytes, offset + 8), BinaryUtil.ReadInt32(ref bytes, offset + 12));
         }
     }
 }

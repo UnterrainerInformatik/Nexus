@@ -28,7 +28,10 @@
 using System;
 using System.Diagnostics;
 using NexusClient.Experimental.NUnitTests.Mappings;
+using NexusClient.Experimental.NUnitTests.Objects;
+using NexusClient.Experimental.NUnitTests.ZeroFormatters;
 using NUnit.Framework;
+using ZeroFormatter;
 
 namespace NexusClient.Experimental.NUnitTests
 {
@@ -42,11 +45,11 @@ namespace NexusClient.Experimental.NUnitTests
         [Category("Mappers.Performance.Manual")]
         public void PerformanceTestTimerWriteManual()
         {
-            var t = TestHelpers.GetTimer();
+            var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                TestHelpers.ToByteArrayManual(t);
+                Helpers.ToByteArrayManual(t);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
@@ -56,11 +59,11 @@ namespace NexusClient.Experimental.NUnitTests
         [Category("Mappers.Performance.DtoStruct")]
         public void PerformanceTestTimerWriteDtoStruct()
         {
-            var t = TestHelpers.GetTimer();
+            var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                TestHelpers.ToByteArrayDtoStruct(t);
+                Helpers.ToByteArrayDtoStruct(t);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
@@ -70,11 +73,26 @@ namespace NexusClient.Experimental.NUnitTests
         [Category("Mappers.Performance.Mapping")]
         public void PerformanceTestTimerWriteMapping()
         {
-            var t = TestHelpers.GetTimer();
+            var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                TestHelpers.ToByteArrayMapping(t, timerMapping);
+                Helpers.ToByteArrayMapping(t, timerMapping);
+            }
+            watch.Stop();
+            Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
+        }
+
+        [Test]
+        [Category("Mappers.Performance.ZeroFormatter")]
+        public void PerformanceTestTimerWriteZeroFormatter()
+        {
+            ZeroFormatterHelpers.Register();
+            var t = Helpers.GetTimer();
+            var watch = Stopwatch.StartNew();
+            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            {
+                ZeroFormatterSerializer.Serialize(t);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
@@ -84,13 +102,13 @@ namespace NexusClient.Experimental.NUnitTests
         [Category("Mappers.Performance.Manual")]
         public void PerformanceTestTimerReadManual()
         {
-            var template = TestHelpers.GetTimer();
+            var template = Helpers.GetTimer();
             var t = new Timer();
-            var bytes = TestHelpers.ToByteArrayManual(template);
+            var bytes = Helpers.ToByteArrayManual(template);
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                TestHelpers.FromByteArrayManual(bytes, t);
+                Helpers.FromByteArrayManual(bytes, t);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
@@ -100,13 +118,13 @@ namespace NexusClient.Experimental.NUnitTests
         [Category("Mappers.Performance.DtoStruct")]
         public void PerformanceTestTimerReadDtoStruct()
         {
-            var template = TestHelpers.GetTimer();
+            var template = Helpers.GetTimer();
             var t = new Timer();
-            var bytes = TestHelpers.ToByteArrayManual(template);
+            var bytes = Helpers.ToByteArrayManual(template);
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                TestHelpers.FromByteArrayDtoStruct(bytes, t);
+                Helpers.FromByteArrayDtoStruct(bytes, t);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
@@ -116,13 +134,29 @@ namespace NexusClient.Experimental.NUnitTests
         [Category("Mappers.Performance.Mapping")]
         public void PerformanceTestTimerReadMapping()
         {
-            var template = TestHelpers.GetTimer();
+            var template = Helpers.GetTimer();
             var t = new Timer();
-            var bytes = TestHelpers.ToByteArrayManual(template);
+            var bytes = Helpers.ToByteArrayManual(template);
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                TestHelpers.FromByteArrayMapping(bytes, t, timerMapping);
+                Helpers.FromByteArrayMapping(bytes, t, timerMapping);
+            }
+            watch.Stop();
+            Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
+        }
+
+        [Test]
+        [Category("Mappers.Performance.ZeroFormatter")]
+        public void PerformanceTestTimerReadZeroFormatter()
+        {
+            ZeroFormatterHelpers.Register();
+            var template = Helpers.GetTimer();
+            var bytes = Helpers.ToByteArrayManual(template);
+            var watch = Stopwatch.StartNew();
+            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            {
+                ZeroFormatterSerializer.Deserialize<Timer>(bytes);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");

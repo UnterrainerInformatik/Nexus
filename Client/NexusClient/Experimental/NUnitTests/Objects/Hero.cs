@@ -25,36 +25,40 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Experimental.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
+using Microsoft.Xna.Framework;
+using ZeroFormatter;
 
-namespace NexusClient.Experimental.NUnitTests.Mappings
+namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    public class TimerMapping<TParent> : Mapping<Timer, TParent>
+    [ZeroFormattable]
+    public class Hero
     {
-        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
+        [Index(0)]
+        public virtual Vector2 Position { get; set; }
+        [Index(1)]
+        public virtual float Velocity { get; set; }
+        [Index(2)]
+        public virtual Vector2 Direction { get; set; }
+
+        [Index(3)]
+        public virtual bool Shooting { get; set; }
+        [Index(4)]
+        public virtual bool Running { get; set; }
+        [Index(5)]
+        public virtual bool Building { get; set; }
+
+        [Index(6)]
+        public virtual Timer Timer { get; set; }
+        
+        private Timer SpecialAbilityTimer { get; }
+
+        public Hero()
         {
-            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
-            {
-                o.Min = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
-            {
-                o.Max = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
-            {
-                o.Value = v;
-                return o;
-            }));
-            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
-            {
-                o.Active = v;
-                return o;
-            }));
+            SpecialAbilityTimer = new Timer();
+            SpecialAbilityTimer.Min = 0;
+            SpecialAbilityTimer.Max = 15;
+            SpecialAbilityTimer.Value = 10.3f;
+            SpecialAbilityTimer.Active = true;
         }
     }
 }
