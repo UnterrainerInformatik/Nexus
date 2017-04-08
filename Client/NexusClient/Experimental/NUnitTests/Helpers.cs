@@ -32,6 +32,7 @@ using Microsoft.Xna.Framework;
 using NexusClient.Experimental.Mappings;
 using NexusClient.Experimental.NUnitTests.Mappings;
 using NexusClient.Experimental.NUnitTests.Objects;
+using ZeroFormatter;
 
 namespace NexusClient.Experimental.NUnitTests
 {
@@ -77,6 +78,14 @@ namespace NexusClient.Experimental.NUnitTests
             }
         }
 
+        public static Timer FromByteArrayZeroFormatter(byte[] bytes)
+        {
+            using (MemoryStream s = new MemoryStream(bytes, 0, bytes.Length, true, true))
+            {
+                return ZeroFormatterSerializer.Deserialize<Timer>(s);
+            }
+        }
+
         public static byte[] ToByteArrayDtoStruct(Timer t)
         {
             using (MemoryStream s = new MemoryStream())
@@ -119,6 +128,16 @@ namespace NexusClient.Experimental.NUnitTests
                 {
                     mapping.WriteTo(w, t);
                 }
+                s.Flush();
+                return s.GetBuffer();
+            }
+        }
+
+        public static byte[] ToByteArrayZeroFormatter(Timer t)
+        {
+            using (MemoryStream s = new MemoryStream())
+            {
+                ZeroFormatterSerializer.Serialize(s, t);
                 s.Flush();
                 return s.GetBuffer();
             }

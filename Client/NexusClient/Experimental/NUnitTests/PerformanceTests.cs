@@ -92,7 +92,7 @@ namespace NexusClient.Experimental.NUnitTests
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                ZeroFormatterSerializer.Serialize(t);
+                Helpers.ToByteArrayZeroFormatter(t);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
@@ -156,7 +156,7 @@ namespace NexusClient.Experimental.NUnitTests
             var watch = Stopwatch.StartNew();
             for (int i = 0; i < PERFORMANCE_COUNT; i++)
             {
-                ZeroFormatterSerializer.Deserialize<Timer>(bytes);
+                Helpers.FromByteArrayZeroFormatter(bytes);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
