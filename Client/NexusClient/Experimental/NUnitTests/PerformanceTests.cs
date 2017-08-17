@@ -31,7 +31,6 @@ using NexusClient.Experimental.NUnitTests.Mappings;
 using NexusClient.Experimental.NUnitTests.Objects;
 using NexusClient.Experimental.NUnitTests.ZeroFormatters;
 using NUnit.Framework;
-using ZeroFormatter;
 
 namespace NexusClient.Experimental.NUnitTests
 {
