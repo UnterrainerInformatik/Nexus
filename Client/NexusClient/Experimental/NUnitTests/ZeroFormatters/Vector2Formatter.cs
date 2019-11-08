@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,38 +26,25 @@
 // ***************************************************************************
 
 using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
 using Microsoft.Xna.Framework;
-using ZeroFormatter;
-using ZeroFormatter.Formatters;
-using ZeroFormatter.Internal;
 
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    [PublicAPI]
-    public class Vector2Formatter<TTypeResolver> : Formatter<TTypeResolver, Vector2>
-        where TTypeResolver : ITypeResolver, new()
-    {
-        private const int BYTE_SIZE = 8;
+	[PublicAPI]
+	public class Vector2Formatter : IMessagePackFormatter<Vector2>, IMessagePackFormatter
+	{
+		public void Serialize(ref MessagePackWriter writer, Vector2 value, MessagePackSerializerOptions options)
+		{
+			var (x, y) = value;
+			writer.Write(x);
+			writer.Write(y);
+		}
 
-        public override int? GetLength()
-        {
-            // If size is variable, return null.
-            return BYTE_SIZE;
-        }
-
-        public override int Serialize(ref byte[] bytes, int offset, Vector2 value)
-        {
-            // Formatter<T> can get child serializer.
-            BinaryUtil.WriteSingle(ref bytes, offset, value.X);
-            offset += 4;
-            BinaryUtil.WriteSingle(ref bytes, offset, value.Y);
-            return BYTE_SIZE;
-        }
-
-        public override Vector2 Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
-        {
-            byteSize = BYTE_SIZE;
-            return new Vector2(BinaryUtil.ReadSingle(ref bytes, offset), BinaryUtil.ReadSingle(ref bytes, offset + 4));
-        }
-    }
+		public Vector2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		{
+			return reader.TryReadNil() ? Vector2.Zero : new Vector2(reader.ReadSingle(), reader.ReadSingle());
+		}
+	}
 }

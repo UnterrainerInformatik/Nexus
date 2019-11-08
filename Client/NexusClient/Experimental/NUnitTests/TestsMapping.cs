@@ -105,7 +105,7 @@ namespace NexusClient.Experimental.NUnitTests
         public void TestIntListWrite()
         {
             var mapping = new ListMapping<int, List<int>>(null, null);
-            List<int> l = new List<int>(new[] {34, 5, 67, 252});
+            var l = new List<int>(new[] {34, 5, 67, 252});
 
             Assert.IsTrue(Helpers.ToByteArrayMapping(l, mapping)
                 .SequenceEqual(Helpers.ToByteArrayManual(l)));
@@ -115,7 +115,7 @@ namespace NexusClient.Experimental.NUnitTests
         public void TestIntListRead()
         {
             var mapping = new ListMapping<int, List<int>>(null, null);
-            List<int> template = new List<int>(new[] {34, 5, 67, 252});
+            var template = new List<int>(new[] {34, 5, 67, 252});
             var l = new List<int>();
 
             l = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), l, mapping);

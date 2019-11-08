@@ -25,21 +25,21 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using ZeroFormatter;
+using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    [ZeroFormattable]
+    [MessagePackObject]
     public class Timer
     {
-        [Index(0)]
-        public virtual float Value { get; set; }
-        [Index(1)]
-        public virtual float Max { get; set; }
-        [Index(2)]
-        public virtual float Min { get; set; }
+        [Key(0)]
+		public float Min { get; set; }
+		[Key(1)]
+        public float Max { get; set; }
+        [Key(2)]
+		public float Value { get; set; }
 
-        [Index(3)]
-        public virtual bool Active { get; set; }
+		[Key(3)]
+        public bool Active { get; set; }
     }
 }

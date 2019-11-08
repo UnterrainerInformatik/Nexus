@@ -26,29 +26,29 @@
 // ***************************************************************************
 
 using Microsoft.Xna.Framework;
-using ZeroFormatter;
+using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    [ZeroFormattable]
+    [MessagePackObject]
     public class Hero
     {
-        [Index(0)]
-        public virtual Vector2 Position { get; set; }
-        [Index(1)]
-        public virtual float Velocity { get; set; }
-        [Index(2)]
-        public virtual Vector2 Direction { get; set; }
+        [Key(0)]
+        public Vector2 Position { get; set; }
+        [Key(1)]
+        public float Velocity { get; set; }
+        [Key(2)]
+        public Vector2 Direction { get; set; }
 
-        [Index(3)]
-        public virtual bool Shooting { get; set; }
-        [Index(4)]
-        public virtual bool Running { get; set; }
-        [Index(5)]
-        public virtual bool Building { get; set; }
+        [Key(3)]
+        public bool Shooting { get; set; }
+        [Key(4)]
+        public bool Running { get; set; }
+        [Key(5)]
+        public bool Building { get; set; }
 
-        [Index(6)]
-        public virtual Timer Timer { get; set; }
+        [Key(6)]
+        public Timer Timer { get; set; }
         
         private Timer SpecialAbilityTimer { get; }
 

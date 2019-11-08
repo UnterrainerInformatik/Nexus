@@ -1,0 +1,14 @@
+version: '2'
+services:
+  nexus:
+    image: mariadb:10.3.0
+    command: mysqld --wait_timeout=3600
+    container_name: nexus
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DATABASE=nexus
+      - MYSQL_USER=nexus
+      - MYSQL_PASSWORD=test
+    ports:
+      - "3306:3306"
+    restart: always

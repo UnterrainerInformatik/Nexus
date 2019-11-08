@@ -43,8 +43,8 @@ namespace NexusClient.Experimental.Mappings
         {
             field.Clear();
             var c = reader.ReadInt32();
-            Type t = typeof(TItems);
-            for (int i = 0; i < c; i++)
+            var t = typeof(TItems);
+            for (var i = 0; i < c; i++)
             {
                 field.Add((TItems) Read(reader, t));
             }
@@ -123,7 +123,7 @@ namespace NexusClient.Experimental.Mappings
 
         private void Write(BinaryWriter w, object o)
         {
-            Type t = o.GetType();
+            var t = o.GetType();
             if (t == typeof(ushort))
             {
                 w.Write((ushort) o);

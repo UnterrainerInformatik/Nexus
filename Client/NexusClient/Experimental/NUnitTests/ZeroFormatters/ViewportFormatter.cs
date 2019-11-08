@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,34 +26,28 @@
 // ***************************************************************************
 
 using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ZeroFormatter;
-using ZeroFormatter.Formatters;
 
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    [PublicAPI]
-    public class ViewportFormatter<TTypeResolver> : Formatter<TTypeResolver, Viewport>
-        where TTypeResolver : ITypeResolver, new()
-    {
-        public override int? GetLength()
-        {
-            return Formatter<TTypeResolver, Rectangle>.Default.GetLength();
-        }
+	[PublicAPI]
+	public class ViewportFormatter : IMessagePackFormatter<Viewport>, IMessagePackFormatter
+	{
+		public void Serialize(ref MessagePackWriter writer, Viewport value, MessagePackSerializerOptions options)
+		{
+			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
+			formatter.Serialize(ref writer, new Rectangle(value.X, value.Y, value.Width, value.Height), options);
+		}
 
-        public override int Serialize(ref byte[] bytes, int offset, Viewport value)
-        {
-            // Formatter<T> can get child serializer.
-            return Formatter<TTypeResolver, Rectangle>.Default.Serialize(ref bytes, offset,
-                new Rectangle(value.X, value.Y, value.Width, value.Height));
-        }
-
-        public override Viewport Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
-        {
-            return
-                new Viewport(Formatter<TTypeResolver, Rectangle>.Default.Deserialize(ref bytes, offset, tracker,
-                    out byteSize));
-        }
-    }
+		public Viewport Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		{
+			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
+			return reader.TryReadNil()
+				? new Viewport(Rectangle.Empty)
+				: new Viewport(formatter.Deserialize(ref reader, options));
+		}
+	}
 }

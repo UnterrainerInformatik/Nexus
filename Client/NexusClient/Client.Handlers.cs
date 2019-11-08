@@ -46,7 +46,7 @@ namespace NexusClient
         {
             lock (lockObject)
             {
-                foreach (KeyValuePair<object, MessageHandler> item in addList)
+                foreach (var item in addList)
                 {
                     if (!removeList.Contains(item.Key) && !removeAndDisposeList.Contains(item.Key))
                     {
@@ -58,19 +58,19 @@ namespace NexusClient
                     }
                 }
 
-                foreach (object key in removeAndDisposeList)
+                foreach (var key in removeAndDisposeList)
                 {
-                    MessageHandler m = registeredHandlers[key];
+                    var m = registeredHandlers[key];
                     registeredHandlers.Remove(key);
                     m.Dispose();
                 }
 
-                foreach (object key in removeList)
+                foreach (var key in removeList)
                 {
                     registeredHandlers.Remove(key);
                 }
 
-                foreach (KeyValuePair<object, MessageHandler> item in readdAfterRemovalList)
+                foreach (var item in readdAfterRemovalList)
                 {
                     registeredHandlers.Add(item.Key, item.Value);
                 }

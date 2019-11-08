@@ -65,9 +65,9 @@ namespace NexusImplementation
         [System.ComponentModel.Category("REST.Simple")]
         public void TestMessageString()
         {
-            WebClient p = new WebClient();
+            var p = new WebClient();
             var url = URL_CONNECTION + "/ping";
-            byte[] data = p.DownloadData(url);
+            var data = p.DownloadData(url);
             Stream stream = new MemoryStream(data);
             var streamReader = new StreamReader(stream);
             var response = streamReader.ReadToEnd();
@@ -78,14 +78,14 @@ namespace NexusImplementation
         [System.ComponentModel.Category("REST.Simple")]
         public void TestMessageJsonReader()
         {
-            WebClient p = new WebClient();
+            var p = new WebClient();
             var url = URL_CONNECTION + "/ping";
-            byte[] data = p.DownloadData(url);
+            var data = p.DownloadData(url);
             Stream stream = new MemoryStream(data);
             XmlReader r = JsonReaderWriterFactory.CreateJsonReader(stream, new XmlDictionaryReaderQuotas());
 
-            XElement root = XElement.Load(r);
-            XElement result = root.XPathSelectElement("//PingResult");
+            var root = XElement.Load(r);
+            var result = root.XPathSelectElement("//PingResult");
             Assert.AreEqual("Pong", result.Value);
         }
 
@@ -93,15 +93,15 @@ namespace NexusImplementation
         [System.ComponentModel.Category("REST.Simple")]
         public void TestMessageJsonObject()
         {
-            WebClient p = new WebClient();
+            var p = new WebClient();
             var url = URL_CONNECTION + "/ping";
-            byte[] data = p.DownloadData(url);
+            var data = p.DownloadData(url);
             Stream stream = new MemoryStream(data);
             var streamReader = new StreamReader(stream);
             var response = streamReader.ReadToEnd();
 
-            PingJson r = JsonConvert.DeserializeObject<PingJson>(response);
-            PingDto d = Static.Mapper.Map<PingDto>(r);
+            var r = JsonConvert.DeserializeObject<PingJson>(response);
+            var d = Static.Mapper.Map<PingDto>(r);
             Assert.AreEqual("Pong", d.PingResult);
         }
     }

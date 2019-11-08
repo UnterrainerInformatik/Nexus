@@ -25,16 +25,16 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using ZeroFormatter;
+using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    [ZeroFormattable]
+    [MessagePackObject]
     public class Level
     {
-        [Index(0)]
-        public virtual int Number { get; set; }
-        [Index(1)]
-        public virtual Hero Hero { get; set; }
+        [Key(0)]
+        public int Number { get; set; }
+        [Key(1)]
+        public Hero Hero { get; set; }
     }
 }

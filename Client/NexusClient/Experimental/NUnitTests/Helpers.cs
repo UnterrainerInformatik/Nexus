@@ -32,7 +32,7 @@ using Microsoft.Xna.Framework;
 using NexusClient.Experimental.Mappings;
 using NexusClient.Experimental.NUnitTests.Mappings;
 using NexusClient.Experimental.NUnitTests.Objects;
-using ZeroFormatter;
+using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests
 {
@@ -41,9 +41,9 @@ namespace NexusClient.Experimental.NUnitTests
     {
         public static Timer FromByteArrayManual(byte[] bytes, Timer t)
         {
-            using (MemoryStream s = new MemoryStream(bytes))
+            using (var s = new MemoryStream(bytes))
             {
-                using (BinaryReader r = new BinaryReader(s))
+                using (var r = new BinaryReader(s))
                 {
                     t.Min = r.ReadSingle();
                     t.Max = r.ReadSingle();
@@ -56,9 +56,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static Timer FromByteArrayDtoStruct(byte[] bytes, Timer t)
         {
-            using (MemoryStream s = new MemoryStream(bytes))
+            using (var s = new MemoryStream(bytes))
             {
-                using (BinaryReader r = new BinaryReader(s))
+                using (var r = new BinaryReader(s))
                 {
                     TimerDtoStruct.From(r).To(t);
                 }
@@ -68,9 +68,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static Timer FromByteArrayMapping(byte[] bytes, Timer t, TimerMapping<Timer> mapping)
         {
-            using (MemoryStream s = new MemoryStream(bytes))
+            using (var s = new MemoryStream(bytes))
             {
-                using (BinaryReader r = new BinaryReader(s))
+                using (var r = new BinaryReader(s))
                 {
                     t = mapping.ReadFrom(r, t);
                 }
@@ -80,17 +80,17 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static Timer FromByteArrayZeroFormatter(byte[] bytes)
         {
-            using (MemoryStream s = new MemoryStream(bytes, 0, bytes.Length, true, true))
+            using (var s = new MemoryStream(bytes, 0, bytes.Length, true, true))
             {
-                return ZeroFormatterSerializer.Deserialize<Timer>(s);
+                return MessagePackSerializer.Deserialize<Timer>(s);
             }
         }
 
         public static byte[] ToByteArrayDtoStruct(Timer t)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     TimerDtoStruct.From(t).To(w);
                 }
@@ -101,9 +101,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayManual(Timer t)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     To(w, t);
                 }
@@ -122,9 +122,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayMapping(Timer t, TimerMapping<Timer> mapping)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     mapping.WriteTo(w, t);
                 }
@@ -135,9 +135,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayZeroFormatter(Timer t)
         {
-            using (MemoryStream s = new MemoryStream())
-            {
-                ZeroFormatterSerializer.Serialize(s, t);
+            using (var s = new MemoryStream())
+			{
+				MessagePackSerializer.Serialize(s, t);
                 s.Flush();
                 return s.GetBuffer();
             }
@@ -145,9 +145,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static Hero FromByteArrayMapping(byte[] bytes, Hero h, HeroMapping<Hero> mapping)
         {
-            using (MemoryStream s = new MemoryStream(bytes))
+            using (var s = new MemoryStream(bytes))
             {
-                using (BinaryReader r = new BinaryReader(s))
+                using (var r = new BinaryReader(s))
                 {
                     h = mapping.ReadFrom(r, h);
                 }
@@ -157,9 +157,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayManual(Hero h)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     To(w, h);
                 }
@@ -183,9 +183,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static Level FromByteArrayMapping(byte[] bytes, Level l, LevelMapping<Level> mapping)
         {
-            using (MemoryStream s = new MemoryStream(bytes))
+            using (var s = new MemoryStream(bytes))
             {
-                using (BinaryReader r = new BinaryReader(s))
+                using (var r = new BinaryReader(s))
                 {
                     l = mapping.ReadFrom(r, l);
                 }
@@ -195,9 +195,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayManual(Level l)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     To(w, l);
                 }
@@ -208,9 +208,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayManual(List<int> l)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     w.Write(l.Count);
                     foreach (var i in l)
@@ -231,9 +231,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayMapping(Hero h, HeroMapping<Hero> mapping)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     mapping.WriteTo(w, h);
                 }
@@ -244,9 +244,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static List<int> FromByteArrayMapping(byte[] bytes, List<int> l, ListMapping<int, List<int>> mapping)
         {
-            using (MemoryStream s = new MemoryStream(bytes))
+            using (var s = new MemoryStream(bytes))
             {
-                using (BinaryReader r = new BinaryReader(s))
+                using (var r = new BinaryReader(s))
                 {
                     l = mapping.ReadFrom(r, l);
                 }
@@ -256,9 +256,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayMapping(List<int> l, ListMapping<int, List<int>> mapping)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     mapping.WriteTo(w, l);
                 }
@@ -269,9 +269,9 @@ namespace NexusClient.Experimental.NUnitTests
 
         public static byte[] ToByteArrayMapping(Level l, LevelMapping<Level> mapping)
         {
-            using (MemoryStream s = new MemoryStream())
+            using (var s = new MemoryStream())
             {
-                using (BinaryWriter w = new BinaryWriter(s))
+                using (var w = new BinaryWriter(s))
                 {
                     mapping.WriteTo(w, l);
                 }

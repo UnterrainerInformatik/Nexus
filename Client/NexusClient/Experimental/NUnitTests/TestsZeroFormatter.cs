@@ -28,7 +28,7 @@
 using NexusClient.Experimental.NUnitTests.Objects;
 using NexusClient.Experimental.NUnitTests.ZeroFormatters;
 using NUnit.Framework;
-using ZeroFormatter;
+using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests
 {
@@ -47,8 +47,8 @@ namespace NexusClient.Experimental.NUnitTests
         {
             var template = Helpers.GetTimer();
 
-            var b = ZeroFormatterSerializer.Serialize(template);
-            var t = ZeroFormatterSerializer.Deserialize<Timer>(b);
+            var b = MessagePackSerializer.Serialize(template);
+            var t = MessagePackSerializer.Deserialize<Timer>(b);
 
             Assert.IsTrue(Helpers.Equals(template, t));
         }
@@ -58,8 +58,8 @@ namespace NexusClient.Experimental.NUnitTests
         {
             var template = Helpers.GetHero();
             
-            var b = ZeroFormatterSerializer.Serialize(template);
-            var h = ZeroFormatterSerializer.Deserialize<Hero>(b);
+            var b = MessagePackSerializer.Serialize(template);
+            var h = MessagePackSerializer.Deserialize<Hero>(b);
 
             Assert.IsTrue(Helpers.Equals(template, h));
         }
@@ -69,8 +69,8 @@ namespace NexusClient.Experimental.NUnitTests
         {
             var template = Helpers.GetLevel();
 
-            var b = ZeroFormatterSerializer.Serialize(template);
-            var l = ZeroFormatterSerializer.Deserialize<Level>(b);
+            var b = MessagePackSerializer.Serialize(template);
+            var l = MessagePackSerializer.Deserialize<Level>(b);
 
             Assert.IsTrue(Helpers.Equals(template, l));
         }

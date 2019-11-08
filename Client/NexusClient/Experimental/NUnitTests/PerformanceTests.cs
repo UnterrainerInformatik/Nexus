@@ -27,6 +27,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
 using NexusClient.Experimental.NUnitTests.Mappings;
 using NexusClient.Experimental.NUnitTests.Objects;
 using NexusClient.Experimental.NUnitTests.ZeroFormatters;
@@ -46,7 +47,7 @@ namespace NexusClient.Experimental.NUnitTests
         {
             var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.ToByteArrayManual(t);
             }
@@ -60,7 +61,7 @@ namespace NexusClient.Experimental.NUnitTests
         {
             var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.ToByteArrayDtoStruct(t);
             }
@@ -74,7 +75,7 @@ namespace NexusClient.Experimental.NUnitTests
         {
             var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.ToByteArrayMapping(t, timerMapping);
             }
@@ -89,7 +90,7 @@ namespace NexusClient.Experimental.NUnitTests
             ZeroFormatterHelpers.Register();
             var t = Helpers.GetTimer();
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.ToByteArrayZeroFormatter(t);
             }
@@ -105,7 +106,7 @@ namespace NexusClient.Experimental.NUnitTests
             var t = new Timer();
             var bytes = Helpers.ToByteArrayManual(template);
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.FromByteArrayManual(bytes, t);
             }
@@ -121,7 +122,7 @@ namespace NexusClient.Experimental.NUnitTests
             var t = new Timer();
             var bytes = Helpers.ToByteArrayManual(template);
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.FromByteArrayDtoStruct(bytes, t);
             }
@@ -137,7 +138,7 @@ namespace NexusClient.Experimental.NUnitTests
             var t = new Timer();
             var bytes = Helpers.ToByteArrayManual(template);
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.FromByteArrayMapping(bytes, t, timerMapping);
             }
@@ -150,15 +151,23 @@ namespace NexusClient.Experimental.NUnitTests
         public void PerformanceTestTimerReadZeroFormatter()
         {
             ZeroFormatterHelpers.Register();
-            var template = Helpers.GetTimer();
-            var bytes = Helpers.ToByteArrayManual(template);
-            var watch = Stopwatch.StartNew();
-            for (int i = 0; i < PERFORMANCE_COUNT; i++)
+			var bytes = StringToByteArray("94CA00000000CA41200000CA40A00000C30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+			var watch = Stopwatch.StartNew();
+            for (var i = 0; i < PERFORMANCE_COUNT; i++)
             {
                 Helpers.FromByteArrayZeroFormatter(bytes);
             }
             watch.Stop();
             Console.Out.WriteLine($"Execution time: {watch.ElapsedMilliseconds}ms");
         }
-    }
+
+		private static byte[] StringToByteArray(string hex)
+		{
+			var NumberChars = hex.Length;
+			var bytes = new byte[NumberChars / 2];
+			for (var i = 0; i < NumberChars; i += 2)
+				bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+			return bytes;
+		}
+	}
 }

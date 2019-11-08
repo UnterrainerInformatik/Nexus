@@ -112,7 +112,7 @@ namespace NexusClient.Experimental
 
         protected virtual TField From(BinaryReader reader, TObject instance, TField field)
         {
-            foreach (BinarySerializable<TField> t in Mappings)
+            foreach (var t in Mappings)
             {
                 t.ReadFrom(reader, field, null);
             }
@@ -121,7 +121,7 @@ namespace NexusClient.Experimental
 
         protected virtual void To(BinaryWriter writer, TObject instance, TField field)
         {
-            foreach (BinarySerializable<TField> t in Mappings)
+            foreach (var t in Mappings)
             {
                 t.WriteTo(writer, field, null);
             }

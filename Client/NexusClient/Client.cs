@@ -101,14 +101,14 @@ namespace NexusClient
 
         public BinaryWriter Create(Enum messageType)
         {
-            Type t = messageType.GetType();
+            var t = messageType.GetType();
             if (!t.IsDefined(typeof(FlagsAttribute), false) || t.GetEnumUnderlyingType() != typeof(ushort))
             {
                 throw new ArgumentException(
                     "The parameter 'messageType' has to be a Flag-Enumeration of underlying-messageType ushort.");
             }
 
-            object o = Convert.ChangeType(messageType, TypeCode.UInt16);
+            var o = Convert.ChangeType(messageType, TypeCode.UInt16);
             if (o == null)
             {
                 throw new ArgumentException("The parameter 'messageType' is not convertible to ushort (UInt16).");
@@ -150,7 +150,7 @@ namespace NexusClient
                     uint bytesRead;
                     if (Networking.ReadP2PMessage(buffer, messageSize, out bytesRead, out remoteSteamId))
                     {
-                        Message result = new Message();
+                        var result = new Message();
                         result.RemoteUserId = remoteSteamId;
                         result.MessageSize = messageSize;
                         result.Data = buffer;
@@ -200,7 +200,7 @@ namespace NexusClient
         /// <returns></returns>
         public bool SendP2PMessage(Guid remoteSteamId, byte[] data, long length, P2PSendType type)
         {
-            bool result = false;
+            var result = false;
             if (ConnectedToServer)
             {
                 result = Networking.SendP2PMessage(remoteSteamId, data, (uint)length, type);

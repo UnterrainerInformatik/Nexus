@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -26,43 +26,29 @@
 // ***************************************************************************
 
 using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
 using Microsoft.Xna.Framework;
-using ZeroFormatter;
-using ZeroFormatter.Formatters;
-using ZeroFormatter.Internal;
 
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    [PublicAPI]
-    public class RectangleFormatter<TTypeResolver> : Formatter<TTypeResolver, Rectangle>
-        where TTypeResolver : ITypeResolver, new()
-    {
-        private const int BYTE_SIZE = 16;
+	[PublicAPI]
+	public class RectangleFormatter : IMessagePackFormatter<Rectangle>, IMessagePackFormatter
+	{
+		public void Serialize(ref MessagePackWriter writer, Rectangle value, MessagePackSerializerOptions options)
+		{
+			var (x, y, width, height) = value;
+			writer.Write(x);
+			writer.Write(y);
+			writer.Write(width);
+			writer.Write(height);
+		}
 
-        public override int? GetLength()
-        {
-            // If size is variable, return null.
-            return BYTE_SIZE;
-        }
-
-        public override int Serialize(ref byte[] bytes, int offset, Rectangle value)
-        {
-            // Formatter<T> can get child serializer.
-            BinaryUtil.WriteInt32(ref bytes, offset, value.X);
-            offset += 4;
-            BinaryUtil.WriteInt32(ref bytes, offset, value.Y);
-            offset += 4;
-            BinaryUtil.WriteInt32(ref bytes, offset, value.Width);
-            offset += 4;
-            BinaryUtil.WriteInt32(ref bytes, offset, value.Height);
-            return BYTE_SIZE;
-        }
-
-        public override Rectangle Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
-        {
-            byteSize = BYTE_SIZE;
-            return new Rectangle(BinaryUtil.ReadInt32(ref bytes, offset), BinaryUtil.ReadInt32(ref bytes, offset + 4),
-                BinaryUtil.ReadInt32(ref bytes, offset + 8), BinaryUtil.ReadInt32(ref bytes, offset + 12));
-        }
-    }
+		public Rectangle Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		{
+			return reader.TryReadNil()
+				? Rectangle.Empty
+				: new Rectangle(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+		}
+	}
 }

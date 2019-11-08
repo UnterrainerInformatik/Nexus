@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -27,39 +27,27 @@
 
 using System;
 using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
 using Microsoft.Xna.Framework;
-using ZeroFormatter;
-using ZeroFormatter.Formatters;
-using ZeroFormatter.Internal;
 
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    [PublicAPI]
-    public class GameTimeFormatter<TTypeResolver> : Formatter<TTypeResolver, GameTime>
-        where TTypeResolver : ITypeResolver, new()
-    {
-        private const int BYTE_SIZE = 16;
+	[PublicAPI]
+	public class GameTimeFormatter : IMessagePackFormatter<GameTime>, IMessagePackFormatter
+	{
+		public void Serialize(ref MessagePackWriter writer, GameTime value, MessagePackSerializerOptions options)
+		{
+			writer.Write(value.ElapsedGameTime.TotalMilliseconds);
+			writer.Write(value.TotalGameTime.TotalMilliseconds);
+		}
 
-        public override int? GetLength()
-        {
-            // If size is variable, return null.
-            return BYTE_SIZE;
-        }
-
-        public override int Serialize(ref byte[] bytes, int offset, GameTime value)
-        {
-            // Formatter<T> can get child serializer.
-            BinaryUtil.WriteDouble(ref bytes, offset, value.ElapsedGameTime.TotalMilliseconds);
-            offset += 8;
-            BinaryUtil.WriteDouble(ref bytes, offset, value.TotalGameTime.TotalMilliseconds);
-            return BYTE_SIZE;
-        }
-
-        public override GameTime Deserialize(ref byte[] bytes, int offset, DirtyTracker tracker, out int byteSize)
-        {
-            byteSize = BYTE_SIZE;
-            return new GameTime(TimeSpan.FromMilliseconds(BinaryUtil.ReadDouble(ref bytes, offset)),
-                TimeSpan.FromMilliseconds(BinaryUtil.ReadDouble(ref bytes, offset + 8)));
-        }
-    }
+		public GameTime Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		{
+			return reader.TryReadNil()
+				? null
+				: new GameTime(TimeSpan.FromMilliseconds(reader.ReadDouble()),
+					TimeSpan.FromMilliseconds(reader.ReadDouble()));
+		}
+	}
 }

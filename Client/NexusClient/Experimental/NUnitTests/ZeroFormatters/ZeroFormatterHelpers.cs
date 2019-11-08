@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -25,21 +25,31 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ZeroFormatter.Formatters;
+using MessagePack;
+using MessagePack.Formatters;
+using MessagePack.ImmutableCollection;
+using MessagePack.Resolvers;
 
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
-    public static class ZeroFormatterHelpers
-    {
-        public static void Register()
-        {
-            Formatter<DefaultResolver, Vector2>.Register(new Vector2Formatter<DefaultResolver>());
-            Formatter<DefaultResolver, Point>.Register(new PointFormatter<DefaultResolver>());
-            Formatter<DefaultResolver, Rectangle>.Register(new RectangleFormatter<DefaultResolver>());
-            Formatter<DefaultResolver, Viewport>.Register(new ViewportFormatter<DefaultResolver>());
-            Formatter<DefaultResolver, GameTime>.Register(new GameTimeFormatter<DefaultResolver>());
-        }
-    }
+	public static class ZeroFormatterHelpers
+	{
+		public static void Register()
+		{
+			var resolver = CompositeResolver.Create(new IMessagePackFormatter[]
+			{
+				new GameTimeFormatter(),
+				new PointFormatter(),
+				new RectangleFormatter(),
+				new Vector2Formatter(), 
+				new ViewportFormatter() // Uses RectangleFormatter, so has to come after that.
+
+			}, new IFormatterResolver[]
+			{
+				ImmutableCollectionResolver.Instance,
+				StandardResolver.Instance
+			});
+			var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+		}
+	}
 }
