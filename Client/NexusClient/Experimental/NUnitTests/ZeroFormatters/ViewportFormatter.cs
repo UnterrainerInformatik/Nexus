@@ -34,7 +34,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
 	[PublicAPI]
-	public class ViewportFormatter : IMessagePackFormatter<Viewport>, IMessagePackFormatter
+	public class ViewportFormatter : IMessagePackFormatter<Viewport>
 	{
 		public void Serialize(ref MessagePackWriter writer, Viewport value, MessagePackSerializerOptions options)
 		{

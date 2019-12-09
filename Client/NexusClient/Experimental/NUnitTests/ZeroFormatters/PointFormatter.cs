@@ -33,7 +33,7 @@ using Microsoft.Xna.Framework;
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
 	[PublicAPI]
-	public class PointFormatter : IMessagePackFormatter<Point>, IMessagePackFormatter
+	public class PointFormatter : IMessagePackFormatter<Point>
 	{
 		public void Serialize(ref MessagePackWriter writer, Point value, MessagePackSerializerOptions options)
 		{

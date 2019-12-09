@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,12 +29,12 @@ using JetBrains.Annotations;
 
 namespace NexusClient
 {
-    [PublicAPI]
-    public enum P2PSendType
-    {
-        UNRELIABLE,
-        UNRELIABLE_NO_DELAY,
-        RELIABLE,
-        RELIABLE_WITH_BUFFERING
-    }
+	[PublicAPI]
+	public enum P2PSendType
+	{
+		UNRELIABLE,
+		UNRELIABLE_NO_DELAY,
+		RELIABLE,
+		RELIABLE_WITH_BUFFERING
+	}
 }

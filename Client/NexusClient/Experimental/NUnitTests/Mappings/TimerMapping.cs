@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,30 +31,30 @@ using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class TimerMapping<TParent> : Mapping<Timer, TParent>
-    {
-        public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
-        {
-            Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
-            {
-                o.Min = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
-            {
-                o.Max = v;
-                return o;
-            }));
-            Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
-            {
-                o.Value = v;
-                return o;
-            }));
-            Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
-            {
-                o.Active = v;
-                return o;
-            }));
-        }
-    }
+	public class TimerMapping<TParent> : Mapping<Timer, TParent>
+	{
+		public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
+		{
+			Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
+			{
+				o.Min = v;
+				return o;
+			}));
+			Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
+			{
+				o.Max = v;
+				return o;
+			}));
+			Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
+			{
+				o.Value = v;
+				return o;
+			}));
+			Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
+			{
+				o.Active = v;
+				return o;
+			}));
+		}
+	}
 }

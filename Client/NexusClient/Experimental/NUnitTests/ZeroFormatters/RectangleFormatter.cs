@@ -33,7 +33,7 @@ using Microsoft.Xna.Framework;
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
 	[PublicAPI]
-	public class RectangleFormatter : IMessagePackFormatter<Rectangle>, IMessagePackFormatter
+	public class RectangleFormatter : IMessagePackFormatter<Rectangle>
 	{
 		public void Serialize(ref MessagePackWriter writer, Rectangle value, MessagePackSerializerOptions options)
 		{

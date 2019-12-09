@@ -1,4 +1,4 @@
-// *************************************************************************** 
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -32,154 +32,169 @@ using JetBrains.Annotations;
 
 namespace NexusClient.Experimental.Mappings
 {
-    [PublicAPI]
-    public class ListMapping<TItems, T> : Mapping<List<TItems>, T>
-    {
-        public ListMapping(Func<T, List<TItems>> load, Func<List<TItems>, T, T> save) : base(load, save)
-        {
-        }
+	[PublicAPI]
+	public class ListMapping<TItems, T> : Mapping<List<TItems>, T>
+	{
+		public ListMapping(Func<T, List<TItems>> load, Func<List<TItems>, T, T> save) : base(load, save)
+		{
+		}
 
-        protected override List<TItems> From(BinaryReader reader, T instance, List<TItems> field)
-        {
-            field.Clear();
-            var c = reader.ReadInt32();
-            var t = typeof(TItems);
-            for (var i = 0; i < c; i++)
-            {
-                field.Add((TItems) Read(reader, t));
-            }
-            return field;
-        }
+		protected override List<TItems> From(BinaryReader reader, T instance, List<TItems> field)
+		{
+			field.Clear();
+			var c = reader.ReadInt32();
+			var t = typeof(TItems);
+			for (var i = 0; i < c; i++)
+			{
+				field.Add((TItems) Read(reader, t));
+			}
 
-        protected override void To(BinaryWriter writer, T instance, List<TItems> field)
-        {
-            writer.Write(field.Count);
-            foreach (var item in field)
-            {
-                Write(writer, item);
-            }
-        }
+			return field;
+		}
 
-        private object Read(BinaryReader r, Type t)
-        {
-            if (t == typeof(ushort))
-            {
-                return r.ReadUInt16();
-            }
-            if (t == typeof(short))
-            {
-                return r.ReadInt16();
-            }
-            if (t == typeof(bool))
-            {
-                return r.ReadBoolean();
-            }
-            if (t == typeof(byte))
-            {
-                return r.ReadByte();
-            }
-            if (t == typeof(char))
-            {
-                return r.ReadChar();
-            }
-            if (t == typeof(decimal))
-            {
-                return r.ReadDecimal();
-            }
-            if (t == typeof(double))
-            {
-                return r.ReadDouble();
-            }
-            if (t == typeof(float))
-            {
-                return r.ReadSingle();
-            }
-            if (t == typeof(int))
-            {
-                return r.ReadInt32();
-            }
-            if (t == typeof(long))
-            {
-                return r.ReadInt64();
-            }
-            if (t == typeof(sbyte))
-            {
-                return r.ReadSByte();
-            }
-            if (t == typeof(string))
-            {
-                return r.ReadString();
-            }
-            if (t == typeof(uint))
-            {
-                return r.ReadUInt32();
-            }
-            if (t == typeof(ulong))
-            {
-                return r.ReadUInt64();
-            }
-            return null;
-        }
+		protected override void To(BinaryWriter writer, T instance, List<TItems> field)
+		{
+			writer.Write(field.Count);
+			foreach (var item in field)
+			{
+				Write(writer, item);
+			}
+		}
 
-        private void Write(BinaryWriter w, object o)
-        {
-            var t = o.GetType();
-            if (t == typeof(ushort))
-            {
-                w.Write((ushort) o);
-            }
-            else if (t == typeof(short))
-            {
-                w.Write((short) o);
-            }
-            else if (t == typeof(bool))
-            {
-                w.Write((bool) o);
-            }
-            else if (t == typeof(byte))
-            {
-                w.Write((byte) o);
-            }
-            else if (t == typeof(char))
-            {
-                w.Write((char) o);
-            }
-            else if (t == typeof(decimal))
-            {
-                w.Write((decimal) o);
-            }
-            else if (t == typeof(double))
-            {
-                w.Write((double) o);
-            }
-            else if (t == typeof(float))
-            {
-                w.Write((float) o);
-            }
-            else if (t == typeof(int))
-            {
-                w.Write((int) o);
-            }
-            else if (t == typeof(long))
-            {
-                w.Write((long) o);
-            }
-            else if (t == typeof(sbyte))
-            {
-                w.Write((sbyte) o);
-            }
-            else if (t == typeof(string))
-            {
-                w.Write((string) o);
-            }
-            else if (t == typeof(uint))
-            {
-                w.Write((uint) o);
-            }
-            else if (t == typeof(ulong))
-            {
-                w.Write((ulong) o);
-            }
-        }
-    }
+		private object Read(BinaryReader r, Type t)
+		{
+			if (t == typeof(ushort))
+			{
+				return r.ReadUInt16();
+			}
+
+			if (t == typeof(short))
+			{
+				return r.ReadInt16();
+			}
+
+			if (t == typeof(bool))
+			{
+				return r.ReadBoolean();
+			}
+
+			if (t == typeof(byte))
+			{
+				return r.ReadByte();
+			}
+
+			if (t == typeof(char))
+			{
+				return r.ReadChar();
+			}
+
+			if (t == typeof(decimal))
+			{
+				return r.ReadDecimal();
+			}
+
+			if (t == typeof(double))
+			{
+				return r.ReadDouble();
+			}
+
+			if (t == typeof(float))
+			{
+				return r.ReadSingle();
+			}
+
+			if (t == typeof(int))
+			{
+				return r.ReadInt32();
+			}
+
+			if (t == typeof(long))
+			{
+				return r.ReadInt64();
+			}
+
+			if (t == typeof(sbyte))
+			{
+				return r.ReadSByte();
+			}
+
+			if (t == typeof(string))
+			{
+				return r.ReadString();
+			}
+
+			if (t == typeof(uint))
+			{
+				return r.ReadUInt32();
+			}
+
+			if (t == typeof(ulong))
+			{
+				return r.ReadUInt64();
+			}
+
+			return null;
+		}
+
+		private void Write(BinaryWriter w, object o)
+		{
+			var t = o.GetType();
+			if (t == typeof(ushort))
+			{
+				w.Write((ushort) o);
+			}
+			else if (t == typeof(short))
+			{
+				w.Write((short) o);
+			}
+			else if (t == typeof(bool))
+			{
+				w.Write((bool) o);
+			}
+			else if (t == typeof(byte))
+			{
+				w.Write((byte) o);
+			}
+			else if (t == typeof(char))
+			{
+				w.Write((char) o);
+			}
+			else if (t == typeof(decimal))
+			{
+				w.Write((decimal) o);
+			}
+			else if (t == typeof(double))
+			{
+				w.Write((double) o);
+			}
+			else if (t == typeof(float))
+			{
+				w.Write((float) o);
+			}
+			else if (t == typeof(int))
+			{
+				w.Write((int) o);
+			}
+			else if (t == typeof(long))
+			{
+				w.Write((long) o);
+			}
+			else if (t == typeof(sbyte))
+			{
+				w.Write((sbyte) o);
+			}
+			else if (t == typeof(string))
+			{
+				w.Write((string) o);
+			}
+			else if (t == typeof(uint))
+			{
+				w.Write((uint) o);
+			}
+			else if (t == typeof(ulong))
+			{
+				w.Write((ulong) o);
+			}
+		}
+	}
 }

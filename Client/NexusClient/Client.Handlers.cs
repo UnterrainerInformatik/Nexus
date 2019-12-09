@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,150 +29,139 @@ using System.Collections.Generic;
 
 namespace NexusClient
 {
-    public partial class Client
-    {
-        private readonly Dictionary<object, MessageHandler> registeredHandlers =
-            new Dictionary<object, MessageHandler>();
+	public partial class Client
+	{
+		private readonly Dictionary<object, MessageHandler> registeredHandlers =
+			new Dictionary<object, MessageHandler>();
 
-        private readonly Dictionary<object, MessageHandler> addList = new Dictionary<object, MessageHandler>();
+		private readonly Dictionary<object, MessageHandler> addList = new Dictionary<object, MessageHandler>();
 
-        private readonly Dictionary<object, MessageHandler> readdAfterRemovalList =
-            new Dictionary<object, MessageHandler>();
+		private readonly Dictionary<object, MessageHandler> readAfterRemovalList =
+			new Dictionary<object, MessageHandler>();
 
-        private readonly List<object> removeList = new List<object>();
-        private readonly List<object> removeAndDisposeList = new List<object>();
+		private readonly List<object> removeList = new List<object>();
+		private readonly List<object> removeAndDisposeList = new List<object>();
 
-        private void ConsolidateHandlers()
-        {
-            lock (lockObject)
-            {
-                foreach (var item in addList)
-                {
-                    if (!removeList.Contains(item.Key) && !removeAndDisposeList.Contains(item.Key))
-                    {
-                        registeredHandlers.Add(item.Key, item.Value);
-                    }
-                    else
-                    {
-                        readdAfterRemovalList.Add(item.Key, item.Value);
-                    }
-                }
+		private void ConsolidateHandlers()
+		{
+			lock (lockObject)
+			{
+				foreach (var item in addList)
+				{
+					if (!removeList.Contains(item.Key) && !removeAndDisposeList.Contains(item.Key))
+					{
+						registeredHandlers.Add(item.Key, item.Value);
+					}
+					else
+					{
+						readAfterRemovalList.Add(item.Key, item.Value);
+					}
+				}
 
-                foreach (var key in removeAndDisposeList)
-                {
-                    var m = registeredHandlers[key];
-                    registeredHandlers.Remove(key);
-                    m.Dispose();
-                }
+				foreach (var key in removeAndDisposeList)
+				{
+					var m = registeredHandlers[key];
+					registeredHandlers.Remove(key);
+					m.Dispose();
+				}
 
-                foreach (var key in removeList)
-                {
-                    registeredHandlers.Remove(key);
-                }
+				foreach (var key in removeList)
+				{
+					registeredHandlers.Remove(key);
+				}
 
-                foreach (var item in readdAfterRemovalList)
-                {
-                    registeredHandlers.Add(item.Key, item.Value);
-                }
+				foreach (var item in readAfterRemovalList)
+				{
+					registeredHandlers.Add(item.Key, item.Value);
+				}
 
-                removeList.Clear();
-                removeAndDisposeList.Clear();
-                readdAfterRemovalList.Clear();
-                addList.Clear();
-            }
-        }
+				removeList.Clear();
+				removeAndDisposeList.Clear();
+				readAfterRemovalList.Clear();
+				addList.Clear();
+			}
+		}
 
-        public object RegisterOrOverwriteHandler(MessageHandler handler, object key = null)
-        {
-            lock (lockObject)
-            {
-                if (key == null)
-                {
-                    key = new object();
-                }
-                if (registeredHandlers.ContainsKey(key))
-                {
-                    removeList.Add(key);
-                }
-                addList.Add(key, handler);
-                return key;
-            }
-        }
+		public object RegisterOrOverwriteHandler(MessageHandler handler, object key = null)
+		{
+			lock (lockObject)
+			{
+				if (key == null)
+				{
+					key = new object();
+				}
 
-        public bool UnregisterHandler(object key)
-        {
-            lock (lockObject)
-            {
-                MessageHandler handler;
-                if (registeredHandlers.TryGetValue(key, out handler))
-                {
-                    removeList.Add(key);
-                    return true;
-                }
-                return false;
-            }
-        }
+				if (registeredHandlers.ContainsKey(key))
+				{
+					removeList.Add(key);
+				}
 
-        public bool UnregisterAndDisposeHandler(object key)
-        {
-            lock (lockObject)
-            {
-                MessageHandler handler;
-                if (registeredHandlers.TryGetValue(key, out handler))
-                {
-                    removeAndDisposeList.Add(key);
-                    return true;
-                }
-                return false;
-            }
-        }
+				addList.Add(key, handler);
+				return key;
+			}
+		}
 
-        public MessageHandler GetHandler(object key)
-        {
-            lock (lockObject)
-            {
-                MessageHandler handler;
-                registeredHandlers.TryGetValue(key, out handler);
-                return handler;
-            }
-        }
+		public bool UnregisterHandler(object key)
+		{
+			lock (lockObject)
+			{
+				if (!registeredHandlers.TryGetValue(key, out _)) return false;
+				removeList.Add(key);
+				return true;
+			}
+		}
 
-        public bool ActivateHandler(object key)
-        {
-            lock (lockObject)
-            {
-                return ModifyHandlerActive(key, true);
-            }
-        }
+		public bool UnregisterAndDisposeHandler(object key)
+		{
+			lock (lockObject)
+			{
+				if (!registeredHandlers.TryGetValue(key, out _)) return false;
+				removeAndDisposeList.Add(key);
+				return true;
+			}
+		}
 
-        public bool DeactivateHandler(object key)
-        {
-            lock (lockObject)
-            {
-                return ModifyHandlerActive(key, false);
-            }
-        }
+		public MessageHandler GetHandler(object key)
+		{
+			lock (lockObject)
+			{
+				registeredHandlers.TryGetValue(key, out var handler);
+				return handler;
+			}
+		}
 
-        public void ClearHandlers()
-        {
-            lock (lockObject)
-            {
-                registeredHandlers.Clear();
-            }
-        }
+		public bool ActivateHandler(object key)
+		{
+			lock (lockObject)
+			{
+				return ModifyHandlerActive(key, true);
+			}
+		}
 
-        private bool ModifyHandlerActive(object key, bool isActive)
-        {
-            lock (lockObject)
-            {
-                MessageHandler handler;
-                if (registeredHandlers.TryGetValue(key, out handler))
-                {
-                    handler.IsActive = isActive;
-                    return true;
-                }
-                return false;
-            }
-        }
-    }
+		public bool DeactivateHandler(object key)
+		{
+			lock (lockObject)
+			{
+				return ModifyHandlerActive(key, false);
+			}
+		}
+
+		public void ClearHandlers()
+		{
+			lock (lockObject)
+			{
+				registeredHandlers.Clear();
+			}
+		}
+
+		private bool ModifyHandlerActive(object key, bool isActive)
+		{
+			lock (lockObject)
+			{
+				if (!registeredHandlers.TryGetValue(key, out var handler)) return false;
+				handler.IsActive = isActive;
+				return true;
+			}
+		}
+	}
 }

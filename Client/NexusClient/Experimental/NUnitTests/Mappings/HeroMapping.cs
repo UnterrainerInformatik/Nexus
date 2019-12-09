@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,45 +31,45 @@ using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class HeroMapping<TParent> : Mapping<Hero, TParent>
-    {
-        public HeroMapping(Func<TParent, Hero> load, Func<Hero, TParent, TParent> save) : base(load, save)
-        {
-            Add(new Vector2Mapping<Hero>(o => o.Position, (v, o) =>
-            {
-                o.Position = v;
-                return o;
-            }));
-            Add(new FloatMapping<Hero>(o => o.Velocity, (v, o) =>
-            {
-                o.Velocity = v;
-                return o;
-            }));
-            Add(new Vector2Mapping<Hero>(o => o.Direction, (v, o) =>
-            {
-                o.Direction = v;
-                return o;
-            }));
-            Add(new BoolMapping<Hero>(o => o.Shooting, (v, o) =>
-            {
-                o.Shooting = v;
-                return o;
-            }));
-            Add(new BoolMapping<Hero>(o => o.Running, (v, o) =>
-            {
-                o.Running = v;
-                return o;
-            }));
-            Add(new BoolMapping<Hero>(o => o.Building, (v, o) =>
-            {
-                o.Building = v;
-                return o;
-            }));
-            Add(new TimerMapping<Hero>(o => o.Timer, (v, o) =>
-            {
-                o.Timer = v;
-                return o;
-            }));
-        }
-    }
+	public class HeroMapping<TParent> : Mapping<Hero, TParent>
+	{
+		public HeroMapping(Func<TParent, Hero> load, Func<Hero, TParent, TParent> save) : base(load, save)
+		{
+			Add(new Vector2Mapping<Hero>(o => o.Position, (v, o) =>
+			{
+				o.Position = v;
+				return o;
+			}));
+			Add(new FloatMapping<Hero>(o => o.Velocity, (v, o) =>
+			{
+				o.Velocity = v;
+				return o;
+			}));
+			Add(new Vector2Mapping<Hero>(o => o.Direction, (v, o) =>
+			{
+				o.Direction = v;
+				return o;
+			}));
+			Add(new BoolMapping<Hero>(o => o.Shooting, (v, o) =>
+			{
+				o.Shooting = v;
+				return o;
+			}));
+			Add(new BoolMapping<Hero>(o => o.Running, (v, o) =>
+			{
+				o.Running = v;
+				return o;
+			}));
+			Add(new BoolMapping<Hero>(o => o.Building, (v, o) =>
+			{
+				o.Building = v;
+				return o;
+			}));
+			Add(new TimerMapping<Hero>(o => o.Timer, (v, o) =>
+			{
+				o.Timer = v;
+				return o;
+			}));
+		}
+	}
 }

@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -30,17 +30,17 @@ using NexusClient.Interfaces;
 
 namespace NexusClient.Nexus
 {
-    public class NexusConnection : IConnection
-    {
-        public bool ConnectToServer(out Guid userId)
-        {
-            userId = new Guid();
-            return true;
-        }
+	public class NexusConnection : IConnection
+	{
+		public bool ConnectToServer(out Guid userId)
+		{
+			userId = new Guid();
+			return true;
+		}
 
-        public bool DisconnectFromServer()
-        {
-            return true;
-        }
-    }
+		public bool DisconnectFromServer()
+		{
+			return true;
+		}
+	}
 }

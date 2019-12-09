@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -34,93 +34,93 @@ using NUnit.Framework;
 
 namespace NexusClient.Experimental.NUnitTests
 {
-    [TestFixture]
-    [Category("Mappers.Mapping")]
-    public class TestsMapping
-    {
-        private readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
-        private readonly HeroMapping<Hero> heroMapping = new HeroMapping<Hero>(null, null);
-        private readonly LevelMapping<Level> levelMapping = new LevelMapping<Level>(null, null);
+	[TestFixture]
+	[Category("Mappers.Mapping")]
+	public class TestsMapping
+	{
+		private readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
+		private readonly HeroMapping<Hero> heroMapping = new HeroMapping<Hero>(null, null);
+		private readonly LevelMapping<Level> levelMapping = new LevelMapping<Level>(null, null);
 
-        [Test]
-        public void TestTimerWrite()
-        {
-            var t = Helpers.GetTimer();
-            Assert.IsTrue(Helpers.ToByteArrayMapping(t, timerMapping)
-                .SequenceEqual(Helpers.ToByteArrayManual(t)));
-        }
+		[Test]
+		public void TestTimerWrite()
+		{
+			var t = Helpers.GetTimer();
+			Assert.IsTrue(Helpers.ToByteArrayMapping(t, timerMapping)
+				.SequenceEqual(Helpers.ToByteArrayManual(t)));
+		}
 
-        [Test]
-        public void TestTimerRead()
-        {
-            var template = Helpers.GetTimer();
-            var t = new Timer();
-            t = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), t, timerMapping);
+		[Test]
+		public void TestTimerRead()
+		{
+			var template = Helpers.GetTimer();
+			var t = new Timer();
+			t = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), t, timerMapping);
 
-            Assert.IsTrue(Helpers.Equals(template, t));
-        }
+			Assert.IsTrue(Helpers.Equals(template, t));
+		}
 
-        [Test]
-        public void TestHeroWrite()
-        {
-            var h = Helpers.GetHero();
-            Assert.IsTrue(Helpers.ToByteArrayMapping(h, heroMapping)
-                .SequenceEqual(Helpers.ToByteArrayManual(h)));
-        }
+		[Test]
+		public void TestHeroWrite()
+		{
+			var h = Helpers.GetHero();
+			Assert.IsTrue(Helpers.ToByteArrayMapping(h, heroMapping)
+				.SequenceEqual(Helpers.ToByteArrayManual(h)));
+		}
 
-        [Test]
-        public void TestHeroRead()
-        {
-            var template = Helpers.GetHero();
-            var h = new Hero();
-            h.Timer = new Timer();
+		[Test]
+		public void TestHeroRead()
+		{
+			var template = Helpers.GetHero();
+			var h = new Hero();
+			h.Timer = new Timer();
 
-            h = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), h, heroMapping);
+			h = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), h, heroMapping);
 
-            Assert.IsTrue(Helpers.Equals(template, h));
-        }
+			Assert.IsTrue(Helpers.Equals(template, h));
+		}
 
-        [Test]
-        public void TestLevelWrite()
-        {
-            var l = Helpers.GetLevel();
-            Assert.IsTrue(Helpers.ToByteArrayMapping(l, levelMapping)
-                .SequenceEqual(Helpers.ToByteArrayManual(l)));
-        }
+		[Test]
+		public void TestLevelWrite()
+		{
+			var l = Helpers.GetLevel();
+			Assert.IsTrue(Helpers.ToByteArrayMapping(l, levelMapping)
+				.SequenceEqual(Helpers.ToByteArrayManual(l)));
+		}
 
-        [Test]
-        public void TestLevelRead()
-        {
-            var template = Helpers.GetLevel();
-            var l = new Level();
-            l.Hero = new Hero();
-            l.Hero.Timer = new Timer();
+		[Test]
+		public void TestLevelRead()
+		{
+			var template = Helpers.GetLevel();
+			var l = new Level();
+			l.Hero = new Hero();
+			l.Hero.Timer = new Timer();
 
-            l = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), l, levelMapping);
+			l = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), l, levelMapping);
 
-            Assert.IsTrue(Helpers.Equals(template, l));
-        }
+			Assert.IsTrue(Helpers.Equals(template, l));
+		}
 
-        [Test]
-        public void TestIntListWrite()
-        {
-            var mapping = new ListMapping<int, List<int>>(null, null);
-            var l = new List<int>(new[] {34, 5, 67, 252});
+		[Test]
+		public void TestIntListWrite()
+		{
+			var mapping = new ListMapping<int, List<int>>(null, null);
+			var l = new List<int>(new[] {34, 5, 67, 252});
 
-            Assert.IsTrue(Helpers.ToByteArrayMapping(l, mapping)
-                .SequenceEqual(Helpers.ToByteArrayManual(l)));
-        }
+			Assert.IsTrue(Helpers.ToByteArrayMapping(l, mapping)
+				.SequenceEqual(Helpers.ToByteArrayManual(l)));
+		}
 
-        [Test]
-        public void TestIntListRead()
-        {
-            var mapping = new ListMapping<int, List<int>>(null, null);
-            var template = new List<int>(new[] {34, 5, 67, 252});
-            var l = new List<int>();
+		[Test]
+		public void TestIntListRead()
+		{
+			var mapping = new ListMapping<int, List<int>>(null, null);
+			var template = new List<int>(new[] {34, 5, 67, 252});
+			var l = new List<int>();
 
-            l = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), l, mapping);
+			l = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), l, mapping);
 
-            Assert.IsTrue(template.SequenceEqual(l));
-        }
-    }
+			Assert.IsTrue(template.SequenceEqual(l));
+		}
+	}
 }

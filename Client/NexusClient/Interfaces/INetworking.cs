@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,12 +29,12 @@ using System;
 
 namespace NexusClient.Interfaces
 {
-    public interface INetworking
-    {
-        bool IsP2PMessageAvailable(out uint messageSize);
+	public interface INetworking
+	{
+		bool IsP2PMessageAvailable(out uint messageSize);
 
-        bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId);
+		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId);
 
-        bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, P2PSendType sendType);
-    }
+		bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, P2PSendType sendType);
+	}
 }

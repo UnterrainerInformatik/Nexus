@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,100 +31,105 @@ using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public abstract class Mapping<TField, TObject> : BinarySerializable<TObject>
-    {
-        public Func<TField, TObject, TObject> Save { get; }
-        public Func<TObject, TField> Load { get; }
+	public abstract class Mapping<TField, TObject> : BinarySerializable<TObject>
+	{
+		public Func<TField, TObject, TObject> Save { get; }
+		public Func<TObject, TField> Load { get; }
 
-        private List<BinarySerializable<TField>> Mappings { get; } = new List<BinarySerializable<TField>>();
+		private List<BinarySerializable<TField>> Mappings { get; } = new List<BinarySerializable<TField>>();
 
-        protected Mapping(Func<TObject, TField> load, Func<TField, TObject, TObject> save)
-        {
-            Load = load;
-            Save = save;
-        }
+		protected Mapping(Func<TObject, TField> load, Func<TField, TObject, TObject> save)
+		{
+			Load = load;
+			Save = save;
+		}
 
-        protected void Add(BinarySerializable<TField> m)
-        {
-            Mappings.Add(m);
-        }
+		protected void Add(BinarySerializable<TField> m)
+		{
+			Mappings.Add(m);
+		}
 
-        public TObject ReadFrom(BinaryReader reader, object obj)
-        {
-            return ReadFrom(reader, default(TObject), obj);
-        }
+		public TObject ReadFrom(BinaryReader reader, object obj)
+		{
+			return ReadFrom(reader, default(TObject), obj);
+		}
 
-        public void WriteTo(BinaryWriter writer, object obj)
-        {
-            WriteTo(writer, default(TObject), obj);
-        }
+		public void WriteTo(BinaryWriter writer, object obj)
+		{
+			WriteTo(writer, default(TObject), obj);
+		}
 
-        public virtual TObject ReadFrom(BinaryReader reader, TObject obj, object parent)
-        {
-            TField f;
-            if (parent != null)
-            {
-                f = (TField) parent;
-            }
-            else
-            {
-                if (Load == null)
-                {
-                    f = default(TField);
-                }
-                else
-                {
-                    f = Load(obj);
-                }
-            }
-            f = From(reader, obj, f);
-            if (Save == null)
-            {
-                return (TObject) parent;
-            }
-            if (obj == null)
-            {
-                return default(TObject);
-            }
-            return Save(f, obj);
-        }
+		public virtual TObject ReadFrom(BinaryReader reader, TObject obj, object parent)
+		{
+			TField f;
+			if (parent != null)
+			{
+				f = (TField) parent;
+			}
+			else
+			{
+				if (Load == null)
+				{
+					f = default(TField);
+				}
+				else
+				{
+					f = Load(obj);
+				}
+			}
 
-        public virtual void WriteTo(BinaryWriter writer, TObject obj, object parent)
-        {
-            TField f;
-            if (Load == null)
-            {
-                f = (TField) parent;
-            }
-            else
-            {
-                if (obj != null)
-                {
-                    f = Load(obj);
-                }
-                else
-                {
-                    f = default(TField);
-                }
-            }
-            To(writer, obj, f);
-        }
+			f = From(reader, obj, f);
+			if (Save == null)
+			{
+				return (TObject) parent;
+			}
 
-        protected virtual TField From(BinaryReader reader, TObject instance, TField field)
-        {
-            foreach (var t in Mappings)
-            {
-                t.ReadFrom(reader, field, null);
-            }
-            return field;
-        }
+			if (obj == null)
+			{
+				return default(TObject);
+			}
 
-        protected virtual void To(BinaryWriter writer, TObject instance, TField field)
-        {
-            foreach (var t in Mappings)
-            {
-                t.WriteTo(writer, field, null);
-            }
-        }
-    }
+			return Save(f, obj);
+		}
+
+		public virtual void WriteTo(BinaryWriter writer, TObject obj, object parent)
+		{
+			TField f;
+			if (Load == null)
+			{
+				f = (TField) parent;
+			}
+			else
+			{
+				if (obj != null)
+				{
+					f = Load(obj);
+				}
+				else
+				{
+					f = default(TField);
+				}
+			}
+
+			To(writer, obj, f);
+		}
+
+		protected virtual TField From(BinaryReader reader, TObject instance, TField field)
+		{
+			foreach (var t in Mappings)
+			{
+				t.ReadFrom(reader, field, null);
+			}
+
+			return field;
+		}
+
+		protected virtual void To(BinaryWriter writer, TObject instance, TField field)
+		{
+			foreach (var t in Mappings)
+			{
+				t.WriteTo(writer, field, null);
+			}
+		}
+	}
 }

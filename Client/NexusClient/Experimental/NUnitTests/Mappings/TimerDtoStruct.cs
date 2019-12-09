@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -30,57 +30,57 @@ using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public struct TimerDtoStruct
-    {
-        public float Value { get; }
-        public float Max { get; }
-        public float Min { get; }
+	public struct TimerDtoStruct
+	{
+		public float Value { get; }
+		public float Max { get; }
+		public float Min { get; }
 
-        public bool Active { get; }
+		public bool Active { get; }
 
-        public TimerDtoStruct(float min, float max, float value, bool active)
-        {
-            Value = value;
-            Max = max;
-            Min = min;
-            Active = active;
-        }
+		public TimerDtoStruct(float min, float max, float value, bool active)
+		{
+			Value = value;
+			Max = max;
+			Min = min;
+			Active = active;
+		}
 
-        /// <summary>
-        ///     The benefit of this method is that you may implement <see cref="From(Timer)" />
-        ///     and <see cref="To(Timer)" /> directly within your
-        ///     object you want to transfer, so you may contain private fields as well without having to expose them.
-        /// </summary>
-        public static TimerDtoStruct From(Timer t)
-        {
-            return new TimerDtoStruct(min: t.Min, max: t.Max, value: t.Value, active: t.Active);
-        }
+		/// <summary>
+		///     The benefit of this method is that you may implement <see cref="From(Timer)" />
+		///     and <see cref="To(Timer)" /> directly within your
+		///     object you want to transfer, so you may contain private fields as well without having to expose them.
+		/// </summary>
+		public static TimerDtoStruct From(Timer t)
+		{
+			return new TimerDtoStruct(min: t.Min, max: t.Max, value: t.Value, active: t.Active);
+		}
 
-        /// <summary>
-        ///     The benefit of this method is that you may implement <see cref="From(Timer)" />
-        ///     and <see cref="To(Timer)" /> directly within your
-        ///     object you want to transfer, so you may contain private fields as well without having to expose them.
-        /// </summary>
-        public void To(Timer t)
-        {
-            t.Min = Min;
-            t.Max = Max;
-            t.Value = Value;
-            t.Active = Active;
-        }
+		/// <summary>
+		///     The benefit of this method is that you may implement <see cref="From(Timer)" />
+		///     and <see cref="To(Timer)" /> directly within your
+		///     object you want to transfer, so you may contain private fields as well without having to expose them.
+		/// </summary>
+		public void To(Timer t)
+		{
+			t.Min = Min;
+			t.Max = Max;
+			t.Value = Value;
+			t.Active = Active;
+		}
 
-        public static TimerDtoStruct From(BinaryReader r)
-        {
-            return new TimerDtoStruct(min: r.ReadSingle(), max: r.ReadSingle(), value: r.ReadSingle(),
-                active: r.ReadBoolean());
-        }
+		public static TimerDtoStruct From(BinaryReader r)
+		{
+			return new TimerDtoStruct(min: r.ReadSingle(), max: r.ReadSingle(), value: r.ReadSingle(),
+				active: r.ReadBoolean());
+		}
 
-        public void To(BinaryWriter w)
-        {
-            w.Write(Min);
-            w.Write(Max);
-            w.Write(Value);
-            w.Write(Active);
-        }
-    }
+		public void To(BinaryWriter w)
+		{
+			w.Write(Min);
+			w.Write(Max);
+			w.Write(Value);
+			w.Write(Active);
+		}
+	}
 }

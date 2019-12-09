@@ -1,4 +1,4 @@
-// *************************************************************************** 
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,21 +31,21 @@ using JetBrains.Annotations;
 
 namespace NexusClient.Experimental.Mappings
 {
-    [PublicAPI]
-    public class FloatMapping<T> : Mapping<float, T>
-    {
-        public FloatMapping(Func<T, float> load, Func<float, T, T> save) : base(load, save)
-        {
-        }
+	[PublicAPI]
+	public class FloatMapping<T> : Mapping<float, T>
+	{
+		public FloatMapping(Func<T, float> load, Func<float, T, T> save) : base(load, save)
+		{
+		}
 
-        protected override float From(BinaryReader reader, T instance, float field)
-        {
-            return reader.ReadSingle();
-        }
+		protected override float From(BinaryReader reader, T instance, float field)
+		{
+			return reader.ReadSingle();
+		}
 
-        protected override void To(BinaryWriter writer, T instance, float field)
-        {
-            writer.Write(field);
-        }
-    }
+		protected override void To(BinaryWriter writer, T instance, float field)
+		{
+			writer.Write(field);
+		}
+	}
 }

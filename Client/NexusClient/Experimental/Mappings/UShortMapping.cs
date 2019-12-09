@@ -1,4 +1,4 @@
-// *************************************************************************** 
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,21 +31,21 @@ using JetBrains.Annotations;
 
 namespace NexusClient.Experimental.Mappings
 {
-    [PublicAPI]
-    public class UShortMapping<T> : Mapping<ushort, T>
-    {
-        public UShortMapping(Func<T, ushort> load, Func<ushort, T, T> save) : base(load, save)
-        {
-        }
+	[PublicAPI]
+	public class UShortMapping<T> : Mapping<ushort, T>
+	{
+		public UShortMapping(Func<T, ushort> load, Func<ushort, T, T> save) : base(load, save)
+		{
+		}
 
-        protected override ushort From(BinaryReader reader, T instance, ushort field)
-        {
-            return reader.ReadUInt16();
-        }
+		protected override ushort From(BinaryReader reader, T instance, ushort field)
+		{
+			return reader.ReadUInt16();
+		}
 
-        protected override void To(BinaryWriter writer, T instance, ushort field)
-        {
-            writer.Write(field);
-        }
-    }
+		protected override void To(BinaryWriter writer, T instance, ushort field)
+		{
+			writer.Write(field);
+		}
+	}
 }

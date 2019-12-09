@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -30,10 +30,10 @@ using JetBrains.Annotations;
 
 namespace NexusClient
 {
-    [PublicAPI]
-    public struct P2PError
-    {
-        public DateTime DateTime;
-        public P2PSessionError Error;
-    }
+	[PublicAPI]
+	public struct P2PError
+	{
+		public DateTime DateTime;
+		public P2PSessionError Error;
+	}
 }

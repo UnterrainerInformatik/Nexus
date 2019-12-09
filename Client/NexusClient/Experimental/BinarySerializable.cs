@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,9 +29,9 @@ using System.IO;
 
 namespace NexusClient.Experimental
 {
-    public interface BinarySerializable<TObject>
-    {
-        TObject ReadFrom(BinaryReader reader, TObject obj, object parent);
-        void WriteTo(BinaryWriter writer, TObject obj, object parent);
-    }
+	public interface BinarySerializable<TObject>
+	{
+		TObject ReadFrom(BinaryReader reader, TObject obj, object parent);
+		void WriteTo(BinaryWriter writer, TObject obj, object parent);
+	}
 }

@@ -1,4 +1,4 @@
-// *************************************************************************** 
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,21 +31,21 @@ using JetBrains.Annotations;
 
 namespace NexusClient.Experimental.Mappings
 {
-    [PublicAPI]
-    public class BoolMapping<T> : Mapping<bool, T>
-    {
-        public BoolMapping(Func<T, bool> load, Func<bool, T, T> save) : base(load, save)
-        {
-        }
+	[PublicAPI]
+	public class BoolMapping<T> : Mapping<bool, T>
+	{
+		public BoolMapping(Func<T, bool> load, Func<bool, T, T> save) : base(load, save)
+		{
+		}
 
-        protected override bool From(BinaryReader reader, T instance, bool field)
-        {
-            return reader.ReadBoolean();
-        }
+		protected override bool From(BinaryReader reader, T instance, bool field)
+		{
+			return reader.ReadBoolean();
+		}
 
-        protected override void To(BinaryWriter writer, T instance, bool field)
-        {
-            writer.Write(field);
-        }
-    }
+		protected override void To(BinaryWriter writer, T instance, bool field)
+		{
+			writer.Write(field);
+		}
+	}
 }

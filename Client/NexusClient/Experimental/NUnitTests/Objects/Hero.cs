@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -25,40 +25,44 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Microsoft.Xna.Framework;
 using MessagePack;
+using Microsoft.Xna.Framework;
 
 namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    [MessagePackObject]
-    public class Hero
-    {
-        [Key(0)]
-        public Vector2 Position { get; set; }
-        [Key(1)]
-        public float Velocity { get; set; }
-        [Key(2)]
-        public Vector2 Direction { get; set; }
+	[MessagePackObject]
+	public class Hero
+	{
+		[Key(0)]
+		public Vector2 Position { get; set; }
 
-        [Key(3)]
-        public bool Shooting { get; set; }
-        [Key(4)]
-        public bool Running { get; set; }
-        [Key(5)]
-        public bool Building { get; set; }
+		[Key(1)]
+		public float Velocity { get; set; }
 
-        [Key(6)]
-        public Timer Timer { get; set; }
-        
-        private Timer SpecialAbilityTimer { get; }
+		[Key(2)]
+		public Vector2 Direction { get; set; }
 
-        public Hero()
-        {
-            SpecialAbilityTimer = new Timer();
-            SpecialAbilityTimer.Min = 0;
-            SpecialAbilityTimer.Max = 15;
-            SpecialAbilityTimer.Value = 10.3f;
-            SpecialAbilityTimer.Active = true;
-        }
-    }
+		[Key(3)]
+		public bool Shooting { get; set; }
+
+		[Key(4)]
+		public bool Running { get; set; }
+
+		[Key(5)]
+		public bool Building { get; set; }
+
+		[Key(6)]
+		public Timer Timer { get; set; }
+
+		private Timer SpecialAbilityTimer { get; }
+
+		public Hero()
+		{
+			SpecialAbilityTimer = new Timer();
+			SpecialAbilityTimer.Min = 0;
+			SpecialAbilityTimer.Max = 15;
+			SpecialAbilityTimer.Value = 10.3f;
+			SpecialAbilityTimer.Active = true;
+		}
+	}
 }

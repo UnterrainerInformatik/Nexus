@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,12 +29,13 @@ using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    [MessagePackObject]
-    public class Level
-    {
-        [Key(0)]
-        public int Number { get; set; }
-        [Key(1)]
-        public Hero Hero { get; set; }
-    }
+	[MessagePackObject]
+	public class Level
+	{
+		[Key(0)]
+		public int Number { get; set; }
+
+		[Key(1)]
+		public Hero Hero { get; set; }
+	}
 }

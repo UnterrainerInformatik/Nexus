@@ -41,15 +41,14 @@ namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 				new GameTimeFormatter(),
 				new PointFormatter(),
 				new RectangleFormatter(),
-				new Vector2Formatter(), 
+				new Vector2Formatter(),
 				new ViewportFormatter() // Uses RectangleFormatter, so has to come after that.
-
 			}, new IFormatterResolver[]
 			{
 				ImmutableCollectionResolver.Instance,
 				StandardResolver.Instance
 			});
-			var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+			MessagePackSerializerOptions.Standard.WithResolver(resolver);
 		}
 	}
 }

@@ -34,7 +34,7 @@ using Microsoft.Xna.Framework;
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
 	[PublicAPI]
-	public class GameTimeFormatter : IMessagePackFormatter<GameTime>, IMessagePackFormatter
+	public class GameTimeFormatter : IMessagePackFormatter<GameTime>
 	{
 		public void Serialize(ref MessagePackWriter writer, GameTime value, MessagePackSerializerOptions options)
 		{

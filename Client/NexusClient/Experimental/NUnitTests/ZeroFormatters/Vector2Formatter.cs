@@ -33,7 +33,7 @@ using Microsoft.Xna.Framework;
 namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
 {
 	[PublicAPI]
-	public class Vector2Formatter : IMessagePackFormatter<Vector2>, IMessagePackFormatter
+	public class Vector2Formatter : IMessagePackFormatter<Vector2>
 	{
 		public void Serialize(ref MessagePackWriter writer, Vector2 value, MessagePackSerializerOptions options)
 		{

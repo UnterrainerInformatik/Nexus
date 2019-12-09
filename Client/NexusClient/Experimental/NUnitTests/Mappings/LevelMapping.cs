@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -31,20 +31,20 @@ using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-    public class LevelMapping<TParent> : Mapping<Level, TParent>
-    {
-        public LevelMapping(Func<TParent, Level> load, Func<Level, TParent, TParent> save) : base(load, save)
-        {
-            Add(new IntMapping<Level>(o => o.Number, (v, o) =>
-            {
-                o.Number = v;
-                return o;
-            }));
-            Add(new HeroMapping<Level>(o => o.Hero, (v, o) =>
-            {
-                o.Hero = v;
-                return o;
-            }));
-        }
-    }
+	public class LevelMapping<TParent> : Mapping<Level, TParent>
+	{
+		public LevelMapping(Func<TParent, Level> load, Func<Level, TParent, TParent> save) : base(load, save)
+		{
+			Add(new IntMapping<Level>(o => o.Number, (v, o) =>
+			{
+				o.Number = v;
+				return o;
+			}));
+			Add(new HeroMapping<Level>(o => o.Hero, (v, o) =>
+			{
+				o.Hero = v;
+				return o;
+			}));
+		}
+	}
 }

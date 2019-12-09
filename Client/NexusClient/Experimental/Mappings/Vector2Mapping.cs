@@ -1,4 +1,4 @@
-// *************************************************************************** 
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -32,22 +32,22 @@ using Microsoft.Xna.Framework;
 
 namespace NexusClient.Experimental.Mappings
 {
-    [PublicAPI]
-    public class Vector2Mapping<T> : Mapping<Vector2, T>
-    {
-        public Vector2Mapping(Func<T, Vector2> load, Func<Vector2, T, T> save) : base(load, save)
-        {
-        }
+	[PublicAPI]
+	public class Vector2Mapping<T> : Mapping<Vector2, T>
+	{
+		public Vector2Mapping(Func<T, Vector2> load, Func<Vector2, T, T> save) : base(load, save)
+		{
+		}
 
-        protected override Vector2 From(BinaryReader reader, T instance, Vector2 field)
-        {
-            return new Vector2(reader.ReadSingle(), reader.ReadSingle());
-        }
+		protected override Vector2 From(BinaryReader reader, T instance, Vector2 field)
+		{
+			return new Vector2(reader.ReadSingle(), reader.ReadSingle());
+		}
 
-        protected override void To(BinaryWriter writer, T instance, Vector2 field)
-        {
-            writer.Write(field.X);
-            writer.Write(field.Y);
-        }
-    }
+		protected override void To(BinaryWriter writer, T instance, Vector2 field)
+		{
+			writer.Write(field.X);
+			writer.Write(field.Y);
+		}
+	}
 }

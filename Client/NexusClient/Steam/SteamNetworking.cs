@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -30,21 +30,21 @@ using NexusClient.Interfaces;
 
 namespace NexusClient.Steam
 {
-    public class SteamNetworking : INetworking
-    {
-        public bool IsP2PMessageAvailable(out uint messageSize)
-        {
-            throw new NotImplementedException();
-        }
+	public class SteamNetworking : INetworking
+	{
+		public bool IsP2PMessageAvailable(out uint messageSize)
+		{
+			throw new NotImplementedException();
+		}
 
-        public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
-        {
-            throw new NotImplementedException();
-        }
+		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
+		{
+			throw new NotImplementedException();
+		}
 
-        public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, P2PSendType sendType)
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, P2PSendType sendType)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

@@ -1,4 +1,4 @@
-﻿// *************************************************************************** 
+﻿// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -29,17 +29,19 @@ using MessagePack;
 
 namespace NexusClient.Experimental.NUnitTests.Objects
 {
-    [MessagePackObject]
-    public class Timer
-    {
-        [Key(0)]
+	[MessagePackObject]
+	public class Timer
+	{
+		[Key(0)]
 		public float Min { get; set; }
+
 		[Key(1)]
-        public float Max { get; set; }
-        [Key(2)]
+		public float Max { get; set; }
+
+		[Key(2)]
 		public float Value { get; set; }
 
 		[Key(3)]
-        public bool Active { get; set; }
-    }
+		public bool Active { get; set; }
+	}
 }

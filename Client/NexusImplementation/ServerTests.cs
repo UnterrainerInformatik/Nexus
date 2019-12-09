@@ -44,11 +44,12 @@ namespace NexusImplementation
     public class ServerTests
     {
         public const string URL_CONNECTION = "http://localhost:58500/Connection.svc";
+		public const string URL = URL_CONNECTION + "/ping";
 
-        /// <summary>
-        ///     Initializes this instance.
-        /// </summary>
-        [SetUp]
+		/// <summary>
+		///     Initializes this instance.
+		/// </summary>
+		[SetUp]
         public void Init()
         {
         }
@@ -66,8 +67,7 @@ namespace NexusImplementation
         public void TestMessageString()
         {
             var p = new WebClient();
-            var url = URL_CONNECTION + "/ping";
-            var data = p.DownloadData(url);
+			var data = p.DownloadData(URL);
             Stream stream = new MemoryStream(data);
             var streamReader = new StreamReader(stream);
             var response = streamReader.ReadToEnd();
@@ -79,8 +79,7 @@ namespace NexusImplementation
         public void TestMessageJsonReader()
         {
             var p = new WebClient();
-            var url = URL_CONNECTION + "/ping";
-            var data = p.DownloadData(url);
+			var data = p.DownloadData(URL);
             Stream stream = new MemoryStream(data);
             XmlReader r = JsonReaderWriterFactory.CreateJsonReader(stream, new XmlDictionaryReaderQuotas());
 
@@ -94,8 +93,7 @@ namespace NexusImplementation
         public void TestMessageJsonObject()
         {
             var p = new WebClient();
-            var url = URL_CONNECTION + "/ping";
-            var data = p.DownloadData(url);
+			var data = p.DownloadData(URL);
             Stream stream = new MemoryStream(data);
             var streamReader = new StreamReader(stream);
             var response = streamReader.ReadToEnd();
