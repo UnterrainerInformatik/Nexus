@@ -51,7 +51,7 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
 		///     and <see cref="To(Timer)" /> directly within your
 		///     object you want to transfer, so you may contain private fields as well without having to expose them.
 		/// </summary>
-		public static TimerDtoStruct From(Timer t)
+		public static TimerDtoStruct From(Objects.Timer t)
 		{
 			return new TimerDtoStruct(min: t.Min, max: t.Max, value: t.Value, active: t.Active);
 		}
@@ -61,7 +61,7 @@ namespace NexusClient.Experimental.NUnitTests.Mappings
 		///     and <see cref="To(Timer)" /> directly within your
 		///     object you want to transfer, so you may contain private fields as well without having to expose them.
 		/// </summary>
-		public void To(Timer t)
+		public void To(Objects.Timer t)
 		{
 			t.Min = Min;
 			t.Max = Max;

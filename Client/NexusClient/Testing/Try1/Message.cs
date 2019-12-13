@@ -25,54 +25,52 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
-using NUnit.Framework;
+using System.IO;
 
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Testing.Try1
 {
-	[TestFixture]
-	[Category("Mappers.ZeroFormatter")]
-	public class TestsZeroFormatter
+	public struct Message
 	{
-		[SetUp]
-		public void Setup()
+		public string Sender;
+		public string[] Recepients;
+
+		public uint MessageSize;
+		public byte[] Data;
+
+		public P2PSendType Type;
+		public BinaryReader Reader;
+
+		public bool Handled;
+
+		public static Message GetDefault()
 		{
-			ZeroFormatterHelpers.Register();
+			return new Message
+			{
+				Sender = null,
+				Recepients = new string[] { },
+				MessageSize = 0,
+				Data = new byte[] { },
+				Type = P2PSendType.RELIABLE,
+
+				Reader = null,
+				Handled = false
+			};
 		}
 
-		[Test]
-		public void TestTimer()
+		public Message SendType(P2PSendType type)
 		{
-			var template = Helpers.GetTimer();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, t));
+			Type = type;
+			return this;
 		}
 
-		[Test]
-		public void TestHero()
+		public Message WithContent(byte[] data)
 		{
-			var template = Helpers.GetHero();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var h = MessagePackSerializer.Deserialize<Hero>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, h));
+			Data = data;
+			return this;
 		}
 
-		[Test]
-		public void TestLevel()
+		public void Send()
 		{
-			var template = Helpers.GetLevel();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var l = MessagePackSerializer.Deserialize<Level>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, l));
 		}
 	}
 }

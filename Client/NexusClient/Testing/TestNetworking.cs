@@ -25,54 +25,26 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
-using NUnit.Framework;
+using System;
+using NexusClient.Interfaces;
 
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Testing
 {
-	[TestFixture]
-	[Category("Mappers.ZeroFormatter")]
-	public class TestsZeroFormatter
+	class TestNetworking : INetworking
 	{
-		[SetUp]
-		public void Setup()
+		public bool IsP2PMessageAvailable(out uint messageSize)
 		{
-			ZeroFormatterHelpers.Register();
+			throw new NotImplementedException();
 		}
 
-		[Test]
-		public void TestTimer()
+		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
 		{
-			var template = Helpers.GetTimer();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, t));
+			throw new NotImplementedException();
 		}
 
-		[Test]
-		public void TestHero()
+		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, P2PSendType sendType)
 		{
-			var template = Helpers.GetHero();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var h = MessagePackSerializer.Deserialize<Hero>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, h));
-		}
-
-		[Test]
-		public void TestLevel()
-		{
-			var template = Helpers.GetLevel();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var l = MessagePackSerializer.Deserialize<Level>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, l));
+			throw new NotImplementedException();
 		}
 	}
 }

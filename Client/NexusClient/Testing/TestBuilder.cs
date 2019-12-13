@@ -25,54 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
-using NUnit.Framework;
-
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Testing
 {
-	[TestFixture]
-	[Category("Mappers.ZeroFormatter")]
-	public class TestsZeroFormatter
+	class TestBuilder
 	{
-		[SetUp]
-		public void Setup()
-		{
-			ZeroFormatterHelpers.Register();
-		}
-
-		[Test]
-		public void TestTimer()
-		{
-			var template = Helpers.GetTimer();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, t));
-		}
-
-		[Test]
-		public void TestHero()
-		{
-			var template = Helpers.GetHero();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var h = MessagePackSerializer.Deserialize<Hero>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, h));
-		}
-
-		[Test]
-		public void TestLevel()
-		{
-			var template = Helpers.GetLevel();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var l = MessagePackSerializer.Deserialize<Level>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, l));
-		}
+		public TestServer Server = new TestServer();
 	}
 }

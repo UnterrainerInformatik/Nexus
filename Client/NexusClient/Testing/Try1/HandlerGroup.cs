@@ -25,54 +25,47 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
-using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Testing.Try1
 {
-	[TestFixture]
-	[Category("Mappers.ZeroFormatter")]
-	public class TestsZeroFormatter
+	public abstract class HandlerGroup
 	{
-		[SetUp]
-		public void Setup()
+		protected  object LockObject = new object();
+		protected delegate void HandleMessageDelegate(Message message);
+		protected readonly Dictionary<Enum, HandleMessageDelegate> MessageHandlers =
+			new Dictionary<Enum, HandleMessageDelegate>();
+
+		protected HandlerGroup(bool active = true)
 		{
-			ZeroFormatterHelpers.Register();
+			Active = active;
 		}
 
-		[Test]
-		public void TestTimer()
+		public bool Active { get; set; }
+
+		/// <summary>
+		///     Handles the given message by searching the dictionary for the key of the message and then calling the delegate.
+		///     Returns true, if it found a message and called the delegate, false otherwise.
+		///     Also sets the IsHandled property of the message to true if it has called a delegate.
+		/// </summary>
+		/// <param name="message">The given message</param>
+		/// <returns>True or false.</returns>
+		public bool Handle(Message message)
 		{
-			var template = Helpers.GetTimer();
+			if (!Active) return false;
 
-			var b = MessagePackSerializer.Serialize(template);
-			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
+			MessageHandlers.TryGetValue(message.Type, out var func);
+			if (func == null) return false;
 
-			Assert.IsTrue(Helpers.Equals(template, t));
+			func(message);
+			message.Handled = true;
+			return true;
 		}
 
-		[Test]
-		public void TestHero()
+		public virtual void Update(GameTime gt)
 		{
-			var template = Helpers.GetHero();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var h = MessagePackSerializer.Deserialize<Hero>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, h));
-		}
-
-		[Test]
-		public void TestLevel()
-		{
-			var template = Helpers.GetLevel();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var l = MessagePackSerializer.Deserialize<Level>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, l));
 		}
 	}
 }

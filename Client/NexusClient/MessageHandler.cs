@@ -71,10 +71,5 @@ namespace NexusClient
 		public virtual void Update(GameTime gt)
 		{
 		}
-
-		public virtual void Dispose()
-		{
-			mapping.Clear();
-		}
 	}
 }

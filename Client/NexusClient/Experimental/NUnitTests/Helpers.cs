@@ -39,7 +39,7 @@ namespace NexusClient.Experimental.NUnitTests
 	[PublicAPI]
 	public static class Helpers
 	{
-		public static Timer FromByteArrayManual(byte[] bytes, Timer t)
+		public static Objects.Timer FromByteArrayManual(byte[] bytes, Objects.Timer t)
 		{
 			using (var s = new MemoryStream(bytes))
 			{
@@ -55,7 +55,7 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		public static Timer FromByteArrayDtoStruct(byte[] bytes, Timer t)
+		public static Objects.Timer FromByteArrayDtoStruct(byte[] bytes, Objects.Timer t)
 		{
 			using (var s = new MemoryStream(bytes))
 			{
@@ -68,7 +68,7 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		public static Timer FromByteArrayMapping(byte[] bytes, Timer t, TimerMapping<Timer> mapping)
+		public static Objects.Timer FromByteArrayMapping(byte[] bytes, Objects.Timer t, TimerMapping<Objects.Timer> mapping)
 		{
 			using (var s = new MemoryStream(bytes))
 			{
@@ -81,15 +81,15 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		public static Timer FromByteArrayZeroFormatter(byte[] bytes)
+		public static Objects.Timer FromByteArrayZeroFormatter(byte[] bytes)
 		{
 			using (var s = new MemoryStream(bytes, 0, bytes.Length, true, true))
 			{
-				return MessagePackSerializer.Deserialize<Timer>(s);
+				return MessagePackSerializer.Deserialize<Objects.Timer>(s);
 			}
 		}
 
-		public static byte[] ToByteArrayDtoStruct(Timer t)
+		public static byte[] ToByteArrayDtoStruct(Objects.Timer t)
 		{
 			using (var s = new MemoryStream())
 			{
@@ -103,7 +103,7 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		public static byte[] ToByteArrayManual(Timer t)
+		public static byte[] ToByteArrayManual(Objects.Timer t)
 		{
 			using (var s = new MemoryStream())
 			{
@@ -117,7 +117,7 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		private static void To(BinaryWriter w, Timer t)
+		private static void To(BinaryWriter w, Objects.Timer t)
 		{
 			w.Write(t.Min);
 			w.Write(t.Max);
@@ -125,7 +125,7 @@ namespace NexusClient.Experimental.NUnitTests
 			w.Write(t.Active);
 		}
 
-		public static byte[] ToByteArrayMapping(Timer t, TimerMapping<Timer> mapping)
+		public static byte[] ToByteArrayMapping(Objects.Timer t, TimerMapping<Objects.Timer> mapping)
 		{
 			using (var s = new MemoryStream())
 			{
@@ -139,7 +139,7 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		public static byte[] ToByteArrayZeroFormatter(Timer t)
+		public static byte[] ToByteArrayZeroFormatter(Objects.Timer t)
 		{
 			using (var s = new MemoryStream())
 			{
@@ -295,9 +295,9 @@ namespace NexusClient.Experimental.NUnitTests
 			}
 		}
 
-		public static Timer GetTimer()
+		public static Objects.Timer GetTimer()
 		{
-			var t = new Timer();
+			var t = new Objects.Timer();
 			t.Min = 0;
 			t.Value = 5;
 			t.Max = 10;
@@ -305,7 +305,7 @@ namespace NexusClient.Experimental.NUnitTests
 			return t;
 		}
 
-		public static bool Equals(Timer a, Timer b)
+		public static bool Equals(Objects.Timer a, Objects.Timer b)
 		{
 			return Equals(a.Min, b.Min) && Equals(a.Max, b.Max) && Equals(a.Value, b.Value) &&
 					Equals(a.Active, b.Active);

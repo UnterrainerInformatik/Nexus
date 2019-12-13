@@ -25,54 +25,21 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
-using NUnit.Framework;
+using System;
+using NexusClient.Interfaces;
 
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Testing
 {
-	[TestFixture]
-	[Category("Mappers.ZeroFormatter")]
-	public class TestsZeroFormatter
+	class TestConnection : IConnection
 	{
-		[SetUp]
-		public void Setup()
+		public bool ConnectToServer(out Guid userId)
 		{
-			ZeroFormatterHelpers.Register();
+			throw new NotImplementedException();
 		}
 
-		[Test]
-		public void TestTimer()
+		public bool DisconnectFromServer()
 		{
-			var template = Helpers.GetTimer();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, t));
-		}
-
-		[Test]
-		public void TestHero()
-		{
-			var template = Helpers.GetHero();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var h = MessagePackSerializer.Deserialize<Hero>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, h));
-		}
-
-		[Test]
-		public void TestLevel()
-		{
-			var template = Helpers.GetLevel();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var l = MessagePackSerializer.Deserialize<Level>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, l));
+			throw new NotImplementedException();
 		}
 	}
 }
