@@ -25,16 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-
 namespace NexusClient.Interfaces
 {
-	public interface INetworking
+	public interface IMessageSerializer<in TSend>
 	{
-		bool IsP2PMessageAvailable(out uint messageSize);
-
-		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId);
-
-		bool SendP2PMessage(string remoteUserId, byte[] data, uint length, SendType sendType);
+		LowLevelMessage SerializerMessage(TSend message);
 	}
 }

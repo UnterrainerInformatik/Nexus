@@ -37,7 +37,7 @@ namespace NexusClient.Testing.Try1
 		public uint MessageSize;
 		public byte[] Data;
 
-		public P2PSendType Type;
+		public SendType Type;
 		public BinaryReader Reader;
 
 		public bool Handled;
@@ -50,14 +50,14 @@ namespace NexusClient.Testing.Try1
 				Recepients = new string[] { },
 				MessageSize = 0,
 				Data = new byte[] { },
-				Type = P2PSendType.RELIABLE,
+				Type = NexusClient.SendType.RELIABLE,
 
 				Reader = null,
 				Handled = false
 			};
 		}
 
-		public Message SendType(P2PSendType type)
+		public Message SendType(SendType type)
 		{
 			Type = type;
 			return this;

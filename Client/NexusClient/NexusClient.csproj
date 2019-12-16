@@ -168,8 +168,11 @@
     <Compile Include="Experimental\NUnitTests\ZeroFormatters\Vector2Formatter.cs" />
     <Compile Include="Experimental\NUnitTests\ZeroFormatters\ZeroFormatterHelpers.cs" />
     <Compile Include="Interfaces\IConnection.cs" />
+    <Compile Include="Interfaces\IMessageConverter.cs" />
+    <Compile Include="Interfaces\IMessageDeserializer.cs" />
+    <Compile Include="Interfaces\IMessageSerializer.cs" />
     <Compile Include="Interfaces\INetworking.cs" />
-    <Compile Include="Message.cs" />
+    <Compile Include="LowLevelMessage.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Client.Handlers.cs" />
@@ -178,7 +181,7 @@
     <Compile Include="P2PError.cs" />
     <Compile Include="P2PSessionError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="P2PSendType.cs" />
+    <Compile Include="SendType.cs" />
     <Compile Include="Steam\SteamConnection.cs" />
     <Compile Include="Steam\SteamNetworking.cs" />
     <Compile Include="Testing\TestBuilder.cs" />
@@ -187,6 +190,7 @@
     <Compile Include="Testing\TestServer.cs" />
     <Compile Include="Testing\Try1\BullyHandlerGroup.cs" />
     <Compile Include="Testing\Try1\BullyTest.cs" />
+    <Compile Include="Testing\Try1\Network.cs" />
     <Compile Include="Testing\Try1\Message.cs" />
     <Compile Include="Testing\Try1\HandlerGroup.cs" />
     <Compile Include="Testing\Try1\Time.cs" />

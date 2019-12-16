@@ -34,7 +34,7 @@ namespace NexusClient
 	{
 		public bool IsActive { get; set; }
 
-		protected delegate void HandleMessageDelegate(Message message);
+		protected delegate void HandleMessageDelegate(LowLevelMessage message);
 
 		private readonly Dictionary<ushort, HandleMessageDelegate> mapping =
 			new Dictionary<ushort, HandleMessageDelegate>();
@@ -56,7 +56,7 @@ namespace NexusClient
 		/// </summary>
 		/// <param name="message">The given message</param>
 		/// <returns>True or false.</returns>
-		public bool Handle(Message message)
+		public bool Handle(LowLevelMessage message)
 		{
 			if (!IsActive) return false;
 

@@ -42,7 +42,7 @@ namespace NexusClient.Testing
 			throw new NotImplementedException();
 		}
 
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, P2PSendType sendType)
+		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
 		{
 			throw new NotImplementedException();
 		}

@@ -215,7 +215,7 @@ namespace NexusClient.Testing.Try1
 				Message.To(recipientId).WithContent(null).Send();
 				var m = Messages.Create(type);
 				m.Write(bullyId);
-				Messages.Send(recipientId, P2PSendType.RELIABLE);
+				Messages.Send(recipientId, SendType.RELIABLE);
 			}
 		}
 

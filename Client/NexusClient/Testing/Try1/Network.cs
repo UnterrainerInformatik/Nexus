@@ -28,22 +28,102 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NexusClient.Interfaces;
 
 namespace NexusClient.Testing.Try1
 {
-	public class Network
+	public class Network<TConverter, TSend, TReceive> where TSend : IMessageSerializer<TSend>
+		where TReceive : IMessageDeserializer<TReceive> where TConverter : IMessageConverter<TSend, TReceive>
 	{
+		internal class MessageApi
+		{
+			private readonly Network<TConverter, TSend, TReceive> network;
+
+			internal MessageApi(Network<TConverter, TSend, TReceive> network)
+			{
+				this.network = network;
+			}
+
+			public Message To(params string[] userId)
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = userId;
+				return m;
+			}
+
+			public Message ToAll()
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = network.Participants.Keys.ToArray();
+				return m;
+			}
+
+			public Message ToAllExcept(params string[] userId)
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = new string[] { };
+				var l = network.Participants.Keys.Where(e => !userId.Contains(e));
+				m.Recepients = l.ToArray();
+				return m;
+			}
+
+			public Message ToOthers()
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = new string[] { };
+				var l = network.Participants.Keys.Where(e => !e.Equals(network.UserId));
+				m.Recepients = l.ToArray();
+				return m;
+			}
+
+			public Message ToOthersExcept(params string[] userId)
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = new string[] { };
+				var l = network.Participants.Keys.Where(e => !userId.Contains(e) && !e.Equals(network.UserId));
+				m.Recepients = l.ToArray();
+				return m;
+			}
+
+			public Message ToSelf()
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = new[] {network.UserId};
+				return m;
+			}
+
+			public Message To(string userId)
+			{
+				var m = Try1.Message.GetDefault();
+				m.Sender = network.UserId;
+				m.Recepients = new[] {userId};
+				return m;
+			}
+		}
+
+		internal MessageApi Message { get; }
 		public string UserId { get; set; }
 		protected readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
 
 		private BinaryReader Reader;
 		private BinaryWriter Writer;
 
+		public Network()
+		{
+			Message = new MessageApi(this);
+		}
+
 		public void Update()
 		{
 		}
 
-		public Network AddParticipants(params string[] userId)
+		public Network<TConverter, TSend, TReceive> AddParticipants(params string[] userId)
 		{
 			foreach (var id in userId)
 			{
@@ -53,7 +133,7 @@ namespace NexusClient.Testing.Try1
 			return this;
 		}
 
-		public Network RemoveParticipants(params string[] userId)
+		public Network<TConverter, TSend, TReceive> RemoveParticipants(params string[] userId)
 		{
 			foreach (var id in userId)
 			{
@@ -62,67 +142,9 @@ namespace NexusClient.Testing.Try1
 
 			return this;
 		}
+	}
 
-		public Message To(params string[] userId)
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = userId;
-			return m;
-		}
-
-		public Message ToAll()
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = Participants.Keys.ToArray();
-			return m;
-		}
-
-		public Message ToAllExcept(params string[] userId)
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = new string[] { };
-			var l = Participants.Keys.Where(e => !userId.Contains(e));
-			m.Recepients = l.ToArray();
-			return m;
-		}
-
-		public Message ToOthers()
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = new string[] { };
-			var l = Participants.Keys.Where(e => !e.Equals(UserId));
-			m.Recepients = l.ToArray();
-			return m;
-		}
-
-		public Message ToOthersExcept(params string[] userId)
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = new string[] { };
-			var l = Participants.Keys.Where(e => !userId.Contains(e) && !e.Equals(UserId));
-			m.Recepients = l.ToArray();
-			return m;
-		}
-
-		public Message ToSelf()
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = new[] {UserId};
-			return m;
-		}
-
-		public Message To(string userId)
-		{
-			var m = Message.GetDefault();
-			m.Sender = UserId;
-			m.Recepients = new[] {userId};
-			return m;
-		}
+	public interface IMessageConverter<T>
+	{
 	}
 }

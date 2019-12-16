@@ -62,7 +62,6 @@ namespace NexusClient
 				{
 					var m = registeredHandlers[key];
 					registeredHandlers.Remove(key);
-					m.Dispose();
 				}
 
 				foreach (var key in removeList)

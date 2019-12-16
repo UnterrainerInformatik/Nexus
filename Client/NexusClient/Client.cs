@@ -139,7 +139,7 @@ namespace NexusClient
 		///     If no more message is waiting, this method will return null.
 		/// </summary>
 		/// <returns></returns>
-		public Message? ReadNext(byte[] buffer)
+		public LowLevelMessage? ReadNext(byte[] buffer)
 		{
 			if (!ConnectedToServer) return null;
 
@@ -147,7 +147,7 @@ namespace NexusClient
 
 			if (!Networking.ReadP2PMessage(buffer, messageSize, out var _, out var remoteSteamId)) return null;
 
-			var result = new Message();
+			var result = new LowLevelMessage();
 			result.RemoteUserId = remoteSteamId;
 			result.MessageSize = messageSize;
 			result.Data = buffer;
@@ -157,7 +157,7 @@ namespace NexusClient
 			return result;
 		}
 
-		public Message? ReadNext()
+		public LowLevelMessage? ReadNext()
 		{
 			var m = ReadNext(readBuffer);
 			if (!m.HasValue)
@@ -172,7 +172,7 @@ namespace NexusClient
 			return result;
 		}
 
-		public bool Send(Guid userId, P2PSendType sendType)
+		public bool Send(Guid userId, SendType sendType)
 		{
 			writer.Flush();
 			BitsSentLastSecond += writeStream.Position;
@@ -189,7 +189,7 @@ namespace NexusClient
 		/// <param name="length">The length.</param>
 		/// <param name="type">The type.</param>
 		/// <returns></returns>
-		public bool SendP2PMessage(Guid remoteSteamId, byte[] data, long length, P2PSendType type)
+		public bool SendP2PMessage(Guid remoteSteamId, byte[] data, long length, SendType type)
 		{
 			if (!ConnectedToServer) return false;
 

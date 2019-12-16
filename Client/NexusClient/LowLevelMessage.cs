@@ -25,16 +25,21 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
+using System.IO;
+using JetBrains.Annotations;
 
-namespace NexusClient.Interfaces
+namespace NexusClient
 {
-	public interface INetworking
+	[PublicAPI]
+	public struct LowLevelMessage
 	{
-		bool IsP2PMessageAvailable(out uint messageSize);
+		public string RemoteUserId { get; set; }
 
-		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId);
+		public uint MessageSize { get; set; }
+		public byte[] Data { get; set; }
 
-		bool SendP2PMessage(string remoteUserId, byte[] data, uint length, SendType sendType);
+		public string MessageType { get; set; }
+		public BinaryReader Reader { get; set; }
+		public bool Handled { get; set; }
 	}
 }

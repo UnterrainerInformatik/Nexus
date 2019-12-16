@@ -25,16 +25,13 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
-namespace NexusClient
+namespace NexusClient.Interfaces
 {
-	[PublicAPI]
-	public enum P2PSendType
+	public interface IMessageConverter<in TSend, out TReceive>
+		where TSend : IMessageSerializer<TSend> where TReceive : IMessageDeserializer<TReceive>
 	{
-		UNRELIABLE,
-		UNRELIABLE_NO_DELAY,
-		RELIABLE,
-		RELIABLE_WITH_BUFFERING
+		TReceive ReadMessage(byte[] buffer, uint messageSize);
+
+		bool SendMessage(TSend message, SendType sendType);
 	}
 }
