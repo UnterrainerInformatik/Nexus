@@ -170,12 +170,20 @@
     <Compile Include="Network\Interfaces\IConnection.cs" />
     <Compile Include="Network\Interfaces\ITransport.cs" />
     <Compile Include="Network\Interfaces\IMessageDes.cs" />
+<<<<<<< HEAD
     <Compile Include="Network\Interfaces\IMessageSer.cs" />
+=======
+    <Compile Include="Network\Interfaces\IMessageSerializer.cs" />
+>>>>>>> master
     <Compile Include="Network\Interfaces\INetworking.cs" />
     <Compile Include="Network\Implementations\MessagePack\IMessagePackReceiveObject.cs" />
     <Compile Include="Network\Implementations\MessagePack\IMessagePackSendObject.cs" />
     <Compile Include="Network\Implementations\MessagePack\MessagePackDes.cs" />
+<<<<<<< HEAD
     <Compile Include="Network\Implementations\MessagePack\MessagePackSer.cs" />
+=======
+    <Compile Include="Network\Implementations\MessagePack\MessagePackSerializer.cs" />
+>>>>>>> master
     <Compile Include="Network\Implementations\MessagePack\MessagePackTransport.cs" />
     <Compile Include="Network\Bully\BullyMessage.cs" />
     <Compile Include="Network\LowLevelMessage.cs" />
