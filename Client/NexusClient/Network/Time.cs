@@ -25,29 +25,20 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-using MessagePack;
-using MessagePack.Formatters;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
+namespace NexusClient.Network
 {
-	[PublicAPI]
-	public class ViewportFormatter : IMessagePackFormatter<Viewport>
+	public class Time
 	{
-		public void Serialize(ref MessagePackWriter writer, Viewport value, MessagePackSerializerOptions options)
+		public int Value { get; private set; } = 0;
+
+		public void Step()
 		{
-			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
-			formatter.Serialize(ref writer, new Rectangle(value.X, value.Y, value.Width, value.Height), options);
+			Value++;
 		}
 
-		public Viewport Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		public void Reset()
 		{
-			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
-			return reader.TryReadNil()
-				? new Viewport(Rectangle.Empty)
-				: new Viewport(formatter.Deserialize(ref reader, options));
+			Value = 0;
 		}
 	}
 }

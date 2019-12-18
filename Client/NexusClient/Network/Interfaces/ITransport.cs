@@ -25,29 +25,16 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using JetBrains.Annotations;
-using MessagePack;
-using MessagePack.Formatters;
-using Microsoft.Xna.Framework;
-
-namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
+namespace NexusClient.Network.Interfaces
 {
-	[PublicAPI]
-	public class GameTimeFormatter : IMessagePackFormatter<GameTime>
+	public interface ITransport<TS, TR>
 	{
-		public void Serialize(ref MessagePackWriter writer, GameTime value, MessagePackSerializerOptions options)
-		{
-			writer.Write(value.ElapsedGameTime.TotalMilliseconds);
-			writer.Write(value.TotalGameTime.TotalMilliseconds);
-		}
+		IMessageSer<TS> Serializer { get; }
 
-		public GameTime Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
-		{
-			return reader.TryReadNil()
-				? null
-				: new GameTime(TimeSpan.FromMilliseconds(reader.ReadDouble()),
-					TimeSpan.FromMilliseconds(reader.ReadDouble()));
-		}
+		IMessageDes<TR> Deserializer { get; }
+
+		TR ReadMessage(byte[] buffer, uint messageSize);
+
+		bool SendMessage(TS message, SendType sendType);
 	}
 }

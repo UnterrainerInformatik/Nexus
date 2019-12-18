@@ -25,10 +25,29 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Interfaces
+using System;
+using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
+using Microsoft.Xna.Framework;
+
+namespace NexusClient.Experimental.NUnitTests.MessagePackFormatters
 {
-	public interface IMessageDeserializer<out TReceive>
+	[PublicAPI]
+	public class GameTimeFormatter : IMessagePackFormatter<GameTime>
 	{
-		TReceive ReadP2PMessage(LowLevelMessage message);
+		public void Serialize(ref MessagePackWriter writer, GameTime value, MessagePackSerializerOptions options)
+		{
+			writer.Write(value.ElapsedGameTime.TotalMilliseconds);
+			writer.Write(value.TotalGameTime.TotalMilliseconds);
+		}
+
+		public GameTime Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		{
+			return reader.TryReadNil()
+				? null
+				: new GameTime(TimeSpan.FromMilliseconds(reader.ReadDouble()),
+					TimeSpan.FromMilliseconds(reader.ReadDouble()));
+		}
 	}
 }

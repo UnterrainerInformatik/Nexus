@@ -25,26 +25,30 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
 using MessagePack;
 using MessagePack.Formatters;
-using Microsoft.Xna.Framework;
+using MessagePack.ImmutableCollection;
+using MessagePack.Resolvers;
 
-namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
+namespace NexusClient.Experimental.NUnitTests.MessagePackFormatters
 {
-	[PublicAPI]
-	public class Vector2Formatter : IMessagePackFormatter<Vector2>
+	public static class MessagePackHelpers
 	{
-		public void Serialize(ref MessagePackWriter writer, Vector2 value, MessagePackSerializerOptions options)
+		public static void Register()
 		{
-			var (x, y) = value;
-			writer.Write(x);
-			writer.Write(y);
-		}
-
-		public Vector2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
-		{
-			return reader.TryReadNil() ? Vector2.Zero : new Vector2(reader.ReadSingle(), reader.ReadSingle());
+			var resolver = CompositeResolver.Create(new IMessagePackFormatter[]
+			{
+				new GameTimeFormatter(),
+				new PointFormatter(),
+				new RectangleFormatter(),
+				new Vector2Formatter(),
+				new ViewportFormatter() // Uses RectangleFormatter, so has to come after that.
+			}, new IFormatterResolver[]
+			{
+				ImmutableCollectionResolver.Instance,
+				StandardResolver.Instance
+			});
+			MessagePackSerializerOptions.Standard.WithResolver(resolver);
 		}
 	}
 }

@@ -25,16 +25,20 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.IO;
 using JetBrains.Annotations;
 
-namespace NexusClient
+namespace NexusClient.Network
 {
 	[PublicAPI]
-	public enum SendType
+	public struct LowLevelMessage
 	{
-		UNRELIABLE,
-		UNRELIABLE_NO_DELAY,
-		RELIABLE,
-		RELIABLE_WITH_BUFFERING
+		public string UserId { get; set; }
+
+		public uint MessageSize { get; set; }
+		public byte[] Data { get; set; }
+
+		public string MessageType { get; set; }
+		public bool Handled { get; set; }
 	}
 }

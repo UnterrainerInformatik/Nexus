@@ -25,30 +25,14 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using MessagePack.Formatters;
-using MessagePack.ImmutableCollection;
-using MessagePack.Resolvers;
+using System;
 
-namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
+namespace NexusClient.Network.Interfaces
 {
-	public static class ZeroFormatterHelpers
+	public interface IConnection
 	{
-		public static void Register()
-		{
-			var resolver = CompositeResolver.Create(new IMessagePackFormatter[]
-			{
-				new GameTimeFormatter(),
-				new PointFormatter(),
-				new RectangleFormatter(),
-				new Vector2Formatter(),
-				new ViewportFormatter() // Uses RectangleFormatter, so has to come after that.
-			}, new IFormatterResolver[]
-			{
-				ImmutableCollectionResolver.Instance,
-				StandardResolver.Instance
-			});
-			MessagePackSerializerOptions.Standard.WithResolver(resolver);
-		}
+		bool ConnectToServer(out Guid userId);
+
+		bool DisconnectFromServer();
 	}
 }

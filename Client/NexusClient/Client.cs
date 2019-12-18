@@ -31,7 +31,8 @@ using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
-using NexusClient.Interfaces;
+using NexusClient.Network;
+using NexusClient.Network.Interfaces;
 using NexusClient.Steam;
 
 namespace NexusClient
@@ -148,7 +149,7 @@ namespace NexusClient
 			if (!Networking.ReadP2PMessage(buffer, messageSize, out var _, out var remoteSteamId)) return null;
 
 			var result = new LowLevelMessage();
-			result.RemoteUserId = remoteSteamId;
+			result.UserId = remoteSteamId;
 			result.MessageSize = messageSize;
 			result.Data = buffer;
 			result.Reader = Read(out var t);

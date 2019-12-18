@@ -25,14 +25,16 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
+using System.IO;
+using NexusClient.Network.Interfaces;
 
-namespace NexusClient.Interfaces
+namespace NexusClient.Network.Implementations.MessagePack
 {
-	public interface IConnection
+	class MessagePackSer : IMessageSer<IMessagePackSendObject>
 	{
-		bool ConnectToServer(out Guid userId);
-
-		bool DisconnectFromServer();
+		public void Serialize(IMessagePackSendObject message, Stream stream)
+		{
+			global::MessagePack.MessagePackSerializer.Serialize(stream, message);
+		}
 	}
 }

@@ -25,54 +25,33 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
-using NUnit.Framework;
+using System.IO;
+using NexusClient.Network.Interfaces;
 
-namespace NexusClient.Experimental.NUnitTests
+namespace NexusClient.Network.Implementations.MessagePack
 {
-	[TestFixture]
-	[Category("Mappers.ZeroFormatter")]
-	public class TestsZeroFormatter
+	class MessagePackTransport : ITransport<IMessagePackSendObject, IMessagePackReceiveObject>
 	{
-		[SetUp]
-		public void Setup()
+		public IMessageSer<IMessagePackSendObject> Serializer { get; }
+		public IMessageDes<IMessagePackReceiveObject> Deserializer { get; }
+
+		public MessagePackTransport()
 		{
-			ZeroFormatterHelpers.Register();
+			Serializer = new MessagePackSer();
+			Deserializer = new MessagePackDes();
 		}
 
-		[Test]
-		public void TestTimer()
+		public IMessagePackReceiveObject ReadMessage(byte[] buffer, uint messageSize)
 		{
-			var template = Helpers.GetTimer();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, t));
+			return Deserializer.Deserialize(buffer);
 		}
 
-		[Test]
-		public void TestHero()
+		public bool SendMessage(IMessagePackSendObject message, SendType sendType)
 		{
-			var template = Helpers.GetHero();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var h = MessagePackSerializer.Deserialize<Hero>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, h));
-		}
-
-		[Test]
-		public void TestLevel()
-		{
-			var template = Helpers.GetLevel();
-
-			var b = MessagePackSerializer.Serialize(template);
-			var l = MessagePackSerializer.Deserialize<Level>(b);
-
-			Assert.IsTrue(Helpers.Equals(template, l));
+			var buffer = new byte[2000];
+			Stream stream = new MemoryStream(buffer);
+			Serializer.Serialize(message, stream);
+			return true;
 		}
 	}
 }

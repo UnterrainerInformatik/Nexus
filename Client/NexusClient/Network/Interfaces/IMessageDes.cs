@@ -25,10 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Interfaces
+namespace NexusClient.Network.Interfaces
 {
-	public interface IMessageSerializer<in TSend>
+	public interface IMessageDes<out TR>
 	{
-		LowLevelMessage SerializerMessage(TSend message);
+		TR Deserialize(byte[] message);
 	}
 }

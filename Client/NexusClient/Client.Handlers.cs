@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System.Collections.Generic;
+using NexusClient.Network;
 
 namespace NexusClient
 {

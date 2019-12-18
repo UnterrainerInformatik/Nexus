@@ -30,25 +30,20 @@ using MessagePack;
 using MessagePack.Formatters;
 using Microsoft.Xna.Framework;
 
-namespace NexusClient.Experimental.NUnitTests.ZeroFormatters
+namespace NexusClient.Experimental.NUnitTests.MessagePackFormatters
 {
 	[PublicAPI]
-	public class RectangleFormatter : IMessagePackFormatter<Rectangle>
+	public class PointFormatter : IMessagePackFormatter<Point>
 	{
-		public void Serialize(ref MessagePackWriter writer, Rectangle value, MessagePackSerializerOptions options)
+		public void Serialize(ref MessagePackWriter writer, Point value, MessagePackSerializerOptions options)
 		{
-			var (x, y, width, height) = value;
-			writer.Write(x);
-			writer.Write(y);
-			writer.Write(width);
-			writer.Write(height);
+			writer.Write(value.X);
+			writer.Write(value.Y);
 		}
 
-		public Rectangle Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		public Point Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
 		{
-			return reader.TryReadNil()
-				? Rectangle.Empty
-				: new Rectangle(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+			return reader.TryReadNil() ? Point.Zero : new Point(reader.ReadInt32(), reader.ReadInt32());
 		}
 	}
 }

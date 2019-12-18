@@ -25,51 +25,29 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.Collections.Generic;
+using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
 using Microsoft.Xna.Framework;
 
-namespace NexusClient
+namespace NexusClient.Experimental.NUnitTests.MessagePackFormatters
 {
-	public abstract class MessageHandler
+	[PublicAPI]
+	public class RectangleFormatter : IMessagePackFormatter<Rectangle>
 	{
-		public bool IsActive { get; set; }
-
-		protected delegate void HandleMessageDelegate(LowLevelMessage message);
-
-		private readonly Dictionary<ushort, HandleMessageDelegate> mapping =
-			new Dictionary<ushort, HandleMessageDelegate>();
-
-		protected MessageHandler(bool isActive = true)
+		public void Serialize(ref MessagePackWriter writer, Rectangle value, MessagePackSerializerOptions options)
 		{
-			IsActive = isActive;
+			writer.Write(value.X);
+			writer.Write(value.Y);
+			writer.Write(value.Width);
+			writer.Write(value.Height);
 		}
 
-		protected void AddMapping(ushort messageType, HandleMessageDelegate handler)
+		public Rectangle Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
 		{
-			mapping.Add(messageType, handler);
-		}
-
-		/// <summary>
-		///     Handles the given message by searching the dictionary for the key of the message and then calling the delegate.
-		///     Returns true, if it found a message and called the delegate, false otherwise.
-		///     Also sets the IsHandled property of the message to true if it has called a delegate.
-		/// </summary>
-		/// <param name="message">The given message</param>
-		/// <returns>True or false.</returns>
-		public bool Handle(LowLevelMessage message)
-		{
-			if (!IsActive) return false;
-
-			mapping.TryGetValue(message.MessageType, out var func);
-			if (func == null) return false;
-
-			func(message);
-			message.Handled = true;
-			return true;
-		}
-
-		public virtual void Update(GameTime gt)
-		{
+			return reader.TryReadNil()
+				? Rectangle.Empty
+				: new Rectangle(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 		}
 	}
 }
