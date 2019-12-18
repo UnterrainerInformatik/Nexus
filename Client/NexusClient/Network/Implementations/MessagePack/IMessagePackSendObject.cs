@@ -25,27 +25,9 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
-
-namespace NexusClient.Testing
+namespace NexusClient.Network.Implementations.MessagePack
 {
-	class TestNetworking : INetworking
+	public interface IMessagePackSendObject
 	{
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

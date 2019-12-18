@@ -149,7 +149,7 @@
     <Compile Include="Experimental\Mappings\IntMapping.cs" />
     <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />
     <Compile Include="Experimental\Mappings\FloatMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\TestsZeroFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\TestsMessagePack.cs" />
     <Compile Include="Experimental\NUnitTests\Objects\Level.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\LevelMapping.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\TimerDtoStruct.cs" />
@@ -161,19 +161,26 @@
     <Compile Include="Experimental\NUnitTests\Objects\Timer.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\HeroMapping.cs" />
     <Compile Include="Experimental\NUnitTests\Mappings\TimerMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\ZeroFormatters\GameTimeFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\ZeroFormatters\PointFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\ZeroFormatters\ViewportFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\ZeroFormatters\RectangleFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\ZeroFormatters\Vector2Formatter.cs" />
-    <Compile Include="Experimental\NUnitTests\ZeroFormatters\ZeroFormatterHelpers.cs" />
-    <Compile Include="Interfaces\IConnection.cs" />
-    <Compile Include="Interfaces\IMessageConverter.cs" />
-    <Compile Include="Interfaces\IMessageDeserializer.cs" />
-    <Compile Include="Interfaces\IMessageSerializer.cs" />
-    <Compile Include="Interfaces\INetworking.cs" />
-    <Compile Include="LowLevelMessage.cs" />
-    <Compile Include="MessageHandler.cs" />
+    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\GameTimeFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\PointFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\ViewportFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\RectangleFormatter.cs" />
+    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\Vector2Formatter.cs" />
+    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\MessagePackHelpers.cs" />
+    <Compile Include="Network\Interfaces\IConnection.cs" />
+    <Compile Include="Network\Interfaces\ITransport.cs" />
+    <Compile Include="Network\Interfaces\IMessageDes.cs" />
+    <Compile Include="Network\Interfaces\IMessageSerializer.cs" />
+    <Compile Include="Network\Interfaces\INetworking.cs" />
+    <Compile Include="Network\Implementations\MessagePack\IMessagePackReceiveObject.cs" />
+    <Compile Include="Network\Implementations\MessagePack\IMessagePackSendObject.cs" />
+    <Compile Include="Network\Implementations\MessagePack\MessagePackDes.cs" />
+    <Compile Include="Network\Implementations\MessagePack\MessagePackSerializer.cs" />
+    <Compile Include="Network\Implementations\MessagePack\MessagePackTransport.cs" />
+    <Compile Include="Network\Bully\BullyMessage.cs" />
+    <Compile Include="Network\LowLevelMessage.cs" />
+    <Compile Include="Network\Apis\TargetApi.cs" />
+    <Compile Include="Network\MessageHandler.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Client.Handlers.cs" />
     <Compile Include="Nexus\NexusConnection.cs" />
@@ -181,19 +188,19 @@
     <Compile Include="P2PError.cs" />
     <Compile Include="P2PSessionError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SendType.cs" />
+    <Compile Include="Network\SendType.cs" />
     <Compile Include="Steam\SteamConnection.cs" />
     <Compile Include="Steam\SteamNetworking.cs" />
     <Compile Include="Testing\TestBuilder.cs" />
     <Compile Include="Testing\TestConnection.cs" />
     <Compile Include="Testing\TestNetworking.cs" />
     <Compile Include="Testing\TestServer.cs" />
-    <Compile Include="Testing\Try1\BullyHandlerGroup.cs" />
-    <Compile Include="Testing\Try1\BullyTest.cs" />
-    <Compile Include="Testing\Try1\Network.cs" />
-    <Compile Include="Testing\Try1\Message.cs" />
-    <Compile Include="Testing\Try1\HandlerGroup.cs" />
-    <Compile Include="Testing\Try1\Time.cs" />
+    <Compile Include="Network\Bully\BullyHandlerGroup.cs" />
+    <Compile Include="Network\Bully\BullyTest.cs" />
+    <Compile Include="Network\Network.cs" />
+    <Compile Include="Network\Apis\MessageApi.cs" />
+    <Compile Include="Network\HandlerGroup.cs" />
+    <Compile Include="Network\Time.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -203,6 +210,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\MessagePackAnalyzer.2.0.221-beta\analyzers\cs\MessagePackAnalyzer.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.192\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Network\Implementations\Testing\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -28,8 +28,7 @@
 using System;
 using System.Diagnostics;
 using NexusClient.Experimental.NUnitTests.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
-using NexusClient.Experimental.NUnitTests.ZeroFormatters;
+using NexusClient.Experimental.NUnitTests.MessagePackFormatters;
 using NUnit.Framework;
 
 namespace NexusClient.Experimental.NUnitTests
@@ -38,7 +37,7 @@ namespace NexusClient.Experimental.NUnitTests
 	public class PerformanceTests
 	{
 		private const int PERFORMANCE_COUNT = 5000000;
-		readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
+		readonly TimerMapping<Objects.Timer> timerMapping = new TimerMapping<Objects.Timer>(null, null);
 
 		[Test]
 		[Category("Mappers.Performance.Manual")]
@@ -89,7 +88,7 @@ namespace NexusClient.Experimental.NUnitTests
 		[Category("Mappers.Performance.ZeroFormatter")]
 		public void PerformanceTestTimerWriteZeroFormatter()
 		{
-			ZeroFormatterHelpers.Register();
+			MessagePackHelpers.Register();
 			var t = Helpers.GetTimer();
 			var watch = Stopwatch.StartNew();
 			for (var i = 0; i < PERFORMANCE_COUNT; i++)
@@ -106,7 +105,7 @@ namespace NexusClient.Experimental.NUnitTests
 		public void PerformanceTestTimerReadManual()
 		{
 			var template = Helpers.GetTimer();
-			var t = new Timer();
+			var t = new Objects.Timer();
 			var bytes = Helpers.ToByteArrayManual(template);
 			var watch = Stopwatch.StartNew();
 			for (var i = 0; i < PERFORMANCE_COUNT; i++)
@@ -123,7 +122,7 @@ namespace NexusClient.Experimental.NUnitTests
 		public void PerformanceTestTimerReadDtoStruct()
 		{
 			var template = Helpers.GetTimer();
-			var t = new Timer();
+			var t = new Objects.Timer();
 			var bytes = Helpers.ToByteArrayManual(template);
 			var watch = Stopwatch.StartNew();
 			for (var i = 0; i < PERFORMANCE_COUNT; i++)
@@ -140,7 +139,7 @@ namespace NexusClient.Experimental.NUnitTests
 		public void PerformanceTestTimerReadMapping()
 		{
 			var template = Helpers.GetTimer();
-			var t = new Timer();
+			var t = new Objects.Timer();
 			var bytes = Helpers.ToByteArrayManual(template);
 			var watch = Stopwatch.StartNew();
 			for (var i = 0; i < PERFORMANCE_COUNT; i++)
@@ -156,7 +155,7 @@ namespace NexusClient.Experimental.NUnitTests
 		[Category("Mappers.Performance.ZeroFormatter")]
 		public void PerformanceTestTimerReadZeroFormatter()
 		{
-			ZeroFormatterHelpers.Register();
+			MessagePackHelpers.Register();
 			var bytes = StringToByteArray(
 				"94CA00000000CA41200000CA40A00000C30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 			var watch = Stopwatch.StartNew();

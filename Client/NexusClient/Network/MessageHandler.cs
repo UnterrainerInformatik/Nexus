@@ -25,27 +25,51 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
-namespace NexusClient.Testing
+namespace NexusClient.Network
 {
-	class TestNetworking : INetworking
+	public abstract class MessageHandler
 	{
-		public bool IsP2PMessageAvailable(out uint messageSize)
+		public bool IsActive { get; set; }
+
+		protected delegate void HandleMessageDelegate(LowLevelMessage message);
+
+		private readonly Dictionary<string, HandleMessageDelegate> mapping =
+			new Dictionary<string, HandleMessageDelegate>();
+
+		protected MessageHandler(bool isActive = true)
 		{
-			throw new NotImplementedException();
+			IsActive = isActive;
 		}
 
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
+		protected void AddMapping(string messageType, HandleMessageDelegate handler)
 		{
-			throw new NotImplementedException();
+			mapping.Add(messageType, handler);
 		}
 
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
+		/// <summary>
+		///     Handles the given message by searching the dictionary for the key of the message and then calling the delegate.
+		///     Returns true, if it found a message and called the delegate, false otherwise.
+		///     Also sets the IsHandled property of the message to true if it has called a delegate.
+		/// </summary>
+		/// <param name="message">The given message</param>
+		/// <returns>True or false.</returns>
+		public bool Handle(LowLevelMessage message)
 		{
-			throw new NotImplementedException();
+			if (!IsActive) return false;
+
+			mapping.TryGetValue(message.MessageType, out var func);
+			if (func == null) return false;
+
+			func(message);
+			message.Handled = true;
+			return true;
+		}
+
+		public virtual void Update(GameTime gt)
+		{
 		}
 	}
 }

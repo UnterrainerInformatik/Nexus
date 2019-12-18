@@ -25,13 +25,9 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Interfaces
+namespace NexusClient.Network.Implementations.MessagePack
 {
-	public interface IMessageConverter<in TSend, out TReceive>
-		where TSend : IMessageSerializer<TSend> where TReceive : IMessageDeserializer<TReceive>
+	public interface IMessagePackReceiveObject
 	{
-		TReceive ReadMessage(byte[] buffer, uint messageSize);
-
-		bool SendMessage(TSend message, SendType sendType);
 	}
 }

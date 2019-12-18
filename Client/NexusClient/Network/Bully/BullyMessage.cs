@@ -25,27 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using MessagePack;
+using NexusClient.Network.Implementations.MessagePack;
 
-namespace NexusClient.Testing
+namespace NexusClient.Network.Bully
 {
-	class TestNetworking : INetworking
+	[MessagePackObject]
+	public struct BullyMessage : IMessagePackSendObject, IMessagePackReceiveObject
 	{
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
-		{
-			throw new NotImplementedException();
-		}
+		[Key(0)]
+		public string Id { get; set; }
 	}
 }

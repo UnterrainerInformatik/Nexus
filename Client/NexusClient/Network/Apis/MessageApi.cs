@@ -25,20 +25,55 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Testing.Try1
-{
-	public class Time
-	{
-		public int Value { get; private set; } = 0;
+using NexusClient.Network.Interfaces;
 
-		public void Step()
+namespace NexusClient.Network.Apis
+{
+	public struct MessageApi<TConv, TSer, TDes, TS, TR>
+		where TSer : IMessageSer<TS>
+		where TDes : IMessageDes<TR>
+		where TConv : ITransport<TS, TR>
+	{
+		internal string Sender { get; set; }
+		internal string[] Recipients { get; set; }
+		internal SendType Type { get; set; }
+		internal TS Content { get; set; }
+
+		private TargetApi<TConv, TSer, TDes, TS, TR> TargetApi { get; }
+
+		private MessageApi(TargetApi<TConv, TSer, TDes, TS, TR> targetApi, TS content, SendType type)
 		{
-			Value++;
+			Sender = null;
+			Recipients = null;
+			TargetApi = targetApi;
+			Content = content;
+			Type = type;
 		}
 
-		public void Reset()
+		public static MessageApi<TConv, TSer, TDes, TS, TR> Create()
 		{
-			Value = 0;
+			return new MessageApi<TConv, TSer, TDes, TS, TR>
+			{
+				Content = default(TS),
+				Type = Network.SendType.RELIABLE
+			};
+		}
+
+		public MessageApi<TConv, TSer, TDes, TS, TR> SendType(SendType type)
+		{
+			Type = type;
+			return this;
+		}
+
+		public MessageApi<TConv, TSer, TDes, TS, TR> WithContent(TS data)
+		{
+			Content = data;
+			return this;
+		}
+
+		public void Send()
+		{
+			TargetApi.Send(this);
 		}
 	}
 }

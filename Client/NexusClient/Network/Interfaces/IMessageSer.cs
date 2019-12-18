@@ -25,27 +25,12 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using System.IO;
 
-namespace NexusClient.Testing
+namespace NexusClient.Network.Interfaces
 {
-	class TestNetworking : INetworking
+	public interface IMessageSer<in TS>
 	{
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
-		{
-			throw new NotImplementedException();
-		}
+		void Serialize(TS message, Stream stream);
 	}
 }

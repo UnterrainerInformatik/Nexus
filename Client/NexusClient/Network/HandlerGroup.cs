@@ -29,12 +29,12 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace NexusClient.Testing.Try1
+namespace NexusClient.Network
 {
 	public abstract class HandlerGroup
 	{
 		protected  object LockObject = new object();
-		protected delegate void HandleMessageDelegate(Message message);
+		protected delegate void HandleMessageDelegate(MessageApi messageApi);
 		protected readonly Dictionary<Enum, HandleMessageDelegate> MessageHandlers =
 			new Dictionary<Enum, HandleMessageDelegate>();
 
@@ -50,17 +50,17 @@ namespace NexusClient.Testing.Try1
 		///     Returns true, if it found a message and called the delegate, false otherwise.
 		///     Also sets the IsHandled property of the message to true if it has called a delegate.
 		/// </summary>
-		/// <param name="message">The given message</param>
+		/// <param name="messageApi">The given message</param>
 		/// <returns>True or false.</returns>
-		public bool Handle(Message message)
+		public bool Handle(MessageApi messageApi)
 		{
 			if (!Active) return false;
 
-			MessageHandlers.TryGetValue(message.Type, out var func);
+			MessageHandlers.TryGetValue(messageApi.Type, out var func);
 			if (func == null) return false;
 
-			func(message);
-			message.Handled = true;
+			func(messageApi);
+			messageApi.Handled = true;
 			return true;
 		}
 

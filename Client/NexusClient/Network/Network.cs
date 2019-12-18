@@ -25,27 +25,57 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Network;
+using System.Collections.Generic;
+using System.IO;
+using NexusClient.Network.Apis;
 using NexusClient.Network.Interfaces;
 
-namespace NexusClient.Testing
+namespace NexusClient.Network
 {
-	class TestNetworking : INetworking
+	public class Network<TConv, TSer, TDes, TS, TR>
+		where TSer : IMessageSer<TS>
+		where TDes : IMessageDes<TR>
+		where TConv : ITransport<TS, TR>
 	{
-		public bool IsP2PMessageAvailable(out uint messageSize)
+		public string UserId { get; set; }
+
+		internal TargetApi<TConv, TSer, TDes, TS, TR> Message { get; }
+		internal TConv Converter { get; set; }
+		internal readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
+
+		public Network(TConv converter)
 		{
-			throw new NotImplementedException();
+			Converter = converter;
+			Message = new TargetApi<TConv, TSer, TDes, TS, TR>(this);
 		}
 
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
+		public void Update()
 		{
-			throw new NotImplementedException();
 		}
 
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
+		public Network<TConv, TSer, TDes, TS, TR> AddParticipants(params string[] userId)
 		{
-			throw new NotImplementedException();
+			foreach (var id in userId)
+			{
+				Participants.Add(id, id);
+			}
+
+			return this;
+		}
+
+		public Network<TConv, TSer, TDes, TS, TR> RemoveParticipants(params string[] userId)
+		{
+			foreach (var id in userId)
+			{
+				Participants.Remove(id);
+			}
+
+			return this;
+		}
+
+		public void Send(MessageApi<TConv, TSer, TDes, TS, TR> m)
+		{
+			Converter.SendMessage(m.Content, m.Type, Converter);
 		}
 	}
 }

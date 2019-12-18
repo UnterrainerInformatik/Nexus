@@ -31,7 +31,7 @@ using NUnit.Framework;
 using Serilog;
 using StateMachine;
 
-namespace NexusClient.Testing.Try1
+namespace NexusClient.Network.Bully
 {
 	enum State
 	{

@@ -38,7 +38,7 @@ namespace NexusClient.Experimental.NUnitTests
 	[Category("Mappers.Mapping")]
 	public class TestsMapping
 	{
-		private readonly TimerMapping<Timer> timerMapping = new TimerMapping<Timer>(null, null);
+		private readonly TimerMapping<Objects.Timer> timerMapping = new TimerMapping<Objects.Timer>(null, null);
 		private readonly HeroMapping<Hero> heroMapping = new HeroMapping<Hero>(null, null);
 		private readonly LevelMapping<Level> levelMapping = new LevelMapping<Level>(null, null);
 
@@ -54,7 +54,7 @@ namespace NexusClient.Experimental.NUnitTests
 		public void TestTimerRead()
 		{
 			var template = Helpers.GetTimer();
-			var t = new Timer();
+			var t = new Objects.Timer();
 			t = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), t, timerMapping);
 
 			Assert.IsTrue(Helpers.Equals(template, t));
@@ -73,7 +73,7 @@ namespace NexusClient.Experimental.NUnitTests
 		{
 			var template = Helpers.GetHero();
 			var h = new Hero();
-			h.Timer = new Timer();
+			h.Timer = new Objects.Timer();
 
 			h = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), h, heroMapping);
 
@@ -94,7 +94,7 @@ namespace NexusClient.Experimental.NUnitTests
 			var template = Helpers.GetLevel();
 			var l = new Level();
 			l.Hero = new Hero();
-			l.Hero.Timer = new Timer();
+			l.Hero.Timer = new Objects.Timer();
 
 			l = Helpers.FromByteArrayMapping(Helpers.ToByteArrayManual(template), l, levelMapping);
 

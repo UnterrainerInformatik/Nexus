@@ -25,16 +25,25 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
+using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
+using Microsoft.Xna.Framework;
 
-namespace NexusClient.Interfaces
+namespace NexusClient.Experimental.NUnitTests.MessagePackFormatters
 {
-	public interface INetworking
+	[PublicAPI]
+	public class Vector2Formatter : IMessagePackFormatter<Vector2>
 	{
-		bool IsP2PMessageAvailable(out uint messageSize);
+		public void Serialize(ref MessagePackWriter writer, Vector2 value, MessagePackSerializerOptions options)
+		{
+			writer.Write(value.X);
+			writer.Write(value.Y);
+		}
 
-		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId);
-
-		bool SendP2PMessage(string remoteUserId, byte[] data, uint length, SendType sendType);
+		public Vector2 Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+		{
+			return reader.TryReadNil() ? Vector2.Zero : new Vector2(reader.ReadSingle(), reader.ReadSingle());
+		}
 	}
 }

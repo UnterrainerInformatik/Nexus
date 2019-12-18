@@ -25,27 +25,29 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace NexusClient.Testing
+namespace NexusClient.Experimental.NUnitTests.MessagePackFormatters
 {
-	class TestNetworking : INetworking
+	[PublicAPI]
+	public class ViewportFormatter : IMessagePackFormatter<Viewport>
 	{
-		public bool IsP2PMessageAvailable(out uint messageSize)
+		public void Serialize(ref MessagePackWriter writer, Viewport value, MessagePackSerializerOptions options)
 		{
-			throw new NotImplementedException();
+			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
+			formatter.Serialize(ref writer, new Rectangle(value.X, value.Y, value.Width, value.Height), options);
 		}
 
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
+		public Viewport Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
 		{
-			throw new NotImplementedException();
-		}
-
-		public bool SendP2PMessage(Guid remoteUserId, byte[] data, uint length, SendType sendType)
-		{
-			throw new NotImplementedException();
+			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
+			return reader.TryReadNil()
+				? new Viewport(Rectangle.Empty)
+				: new Viewport(formatter.Deserialize(ref reader, options));
 		}
 	}
 }

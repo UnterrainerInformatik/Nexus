@@ -27,30 +27,30 @@
 
 using System;
 using NexusClient.Experimental.Mappings;
-using NexusClient.Experimental.NUnitTests.Objects;
 
 namespace NexusClient.Experimental.NUnitTests.Mappings
 {
-	public class TimerMapping<TParent> : Mapping<Timer, TParent>
+	public class TimerMapping<TParent> : Mapping<Objects.Timer, TParent>
 	{
-		public TimerMapping(Func<TParent, Timer> load, Func<Timer, TParent, TParent> save) : base(load, save)
+		public TimerMapping(Func<TParent, Objects.Timer> load, Func<Objects.Timer, TParent, TParent> save) : base(load,
+			save)
 		{
-			Add(new FloatMapping<Timer>(o => o.Min, (v, o) =>
+			Add(new FloatMapping<Objects.Timer>(o => o.Min, (v, o) =>
 			{
 				o.Min = v;
 				return o;
 			}));
-			Add(new FloatMapping<Timer>(o => o.Max, (v, o) =>
+			Add(new FloatMapping<Objects.Timer>(o => o.Max, (v, o) =>
 			{
 				o.Max = v;
 				return o;
 			}));
-			Add(new FloatMapping<Timer>(t => t.Value, (v, o) =>
+			Add(new FloatMapping<Objects.Timer>(t => t.Value, (v, o) =>
 			{
 				o.Value = v;
 				return o;
 			}));
-			Add(new BoolMapping<Timer>(o => o.Active, (v, o) =>
+			Add(new BoolMapping<Objects.Timer>(o => o.Active, (v, o) =>
 			{
 				o.Active = v;
 				return o;
