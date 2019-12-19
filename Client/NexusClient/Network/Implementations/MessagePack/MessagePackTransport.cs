@@ -30,10 +30,10 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Implementations.MessagePack
 {
-	class MessagePackTransport : ITransport<IMessagePackSendObject, IMessagePackReceiveObject>
+	class MessagePackTransport : ITransport<MessagePackDto>
 	{
-		public IMessageSer<IMessagePackSendObject> Serializer { get; }
-		public IMessageDes<IMessagePackReceiveObject> Deserializer { get; }
+		public IMessageSer<MessagePackDto> Serializer { get; }
+		public IMessageDes<MessagePackDto> Deserializer { get; }
 
 		public MessagePackTransport()
 		{
@@ -41,12 +41,12 @@ namespace NexusClient.Network.Implementations.MessagePack
 			Deserializer = new MessagePackDes();
 		}
 
-		public IMessagePackReceiveObject ReadMessage(byte[] buffer, uint messageSize)
+		public MessagePackDto ReadMessage(byte[] buffer, uint messageSize)
 		{
 			return Deserializer.Deserialize(buffer);
 		}
 
-		public bool SendMessage(IMessagePackSendObject message, SendType sendType)
+		public bool SendMessage(MessagePackDto message, SendType sendType)
 		{
 			var buffer = new byte[2000];
 			Stream stream = new MemoryStream(buffer);

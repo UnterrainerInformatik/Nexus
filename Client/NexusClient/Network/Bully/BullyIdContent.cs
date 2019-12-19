@@ -31,7 +31,7 @@ using NexusClient.Network.Implementations.MessagePack;
 namespace NexusClient.Network.Bully
 {
 	[MessagePackObject]
-	public struct BullyMessage : IMessagePackSendObject, IMessagePackReceiveObject
+	public struct BullyIdContent : MessagePackDto
 	{
 		[Key(0)]
 		public string Id { get; set; }

@@ -25,51 +25,58 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using System;
+using System.IO;
+using NexusClient.Network.Implementations.MessagePack;
+using NUnit.Framework;
 
-namespace NexusClient.Network
+namespace NexusClient.Network.NUnitTests
 {
-	public abstract class MessageHandler
+	public enum TestType
 	{
-		public bool IsActive { get; set; }
+		ELECTION_CALL,
+		ELECTION_CALL_ANSWER
+	}
 
-		protected delegate void HandleMessageDelegate(LowLevelMessage message);
+	public struct TestContent : MessagePackDto
+	{
+		public string TestField { get; set; }
+	}
 
-		private readonly Dictionary<string, HandleMessageDelegate> mapping =
-			new Dictionary<string, HandleMessageDelegate>();
-
-		protected MessageHandler(bool isActive = true)
+	public class TestHandlerGroup : HandlerGroup
+	{
+		public TestHandlerGroup()
 		{
-			IsActive = isActive;
+			AddHandler<TestContent>(TestType.ELECTION_CALL, ElectionCallReceived);
+			AddHandler<TestContent>(TestType.ELECTION_CALL_ANSWER, ElectionCallAnswerReceived);
 		}
 
-		protected void AddMapping(string messageType, HandleMessageDelegate handler)
+		private void ElectionCallReceived(Message<TestContent> message)
 		{
-			mapping.Add(messageType, handler);
+			Console.Out.WriteLine($"Election-call message handled. TestField: [{message.Content.TestField}]");
 		}
 
-		/// <summary>
-		///     Handles the given message by searching the dictionary for the key of the message and then calling the delegate.
-		///     Returns true, if it found a message and called the delegate, false otherwise.
-		///     Also sets the IsHandled property of the message to true if it has called a delegate.
-		/// </summary>
-		/// <param name="message">The given message</param>
-		/// <returns>True or false.</returns>
-		public bool Handle(LowLevelMessage message)
+		private void ElectionCallAnswerReceived(Message<TestContent> message)
 		{
-			if (!IsActive) return false;
-
-			mapping.TryGetValue(message.MessageType, out var func);
-			if (func == null) return false;
-
-			func(message);
-			message.Handled = true;
-			return true;
+			Console.Out.WriteLine($"Election-call-answer message handled. TestField: [{message.Content.TestField}]");
 		}
+	}
 
-		public virtual void Update(GameTime gt)
+	[TestFixture()]
+	public class HandlerGroupTests
+	{
+		[Test]
+		public void AddAndGetHandler()
 		{
+			var content = new TestContent();
+			var msg = new Message<TestContent>();
+			msg.Content = content;
+			msg.SenderId = "1";
+			msg.Type = TestType.ELECTION_CALL;
+
+			var hg = new TestHandlerGroup();
+
+			hg.Handle("ELECTION_CALL", msg);
 		}
 	}
 }

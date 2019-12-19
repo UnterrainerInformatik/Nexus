@@ -27,16 +27,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace NexusClient.Network
 {
+	internal struct HandlerStoreItem
+	{
+		public Delegate Del { get; set; }
+		public Type Type { get; set; }
+		public Enum MessageType { get; set; }
+	}
+
 	public abstract class HandlerGroup
 	{
-		protected  object LockObject = new object();
-		protected delegate void HandleMessageDelegate(MessageApi messageApi);
-		protected readonly Dictionary<Enum, HandleMessageDelegate> MessageHandlers =
-			new Dictionary<Enum, HandleMessageDelegate>();
+		protected object LockObject = new object();
+
+		public delegate void HandleMessageDelegate<T>(Message<T> message);
+
+		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
 		protected HandlerGroup(bool active = true)
 		{
@@ -45,22 +54,31 @@ namespace NexusClient.Network
 
 		public bool Active { get; set; }
 
-		/// <summary>
-		///     Handles the given message by searching the dictionary for the key of the message and then calling the delegate.
-		///     Returns true, if it found a message and called the delegate, false otherwise.
-		///     Also sets the IsHandled property of the message to true if it has called a delegate.
-		/// </summary>
-		/// <param name="messageApi">The given message</param>
-		/// <returns>True or false.</returns>
-		public bool Handle(MessageApi messageApi)
+		public void AddHandler<T>(Enum key, HandleMessageDelegate<T> handler)
+		{
+			handlerStore.Add(key.ToString(), convertDelegate(key, handler));
+		}
+
+		private HandlerStoreItem convertDelegate<T>(Enum messageType, HandleMessageDelegate<T> handler)
+		{
+			var s = new HandlerStoreItem();
+			s.Del = Delegate.CreateDelegate(typeof(HandleMessageDelegate<T>), handler.Target, handler.Method);
+			s.Type = handler.GetType();
+			s.MessageType = messageType;
+			return s;
+		}
+
+		public bool Handle<T>(string messageType, T message)
 		{
 			if (!Active) return false;
 
-			MessageHandlers.TryGetValue(messageApi.Type, out var func);
-			if (func == null) return false;
+			if (!handlerStore.ContainsKey(messageType)) return false;
 
-			func(messageApi);
-			messageApi.Handled = true;
+			var h = handlerStore[messageType];
+
+			var handler = Delegate.CreateDelegate(h.Type, h.Del.Target, h.Del.Method);
+			handler.DynamicInvoke(message);
+
 			return true;
 		}
 

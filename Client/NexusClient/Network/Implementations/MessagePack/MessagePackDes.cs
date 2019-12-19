@@ -29,11 +29,11 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Implementations.MessagePack
 {
-	class MessagePackDes : IMessageDes<IMessagePackReceiveObject>
+	class MessagePackDes : IMessageDes<MessagePackDto>
 	{
-		public IMessagePackReceiveObject Deserialize(byte[] message)
+		public MessagePackDto Deserialize(byte[] message)
 		{
-			return global::MessagePack.MessagePackSerializer.Deserialize<IMessagePackReceiveObject>(message);
+			return global::MessagePack.MessagePackSerializer.Deserialize<MessagePackDto>(message);
 		}
 	}
 }

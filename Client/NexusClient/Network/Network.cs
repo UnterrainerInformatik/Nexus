@@ -32,28 +32,32 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network
 {
-	public class Network<TConv, TSer, TDes, TS, TR>
-		where TSer : IMessageSer<TS>
-		where TDes : IMessageDes<TR>
-		where TConv : ITransport<TS, TR>
+	public partial class Network<TConv, TSer, TDes, T>
+		where TSer : IMessageSer<T>
+		where TDes : IMessageDes<T>
+		where TConv : ITransport<T>
 	{
 		public string UserId { get; set; }
 
-		internal TargetApi<TConv, TSer, TDes, TS, TR> Message { get; }
+		internal object LockObject = new object();
+		internal TargetApi<TConv, TSer, TDes, T> Message { get; }
 		internal TConv Converter { get; set; }
 		internal readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
+		internal INetworking Networking { get; set; }
 
-		public Network(TConv converter)
+		public Network(INetworking networking, TConv converter)
 		{
+			Networking = networking;
 			Converter = converter;
-			Message = new TargetApi<TConv, TSer, TDes, TS, TR>(this);
+			Message = new TargetApi<TConv, TSer, TDes, T>(this);
+			
+			writeStream = new MemoryStream(writeBuffer);
+			writer = new BinaryWriter(writeStream);
+			readStream = new MemoryStream(readBuffer, 0, READ_BUFFER_SIZE);
+			reader = new BinaryReader(readStream);
 		}
 
-		public void Update()
-		{
-		}
-
-		public Network<TConv, TSer, TDes, TS, TR> AddParticipants(params string[] userId)
+		public Network<TConv, TSer, TDes, T> AddParticipants(params string[] userId)
 		{
 			foreach (var id in userId)
 			{
@@ -63,7 +67,7 @@ namespace NexusClient.Network
 			return this;
 		}
 
-		public Network<TConv, TSer, TDes, TS, TR> RemoveParticipants(params string[] userId)
+		public Network<TConv, TSer, TDes, T> RemoveParticipants(params string[] userId)
 		{
 			foreach (var id in userId)
 			{
@@ -73,9 +77,17 @@ namespace NexusClient.Network
 			return this;
 		}
 
-		public void Send(MessageApi<TConv, TSer, TDes, TS, TR> m)
+		public void Send(MessageApi<TConv, TSer, TDes, T> m)
 		{
-			Converter.SendMessage(m.Content, m.Type, Converter);
+			Converter.SendMessage(m.Content, m.TransportSendType);
 		}
+
+		private readonly Dictionary<object, HandlerGroup> handlerGroups =
+			new Dictionary<object, HandlerGroup>();
+
+		private readonly Dictionary<object, HandlerGroup> addList = new Dictionary<object, HandlerGroup>();
+		private readonly Dictionary<object, HandlerGroup> addAfterRemovingList =
+			new Dictionary<object, HandlerGroup>();
+		private readonly List<object> removeList = new List<object>();
 	}
 }

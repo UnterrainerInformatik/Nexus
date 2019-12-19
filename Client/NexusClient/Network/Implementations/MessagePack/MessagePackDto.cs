@@ -27,7 +27,7 @@
 
 namespace NexusClient.Network.Implementations.MessagePack
 {
-	public interface IMessagePackReceiveObject
+	public interface MessagePackDto
 	{
 	}
 }

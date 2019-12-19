@@ -25,48 +25,42 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Apis
 {
-	public struct MessageApi<TConv, TSer, TDes, TS, TR>
-		where TSer : IMessageSer<TS>
-		where TDes : IMessageDes<TR>
-		where TConv : ITransport<TS, TR>
+	public struct MessageApi<TConv, TSer, TDes, T>
+		where TSer : IMessageSer<T>
+		where TDes : IMessageDes<T>
+		where TConv : ITransport<T>
 	{
 		internal string Sender { get; set; }
 		internal string[] Recipients { get; set; }
-		internal SendType Type { get; set; }
-		internal TS Content { get; set; }
+		internal SendType TransportSendType { get; set; }
+		internal Enum MessageType { get; set; }
+		internal T Content { get; set; }
 
-		private TargetApi<TConv, TSer, TDes, TS, TR> TargetApi { get; }
+		private TargetApi<TConv, TSer, TDes, T> TargetApi { get; }
 
-		private MessageApi(TargetApi<TConv, TSer, TDes, TS, TR> targetApi, TS content, SendType type)
+		public static MessageApi<TConv, TSer, TDes, T> Create()
 		{
-			Sender = null;
-			Recipients = null;
-			TargetApi = targetApi;
-			Content = content;
-			Type = type;
-		}
-
-		public static MessageApi<TConv, TSer, TDes, TS, TR> Create()
-		{
-			return new MessageApi<TConv, TSer, TDes, TS, TR>
+			return new MessageApi<TConv, TSer, TDes, T>
 			{
-				Content = default(TS),
-				Type = Network.SendType.RELIABLE
+				Content = default(T),
+				TransportSendType = Network.SendType.RELIABLE
 			};
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> SendType(SendType type)
+		public MessageApi<TConv, TSer, TDes, T> WithSendType(SendType type)
 		{
-			Type = type;
+			TransportSendType = type;
 			return this;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> WithContent(TS data)
+		public MessageApi<TConv, TSer, TDes, T> WithContent(Enum messageType, T data)
 		{
+			MessageType = messageType;
 			Content = data;
 			return this;
 		}

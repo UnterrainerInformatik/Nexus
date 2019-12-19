@@ -38,12 +38,12 @@ namespace NexusClient.Nexus
 			throw new NotImplementedException();
 		}
 
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId)
+		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool SendP2PMessage(string remoteUserId, byte[] data, uint length, SendType sendType)
+		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
 		{
 			throw new NotImplementedException();
 		}

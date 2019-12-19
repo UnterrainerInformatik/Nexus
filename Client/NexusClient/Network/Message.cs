@@ -25,9 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Network.Implementations.MessagePack
+using System;
+
+namespace NexusClient.Network
 {
-	public interface IMessagePackSendObject
+	public struct Message<T>
 	{
+		public string SenderId { get; set; }
+		public Enum Type { get; set; }
+		public T Content { get; set; }
+		public bool Handled { get; set; }
 	}
 }

@@ -33,8 +33,8 @@ namespace NexusClient.Network.Interfaces
 	{
 		bool IsP2PMessageAvailable(out uint messageSize);
 
-		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out Guid remoteUserId);
+		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId);
 
-		bool SendP2PMessage(string remoteUserId, byte[] data, uint length, SendType sendType);
+		bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType);
 	}
 }

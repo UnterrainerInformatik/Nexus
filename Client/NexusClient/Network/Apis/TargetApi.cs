@@ -30,42 +30,42 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Apis
 {
-	internal class TargetApi<TConv, TSer, TDes, TS, TR>
-		where TSer : IMessageSer<TS>
-		where TDes : IMessageDes<TR>
-		where TConv : ITransport<TS, TR>
+	internal class TargetApi<TConv, TSer, TDes, T>
+		where TSer : IMessageSer<T>
+		where TDes : IMessageDes<T>
+		where TConv : ITransport<T>
 	{
-		private readonly Network<TConv, TSer, TDes, TS, TR> network;
+		private readonly Network<TConv, TSer, TDes, T> network;
 
-		internal TargetApi(Network<TConv, TSer, TDes, TS, TR> network)
+		internal TargetApi(Network<TConv, TSer, TDes, T> network)
 		{
 			this.network = network;
 		}
 
-		internal void Send(MessageApi<TConv, TSer, TDes, TS, TR> messageApiResult)
+		internal void Send(MessageApi<TConv, TSer, TDes, T> messageApiResult)
 		{
 			network.Send(messageApiResult);
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> To(params string[] userId)
+		public MessageApi<TConv, TSer, TDes, T> To(params string[] userId)
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = userId;
 			return m;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> ToAll()
+		public MessageApi<TConv, TSer, TDes, T> ToAll()
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = network.Participants.Keys.ToArray();
 			return m;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> ToAllExcept(params string[] userId)
+		public MessageApi<TConv, TSer, TDes, T> ToAllExcept(params string[] userId)
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = new string[] { };
 			var l = network.Participants.Keys.Where(e => !userId.Contains(e));
@@ -73,9 +73,9 @@ namespace NexusClient.Network.Apis
 			return m;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> ToOthers()
+		public MessageApi<TConv, TSer, TDes, T> ToOthers()
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = new string[] { };
 			var l = network.Participants.Keys.Where(e => !e.Equals(network.UserId));
@@ -83,9 +83,9 @@ namespace NexusClient.Network.Apis
 			return m;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> ToOthersExcept(params string[] userId)
+		public MessageApi<TConv, TSer, TDes, T> ToOthersExcept(params string[] userId)
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = new string[] { };
 			var l = network.Participants.Keys.Where(e => !userId.Contains(e) && !e.Equals(network.UserId));
@@ -93,17 +93,17 @@ namespace NexusClient.Network.Apis
 			return m;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> ToSelf()
+		public MessageApi<TConv, TSer, TDes, T> ToSelf()
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = new[] {network.UserId};
 			return m;
 		}
 
-		public MessageApi<TConv, TSer, TDes, TS, TR> To(string userId)
+		public MessageApi<TConv, TSer, TDes, T> To(string userId)
 		{
-			var m = MessageApi<TConv, TSer, TDes, TS, TR>.Create();
+			var m = MessageApi<TConv, TSer, TDes, T>.Create();
 			m.Sender = network.UserId;
 			m.Recipients = new[] {userId};
 			return m;

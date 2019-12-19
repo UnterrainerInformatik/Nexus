@@ -51,17 +51,7 @@ namespace NexusClient.Network.Bully
 		[Test]
 		public void Test()
 		{
-			var m = Fsm<State, Trigger>.Builder(State.NO)
-				.State(State.OPENED)
-				.TransitionTo(State.OPENED).On(Trigger.OPEN)
-				.TransitionTo(State.CLOSED).On(Trigger.CLOSE)
-				.State(State.CLOSED).ClearsStack()
-				.TransitionTo(State.CLOSED).On(Trigger.CLOSE)
-				.TransitionTo(State.OPENED).On(Trigger.OPEN)
-				.After(TimeSpan.FromSeconds(1)).TransitionTo()
-				.Build();
-
-			m.Update(TimeSpan.FromSeconds(1));
+			
 		}
 
 		private void SetupLogging(string[] args)

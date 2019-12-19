@@ -27,14 +27,14 @@
 
 namespace NexusClient.Network.Interfaces
 {
-	public interface ITransport<TS, TR>
+	public interface ITransport<T>
 	{
-		IMessageSer<TS> Serializer { get; }
+		IMessageSer<T> Serializer { get; }
 
-		IMessageDes<TR> Deserializer { get; }
+		IMessageDes<T> Deserializer { get; }
 
-		TR ReadMessage(byte[] buffer, uint messageSize);
+		T ReadMessage(byte[] buffer, uint messageSize);
 
-		bool SendMessage(TS message, SendType sendType);
+		bool SendMessage(T message, SendType sendType);
 	}
 }

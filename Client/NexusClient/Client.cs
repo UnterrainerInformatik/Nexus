@@ -92,7 +92,7 @@ namespace NexusClient
 		///     Don't ever call writer.close() since we re-use the underlying stream and the writer.
 		///     You don't have to call writer.flush() before you send your message either. That is handled in Send() for you.
 		/// </summary>
-		public BinaryWriter Create(ushort messageType)
+		public BinaryWriter Create(string messageType)
 		{
 			// Reset the buffer of the stream.
 			writeStream.Position = 0;
@@ -102,20 +102,7 @@ namespace NexusClient
 
 		public BinaryWriter Create(Enum messageType)
 		{
-			var t = messageType.GetType();
-			if (!t.IsDefined(typeof(FlagsAttribute), false) || t.GetEnumUnderlyingType() != typeof(ushort))
-			{
-				throw new ArgumentException(
-					"The parameter 'messageType' has to be a Flag-Enumeration of underlying-messageType ushort.");
-			}
-
-			var o = Convert.ChangeType(messageType, TypeCode.UInt16);
-			if (o == null)
-			{
-				throw new ArgumentException("The parameter 'messageType' is not convertible to ushort (UInt16).");
-			}
-
-			return Create((ushort) o);
+			return Create(messageType.ToString());
 		}
 
 		/// <summary>
@@ -125,13 +112,13 @@ namespace NexusClient
 		/// </summary>
 		/// <param name="messageType"></param>
 		/// <returns></returns>
-		private BinaryReader Read(out ushort messageType)
+		private BinaryReader Read(out string messageType)
 		{
 			// Reset the buffer on the stream.
 			readStream.Position = 0;
 			// We don't have to copy our message-buffer to our read-buffer since they are the same thing.
 
-			messageType = reader.ReadUInt16();
+			messageType = reader.ReadString();
 			return reader;
 		}
 
@@ -149,7 +136,7 @@ namespace NexusClient
 			if (!Networking.ReadP2PMessage(buffer, messageSize, out var _, out var remoteSteamId)) return null;
 
 			var result = new LowLevelMessage();
-			result.UserId = remoteSteamId;
+			result.UserId = remoteSteamId.ToString();
 			result.MessageSize = messageSize;
 			result.Data = buffer;
 			result.Reader = Read(out var t);
@@ -194,7 +181,7 @@ namespace NexusClient
 		{
 			if (!ConnectedToServer) return false;
 
-			var result = Networking.SendP2PMessage(remoteSteamId, data, (uint) length, type);
+			var result = Networking.SendP2PMessage(remoteSteamId.ToString(), data, (uint) length, type);
 
 			lock (errorsLockObject)
 			{
@@ -220,12 +207,12 @@ namespace NexusClient
 
 			lock (lockObject)
 			{
-				foreach (var handler in registeredHandlers.Values)
+				foreach (var handler in handlerGroups.Values)
 				{
 					handler.Update(gt);
 				}
 
-				ConsolidateHandlers();
+				ConsolidateHandlerGroups();
 				HandleMessages();
 			}
 		}
@@ -237,17 +224,12 @@ namespace NexusClient
 			{
 				lock (lockObject)
 				{
-					foreach (var handler in registeredHandlers.Values)
+					foreach (var group in handlerGroups.Values)
 					{
-						if (m.Value.Handled)
-						{
-							break;
-						}
-
-						handler.Handle(m.Value);
+						
 					}
 
-					ConsolidateHandlers();
+					ConsolidateHandlerGroups();
 					m = ReadNext();
 				}
 			}
