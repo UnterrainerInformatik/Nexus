@@ -30,10 +30,10 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Apis
 {
-	public struct MessageApi<TConv, TSer, TDes, T>
-		where TSer : IMessageSer<T>
+	public struct MessageApi<TTrans, TSer, TDes, T> where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
-		where TConv : ITransport<T>
+		where TTrans : ITransport<T>
+		where T : IMessageDto
 	{
 		internal string Sender { get; set; }
 		internal string[] Recipients { get; set; }
@@ -41,24 +41,20 @@ namespace NexusClient.Network.Apis
 		internal Enum MessageType { get; set; }
 		internal T Content { get; set; }
 
-		private TargetApi<TConv, TSer, TDes, T> TargetApi { get; }
+		private TargetApi<TTrans, TSer, TDes, T> TargetApi { get; set; }
 
-		public static MessageApi<TConv, TSer, TDes, T> Create()
+		public static MessageApi<TTrans, TSer, TDes, T> Create(TargetApi<TTrans, TSer, TDes, T> targetApi)
 		{
-			return new MessageApi<TConv, TSer, TDes, T>
-			{
-				Content = default(T),
-				TransportSendType = Network.SendType.RELIABLE
-			};
+			return new MessageApi<TTrans, TSer, TDes, T> {TargetApi = targetApi, Content = default(T), TransportSendType = SendType.RELIABLE};
 		}
 
-		public MessageApi<TConv, TSer, TDes, T> WithSendType(SendType type)
+		public MessageApi<TTrans, TSer, TDes, T> WithSendType(SendType type)
 		{
 			TransportSendType = type;
 			return this;
 		}
 
-		public MessageApi<TConv, TSer, TDes, T> WithContent(Enum messageType, T data)
+		public MessageApi<TTrans, TSer, TDes, T> WithContent(Enum messageType, T data)
 		{
 			MessageType = messageType;
 			Content = data;

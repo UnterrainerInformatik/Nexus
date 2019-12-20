@@ -27,8 +27,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
+using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network
 {
@@ -39,13 +39,18 @@ namespace NexusClient.Network
 		public Enum MessageType { get; set; }
 	}
 
-	public abstract class HandlerGroup
+	public abstract class HandlerGroup<TTrans, TSer, TDes, T> where TTrans : ITransport<T>
+		where TSer : IMessageSer<T>
+		where TDes : IMessageDes<T>
+		where T : IMessageDto
 	{
-		protected object LockObject = new object();
+		protected readonly object LockObject = new object();
 
 		public delegate void HandleMessageDelegate<T>(Message<T> message);
 
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
+
+		public Network<TTrans, TSer, TDes, T> Network { get; internal set; }
 
 		protected HandlerGroup(bool active = true)
 		{

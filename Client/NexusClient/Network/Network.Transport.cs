@@ -1,24 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// ***************************************************************************
+// This is free and unencumbered software released into the public domain.
+// 
+// Anyone is free to copy, modify, publish, use, compile, sell, or
+// distribute this software, either in source code form or as a compiled
+// binary, for any purpose, commercial or non-commercial, and by any
+// means.
+// 
+// In jurisdictions that recognize copyright laws, the author or authors
+// of this software dedicate any and all copyright interest in the
+// software to the public domain. We make this dedication for the benefit
+// of the public at large and to the detriment of our heirs and
+// successors. We intend this dedication to be an overt act of
+// relinquishment in perpetuity of all present and future rights to this
+// software under copyright law.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+// 
+// For more information, please refer to <http://unlicense.org>
+// ***************************************************************************
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 namespace NexusClient.Network
 {
-	public partial class Network<TConv, TSer, TDes, T>
+	public partial class Network<TTrans, TSer, TDes, T>
 	{
 		private const int WRITE_BUFFER_SIZE = 1024 * 1024 * 8;
 		private readonly byte[] writeBuffer = new byte[WRITE_BUFFER_SIZE];
 		private readonly MemoryStream writeStream;
-		private BinaryWriter writer;
+		private readonly BinaryWriter writer;
 
 		private const int READ_BUFFER_SIZE = 1024 * 1024 * 8;
 		private readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
-		private MemoryStream readStream;
-		private BinaryReader reader;
+		private readonly MemoryStream readStream;
+		private readonly BinaryReader reader;
 
 		public BinaryWriter GetWriterFor(Enum messageType)
 		{
@@ -38,14 +61,16 @@ namespace NexusClient.Network
 		{
 			if (!Networking.IsP2PMessageAvailable(out var messageSize)) return null;
 
-			if (!Networking.ReadP2PMessage(readBuffer, messageSize, out var _, out var remoteSteamId)) return null;
+			if (!Networking.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
 
-			var result = new LowLevelMessage();
-			result.UserId = remoteSteamId.ToString();
-			result.MessageSize = messageSize;
-			result.Data = readBuffer;
-			result.Reader = GetReaderFor(out var t);
-			result.MessageType = t;
+			var result = new LowLevelMessage
+			{
+				UserId = remoteSteamId.ToString(),
+				MessageSize = messageSize,
+				Data = readBuffer,
+				Reader = GetReaderFor(out var t),
+				MessageType = t
+			};
 			return result;
 		}
 
@@ -70,7 +95,7 @@ namespace NexusClient.Network
 			{
 				lock (LockObject)
 				{
-					T message = Converter.ReadMessage(m.Value.Data, m.Value.MessageSize);
+					var message = Transport.ReadMessage(m.Value.Data, m.Value.MessageSize);
 					foreach (var group in handlerGroups.Values)
 					{
 						if (group.Handle(m.Value.MessageType, message))

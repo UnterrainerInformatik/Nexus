@@ -25,9 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using NexusClient.Network.Interfaces;
+
 namespace NexusClient.Network.Implementations.MessagePack
 {
-	public interface MessagePackDto
+	public interface MessagePackDto : IMessageDto
 	{
 	}
 }

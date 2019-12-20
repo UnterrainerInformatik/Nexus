@@ -27,7 +27,7 @@
 
 namespace NexusClient.Network.Interfaces
 {
-	public interface IMessageDes<out T>
+	public interface IMessageDes<out T> where T : IMessageDto
 	{
 		T Deserialize(byte[] message);
 	}

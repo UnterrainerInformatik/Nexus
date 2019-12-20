@@ -47,5 +47,10 @@ namespace NexusClient.Steam
 		{
 			throw new NotImplementedException();
 		}
+
+		public string Login()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

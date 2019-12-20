@@ -30,7 +30,7 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Implementations.MessagePack
 {
-	class MessagePackSer : IMessageSer<MessagePackDto>
+	public class MessagePackSer : IMessageSer<MessagePackDto>
 	{
 		public void Serialize(MessagePackDto message, Stream stream)
 		{

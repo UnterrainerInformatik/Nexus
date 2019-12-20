@@ -32,32 +32,48 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network
 {
-	public partial class Network<TConv, TSer, TDes, T>
+	public partial class Network<TTrans, TSer, TDes, T> where TTrans : ITransport<T>
 		where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
-		where TConv : ITransport<T>
+		where T : IMessageDto
 	{
 		public string UserId { get; set; }
 
 		internal object LockObject = new object();
-		internal TargetApi<TConv, TSer, TDes, T> Message { get; }
-		internal TConv Converter { get; set; }
+		internal TargetApi<TTrans, TSer, TDes, T> Message { get; }
+		internal TTrans Transport { get; set; }
 		internal readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
 		internal INetworking Networking { get; set; }
 
-		public Network(INetworking networking, TConv converter)
+		private readonly Dictionary<object, HandlerGroup<TTrans, TSer, TDes, T>> handlerGroups =
+			new Dictionary<object, HandlerGroup<TTrans, TSer, TDes, T>>();
+
+		private readonly Dictionary<object, HandlerGroup<TTrans, TSer, TDes, T>> addList =
+			new Dictionary<object, HandlerGroup<TTrans, TSer, TDes, T>>();
+
+		private readonly Dictionary<object, HandlerGroup<TTrans, TSer, TDes, T>> addAfterRemovingList =
+			new Dictionary<object, HandlerGroup<TTrans, TSer, TDes, T>>();
+
+		private readonly List<object> removeList = new List<object>();
+
+		public Network(INetworking networking, TTrans transport)
 		{
 			Networking = networking;
-			Converter = converter;
-			Message = new TargetApi<TConv, TSer, TDes, T>(this);
-			
+			Transport = transport;
+			Message = new TargetApi<TTrans, TSer, TDes, T>(this);
+
 			writeStream = new MemoryStream(writeBuffer);
 			writer = new BinaryWriter(writeStream);
 			readStream = new MemoryStream(readBuffer, 0, READ_BUFFER_SIZE);
 			reader = new BinaryReader(readStream);
 		}
 
-		public Network<TConv, TSer, TDes, T> AddParticipants(params string[] userId)
+		public void Initialize()
+		{
+			UserId = Networking.Login();
+		}
+
+		public Network<TTrans, TSer, TDes, T> AddParticipants(params string[] userId)
 		{
 			foreach (var id in userId)
 			{
@@ -67,7 +83,7 @@ namespace NexusClient.Network
 			return this;
 		}
 
-		public Network<TConv, TSer, TDes, T> RemoveParticipants(params string[] userId)
+		public Network<TTrans, TSer, TDes, T> RemoveParticipants(params string[] userId)
 		{
 			foreach (var id in userId)
 			{
@@ -77,17 +93,9 @@ namespace NexusClient.Network
 			return this;
 		}
 
-		public void Send(MessageApi<TConv, TSer, TDes, T> m)
+		public void Send(MessageApi<TTrans, TSer, TDes, T> m)
 		{
-			Converter.SendMessage(m.Content, m.TransportSendType);
+			Transport.SendMessage(m.Content, m.TransportSendType);
 		}
-
-		private readonly Dictionary<object, HandlerGroup> handlerGroups =
-			new Dictionary<object, HandlerGroup>();
-
-		private readonly Dictionary<object, HandlerGroup> addList = new Dictionary<object, HandlerGroup>();
-		private readonly Dictionary<object, HandlerGroup> addAfterRemovingList =
-			new Dictionary<object, HandlerGroup>();
-		private readonly List<object> removeList = new List<object>();
 	}
 }

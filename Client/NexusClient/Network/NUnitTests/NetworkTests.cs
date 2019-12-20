@@ -25,7 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Moq;
+using NexusClient.Network.Implementations.MessagePack;
 using NexusClient.Network.NUnitTests.TestInfrastructure;
 using NexusClient.Testing;
 using NUnit.Framework;
@@ -33,40 +33,41 @@ using NUnit.Framework;
 namespace NexusClient.Network.NUnitTests
 {
 	[TestFixture()]
-	public class HandlerGroupTests
+	public class NetworkTests
 	{
+		private Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n1;
+		private Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n2;
+
 		private TestHandlerGroup hg;
 
 		[SetUp]
 		public void Setup()
 		{
-			Mock<TestServer> server = new Mock<TestServer>();
-			hg = new TestHandlerGroup(server.Object);
+			TestServer Server = new TestServer();
+			TestNetworking networking = new TestNetworking(Server);
+			MessagePackTransport transport = new MessagePackTransport();
+			n1 = new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(networking,
+				transport);
+			n1.Initialize();
+			n2 = new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(networking,
+				transport);
+			n2.Initialize();
+
+			hg = new TestHandlerGroup(Server);
+			n1.RegisterOrOverwriteHandlerGroup(hg);
+			n1.AddParticipants(n2.UserId);
+			n2.AddParticipants(n1.UserId);
 		}
 
 		[Test]
-		public void AddAndGetHandlerDoesNotThrowException()
+		public void AddAndGetHandler()
 		{
-			var content = new TestContent();
-
-			hg.Handle("ELECTION_CALL",
-				new Message<TestContent> { Content = content, SenderId = "1", Type = TestType.ELECTION_CALL });
-		}
-
-		[Test]
-		public void RightHandlersAreGettingCalled()
-		{
-			var content = new TestContent();
-
-			hg.Handle("ELECTION_CALL",
-				new Message<TestContent> {Content = content, SenderId = "1", Type = TestType.ELECTION_CALL});
-			Assert.AreEqual(0, hg.ElectionCallAnswerCount);
-			Assert.AreEqual(1, hg.ElectionCallCount);
-
-			hg.Handle("ELECTION_CALL_ANSWER",
-				new Message<TestContent> {Content = content, SenderId = "2", Type = TestType.ELECTION_CALL_ANSWER});
-			Assert.AreEqual(1, hg.ElectionCallAnswerCount);
-			Assert.AreEqual(1, hg.ElectionCallCount);
+			n1.Message.ToAll().WithContent(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"})
+				.Send();
+			n2.Message.ToOthers().WithContent(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"})
+				.Send();
+			n1.Message.ToOthersExcept(n2.UserId).WithContent(TestType.ELECTION_CALL_ANSWER,
+				new TestContent() {TestField = "should not be received"}).Send();
 		}
 	}
 }

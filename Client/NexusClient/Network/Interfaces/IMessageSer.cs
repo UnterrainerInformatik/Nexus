@@ -29,7 +29,7 @@ using System.IO;
 
 namespace NexusClient.Network.Interfaces
 {
-	public interface IMessageSer<in T>
+	public interface IMessageSer<in T> where T : IMessageDto
 	{
 		void Serialize(T message, Stream stream);
 	}

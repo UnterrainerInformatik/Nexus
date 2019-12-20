@@ -25,33 +25,12 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
-using NexusClient.Network.Interfaces;
+using NexusClient.Network.Implementations.MessagePack;
 
-namespace NexusClient.Network.Implementations.MessagePack
+namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {
-	public class MessagePackTransport : ITransport<MessagePackDto>
+	public struct TestContent : MessagePackDto
 	{
-		public IMessageSer<MessagePackDto> Serializer { get; }
-		public IMessageDes<MessagePackDto> Deserializer { get; }
-
-		public MessagePackTransport()
-		{
-			Serializer = new MessagePackSer();
-			Deserializer = new MessagePackDes();
-		}
-
-		public MessagePackDto ReadMessage(byte[] buffer, uint messageSize)
-		{
-			return Deserializer.Deserialize(buffer);
-		}
-
-		public bool SendMessage(MessagePackDto message, SendType sendType)
-		{
-			var buffer = new byte[2000];
-			Stream stream = new MemoryStream(buffer);
-			Serializer.Serialize(message, stream);
-			return true;
-		}
+		public string TestField { get; set; }
 	}
 }

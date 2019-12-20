@@ -25,8 +25,6 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-
 namespace NexusClient.Network.Interfaces
 {
 	public interface INetworking
@@ -36,5 +34,7 @@ namespace NexusClient.Network.Interfaces
 		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId);
 
 		bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType);
+
+		string Login();
 	}
 }

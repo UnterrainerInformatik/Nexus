@@ -55,10 +55,9 @@ namespace NexusClient.Network.Bully
 		TEAM_BULLY_VICTORY_DISTRIBUTION
 	}
 
-	public class BullyHandlerGroup : HandlerGroup
+	public class BullyHandlerGroup : HandlerGroup<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
 		private TestServer Server { get; } = new TestServer();
-		private readonly Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n;
 
 		private readonly Timer.Timer electionStartedTimer = new Timer.Timer(2000f).SetIsActive(false);
 
@@ -70,8 +69,6 @@ namespace NexusClient.Network.Bully
 		/// </summary>
 		public BullyHandlerGroup(string localUserId)
 		{
-			n = new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(
-				new TestNetworking(Server), new MessagePackTransport());
 			this.localUserId = localUserId;
 			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_ELECTION_CALL, BullyElectionCallReceived);
 			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER, BullyElectionCallAnswerReceived);
@@ -110,7 +107,7 @@ namespace NexusClient.Network.Bully
 			{
 				if (string.Compare(localUserId, message.Content.Id, StringComparison.InvariantCulture) < 0)
 				{
-					n.Message.To(message.SenderId).WithContent(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER,
+					Network.Message.To(message.SenderId).WithContent(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER,
 						new BullyIdContent() {Id = localUserId}).Send();
 					StartBullyElection();
 					Log.Debug($"Bully-ElectionCall received from userId [{message.Content.Id}] - " +
@@ -178,7 +175,7 @@ namespace NexusClient.Network.Bully
 			lock (LockObject)
 			{
 				foreach (var client in GetOthersWithLowerId())
-					n.Message.To(client).WithContent(BullyMessageType.TEAM_BULLY_ELECTION_CALL,
+					Network.Message.To(client).WithContent(BullyMessageType.TEAM_BULLY_ELECTION_CALL,
 						new BullyIdContent() {Id = localUserId}).Send();
 				electionStartedTimer.SetIsActive(true);
 			}
@@ -187,7 +184,7 @@ namespace NexusClient.Network.Bully
 		private void AnnounceVictory()
 		{
 			LeaderId = localUserId;
-			n.Message.ToOthers().WithContent(BullyMessageType.TEAM_BULLY_VICTORY_DISTRIBUTION,
+			Network.Message.ToOthers().WithContent(BullyMessageType.TEAM_BULLY_VICTORY_DISTRIBUTION,
 				new BullyIdContent() {Id = localUserId}).Send();
 		}
 
@@ -195,8 +192,9 @@ namespace NexusClient.Network.Bully
 		{
 			lock (LockObject)
 			{
-				var winnerId = n.Participants.Values.SingleOrDefault(p => p == n.Participants.Values.Min(q => q)) ??
-								localUserId;
+				var winnerId =
+					Network.Participants.Values.SingleOrDefault(p => p == Network.Participants.Values.Min(q => q)) ??
+					localUserId;
 				if (string.Compare(localUserId, winnerId, StringComparison.InvariantCulture) < 0)
 					winnerId = localUserId;
 				return winnerId;
@@ -207,7 +205,7 @@ namespace NexusClient.Network.Bully
 		{
 			lock (LockObject)
 			{
-				return n.Participants.Values.Where(e =>
+				return Network.Participants.Values.Where(e =>
 					String.Compare(e, localUserId, StringComparison.InvariantCulture) < 0);
 			}
 		}

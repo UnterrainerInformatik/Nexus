@@ -40,9 +40,10 @@ namespace NexusClient.Testing
 			Server = server;
 		}
 
-		public void Login()
+		public string Login()
 		{
 			UserId = Server.Login();
+			return UserId;
 		}
 
 		public void Logout()

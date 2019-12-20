@@ -27,7 +27,7 @@
 
 namespace NexusClient.Network.Interfaces
 {
-	public interface ITransport<T>
+	public interface ITransport<T> where T : IMessageDto
 	{
 		IMessageSer<T> Serializer { get; }
 

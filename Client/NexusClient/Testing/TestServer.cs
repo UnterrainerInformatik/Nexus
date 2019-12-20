@@ -44,7 +44,7 @@ namespace NexusClient.Testing
 
 		public string Login()
 		{
-			var userId = new Guid().ToString();
+			var userId = System.Guid.NewGuid().ToString();
 			UserConnections.Add(userId, new Queue<TestMessage>());
 			return userId;
 		}

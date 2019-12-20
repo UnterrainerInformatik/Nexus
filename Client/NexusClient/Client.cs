@@ -207,12 +207,7 @@ namespace NexusClient
 
 			lock (lockObject)
 			{
-				foreach (var handler in handlerGroups.Values)
-				{
-					handler.Update(gt);
-				}
-
-				ConsolidateHandlerGroups();
+				
 				HandleMessages();
 			}
 		}
@@ -224,12 +219,7 @@ namespace NexusClient
 			{
 				lock (lockObject)
 				{
-					foreach (var group in handlerGroups.Values)
-					{
-						
-					}
-
-					ConsolidateHandlerGroups();
+					
 					m = ReadNext();
 				}
 			}

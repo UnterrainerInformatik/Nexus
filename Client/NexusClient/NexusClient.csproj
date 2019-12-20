@@ -37,6 +37,9 @@
     <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Faders, Version=1.1.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Faders.1.1.1.1\lib\portable45-net45+win8+wpa81\Faders.dll</HintPath>
     </Reference>
@@ -60,6 +63,9 @@
     </Reference>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq, Version=4.13.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.13.1\lib\net45\Moq.dll</HintPath>
     </Reference>
     <Reference Include="Nerdbank.Streams, Version=2.2.0.0, Culture=neutral, PublicKeyToken=cac503e1823ce71c, processorArchitecture=MSIL">
       <HintPath>..\packages\Nerdbank.Streams.2.2.26\lib\net46\Nerdbank.Streams.dll</HintPath>
@@ -89,6 +95,7 @@
     <Reference Include="System.Collections.Immutable, Version=1.2.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.6.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Pipelines, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Pipelines.4.5.3\lib\netstandard2.0\System.IO.Pipelines.dll</HintPath>
@@ -132,41 +139,46 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Experimental\BinarySerializable.cs" />
-    <Compile Include="Experimental\Mappings\ListMapping.cs" />
-    <Compile Include="Experimental\Mappings\BoolMapping.cs" />
-    <Compile Include="Experimental\Mappings\SByteMapping.cs" />
-    <Compile Include="Experimental\Mappings\DecimalMapping.cs" />
-    <Compile Include="Experimental\Mappings\CharMapping.cs" />
-    <Compile Include="Experimental\Mappings\ByteMapping.cs" />
-    <Compile Include="Experimental\Mappings\StringMapping.cs" />
-    <Compile Include="Experimental\Mappings\ULongMapping.cs" />
-    <Compile Include="Experimental\Mappings\UShortMapping.cs" />
-    <Compile Include="Experimental\Mappings\UIntMapping.cs" />
-    <Compile Include="Experimental\Mappings\DoubleMapping.cs" />
-    <Compile Include="Experimental\Mappings\LongMapping.cs" />
-    <Compile Include="Experimental\Mappings\ShortMapping.cs" />
-    <Compile Include="Experimental\Mappings\IntMapping.cs" />
-    <Compile Include="Experimental\Mappings\Vector2Mapping.cs" />
-    <Compile Include="Experimental\Mappings\FloatMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\TestsMessagePack.cs" />
-    <Compile Include="Experimental\NUnitTests\Objects\Level.cs" />
-    <Compile Include="Experimental\NUnitTests\Mappings\LevelMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\Mappings\TimerDtoStruct.cs" />
-    <Compile Include="Experimental\Mapping.cs" />
-    <Compile Include="Experimental\NUnitTests\Objects\Hero.cs" />
-    <Compile Include="Experimental\NUnitTests\PerformanceTests.cs" />
-    <Compile Include="Experimental\NUnitTests\Helpers.cs" />
-    <Compile Include="Experimental\NUnitTests\TestsMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\Objects\Timer.cs" />
-    <Compile Include="Experimental\NUnitTests\Mappings\HeroMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\Mappings\TimerMapping.cs" />
-    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\GameTimeFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\PointFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\ViewportFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\RectangleFormatter.cs" />
-    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\Vector2Formatter.cs" />
-    <Compile Include="Experimental\NUnitTests\MessagePackFormatters\MessagePackHelpers.cs" />
+    <Compile Include="Network\Interfaces\IMessageDto.cs" />
+    <Compile Include="Network\NUnitTests\NetworkTests.cs" />
+    <Compile Include="Network\NUnitTests\TestInfrastructure\TestContent.cs" />
+    <Compile Include="Network\NUnitTests\TestInfrastructure\TestHandlerGroup.cs" />
+    <Compile Include="Network\NUnitTests\TestInfrastructure\TestType.cs" />
+    <Compile Include="PerformanceTests\BinarySerializable.cs" />
+    <Compile Include="PerformanceTests\Mappings\ListMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\BoolMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\SByteMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\DecimalMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\CharMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\ByteMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\StringMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\ULongMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\UShortMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\UIntMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\DoubleMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\LongMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\ShortMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\IntMapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\Vector2Mapping.cs" />
+    <Compile Include="PerformanceTests\Mappings\FloatMapping.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\TestsMessagePack.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Objects\Level.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Mappings\LevelMapping.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Mappings\TimerDtoStruct.cs" />
+    <Compile Include="PerformanceTests\Mapping.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Objects\Hero.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\PerformanceTests.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Helpers.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\TestsMapping.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Objects\Timer.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Mappings\HeroMapping.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\Mappings\TimerMapping.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\MessagePackFormatters\GameTimeFormatter.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\MessagePackFormatters\PointFormatter.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\MessagePackFormatters\ViewportFormatter.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\MessagePackFormatters\RectangleFormatter.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\MessagePackFormatters\Vector2Formatter.cs" />
+    <Compile Include="PerformanceTests\NUnitTests\MessagePackFormatters\MessagePackHelpers.cs" />
     <Compile Include="Network\Interfaces\IConnection.cs" />
     <Compile Include="Network\Interfaces\ITransport.cs" />
     <Compile Include="Network\Interfaces\IMessageDes.cs" />
@@ -181,8 +193,7 @@
     <Compile Include="Network\Apis\TargetApi.cs" />
     <Compile Include="Network\Message.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="Client.Handlers.cs" />
-    <Compile Include="Network\Network.Handlers.cs" />
+    <Compile Include="Network\Network.HandlersGroups.cs" />
     <Compile Include="Network\Network.Transport.cs" />
     <Compile Include="Network\NUnitTests\HandlerGroupTests.cs" />
     <Compile Include="Nexus\NexusConnection.cs" />
@@ -213,9 +224,7 @@
     <Analyzer Include="..\packages\MessagePackAnalyzer.2.0.221-beta\analyzers\cs\MessagePackAnalyzer.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.192\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Network\Implementations\Testing\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

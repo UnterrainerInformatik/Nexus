@@ -25,33 +25,35 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
-using NexusClient.Network.Interfaces;
+using System;
+using NexusClient.Network.Implementations.MessagePack;
+using NexusClient.Testing;
 
-namespace NexusClient.Network.Implementations.MessagePack
+namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {
-	public class MessagePackTransport : ITransport<MessagePackDto>
+	public class TestHandlerGroup : HandlerGroup<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
-		public IMessageSer<MessagePackDto> Serializer { get; }
-		public IMessageDes<MessagePackDto> Deserializer { get; }
+		public TestServer Server { get; }
+		public int ElectionCallCount { get; private set; }
+		public int ElectionCallAnswerCount { get; private set; }
 
-		public MessagePackTransport()
+		public TestHandlerGroup(TestServer server)
 		{
-			Serializer = new MessagePackSer();
-			Deserializer = new MessagePackDes();
+			Server = server;
+			AddHandler<TestContent>(TestType.ELECTION_CALL, ElectionCallReceived);
+			AddHandler<TestContent>(TestType.ELECTION_CALL_ANSWER, ElectionCallAnswerReceived);
 		}
 
-		public MessagePackDto ReadMessage(byte[] buffer, uint messageSize)
+		private void ElectionCallReceived(Message<TestContent> message)
 		{
-			return Deserializer.Deserialize(buffer);
+			ElectionCallCount++;
+			Console.Out.WriteLine($"Election-call message handled. TestField: [{message.Content.TestField}]");
 		}
 
-		public bool SendMessage(MessagePackDto message, SendType sendType)
+		private void ElectionCallAnswerReceived(Message<TestContent> message)
 		{
-			var buffer = new byte[2000];
-			Stream stream = new MemoryStream(buffer);
-			Serializer.Serialize(message, stream);
-			return true;
+			ElectionCallAnswerCount++;
+			Console.Out.WriteLine($"Election-call-answer message handled. TestField: [{message.Content.TestField}]");
 		}
 	}
 }

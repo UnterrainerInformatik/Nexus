@@ -25,30 +25,19 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.Collections.Generic;
-using NexusClient.Network;
-
-namespace NexusClient
+namespace NexusClient.Network
 {
-	public partial class Client
+	public partial class Network<TTrans, TSer, TDes, T>
 	{
-		private readonly Dictionary<object, HandlerGroup> handlerGroups =
-			new Dictionary<object, HandlerGroup>();
-
-		private readonly Dictionary<object, HandlerGroup> addList = new Dictionary<object, HandlerGroup>();
-		private readonly Dictionary<object, HandlerGroup> addAfterRemovingList =
-			new Dictionary<object, HandlerGroup>();
-		private readonly List<object> removeList = new List<object>();
-		
-
 		private void ConsolidateHandlerGroups()
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				foreach (var item in addList)
 				{
 					if (!removeList.Contains(item.Key))
 					{
+						item.Value.Network = this;
 						handlerGroups.Add(item.Key, item.Value);
 					}
 					else
@@ -59,6 +48,8 @@ namespace NexusClient
 
 				foreach (var key in removeList)
 				{
+					if (handlerGroups.TryGetValue(key, out var hg))
+						hg.Network = null;
 					handlerGroups.Remove(key);
 				}
 
@@ -73,9 +64,10 @@ namespace NexusClient
 			}
 		}
 
-		public object RegisterOrOverwriteHandlerGroup(HandlerGroup handlerGroup, object key = null)
+		public object RegisterOrOverwriteHandlerGroup(HandlerGroup<TTrans, TSer, TDes, T> handlerGroup,
+			object key = null)
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				if (key == null)
 				{
@@ -94,17 +86,17 @@ namespace NexusClient
 
 		public bool UnregisterHandlerGroup(object key)
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				if (!handlerGroups.TryGetValue(key, out _)) return false;
 				removeList.Add(key);
 				return true;
 			}
 		}
-		
-		public HandlerGroup GetHandler(object key)
+
+		public HandlerGroup<TTrans, TSer, TDes, T> GetHandler(object key)
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				handlerGroups.TryGetValue(key, out var handler);
 				return handler;
@@ -113,7 +105,7 @@ namespace NexusClient
 
 		public bool ActivateHandler(object key)
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				return ModifyActive(key, true);
 			}
@@ -121,7 +113,7 @@ namespace NexusClient
 
 		public bool DeactivateHandler(object key)
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				return ModifyActive(key, false);
 			}
@@ -129,15 +121,20 @@ namespace NexusClient
 
 		public void ClearHandlers()
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
+				foreach (var hg in handlerGroups.Values)
+				{
+					hg.Network = null;
+				}
+
 				handlerGroups.Clear();
 			}
 		}
 
 		private bool ModifyActive(object key, bool isActive)
 		{
-			lock (lockObject)
+			lock (LockObject)
 			{
 				if (!handlerGroups.TryGetValue(key, out var handler)) return false;
 				handler.Active = isActive;
