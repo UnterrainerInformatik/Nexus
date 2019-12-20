@@ -30,12 +30,12 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Testing
 {
-	class TestNetworking : INetworking
+	class TestTransport : ITransport
 	{
 		public TestServer Server { get; set; }
 		public string UserId { get; set; }
 
-		public TestNetworking(TestServer server)
+		public TestTransport(TestServer server)
 		{
 			Server = server;
 		}

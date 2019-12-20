@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using NexusClient.Network.Implementations.MessagePack;
+using NexusClient.Network.Converters.MessagePack;
 using NexusClient.Testing;
 using Serilog;
 
@@ -55,7 +55,7 @@ namespace NexusClient.Network.Bully
 		TEAM_BULLY_VICTORY_DISTRIBUTION
 	}
 
-	public class BullyHandlerGroup : HandlerGroup<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>
+	public class BullyHandlerGroup : HandlerGroup<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
 		private TestServer Server { get; } = new TestServer();
 

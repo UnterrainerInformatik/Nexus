@@ -25,16 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.Network.Interfaces
+using NexusClient.Network.Interfaces;
+
+namespace NexusClient.Network.Converters.MessagePack
 {
-	public interface INetworking
+	public interface MessagePackDto : IMessageDto
 	{
-		bool IsP2PMessageAvailable(out uint messageSize);
-
-		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId);
-
-		bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType);
-
-		string Login();
 	}
 }

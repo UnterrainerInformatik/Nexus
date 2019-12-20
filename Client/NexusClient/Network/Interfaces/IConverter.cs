@@ -25,11 +25,18 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network.Interfaces;
+using System.IO;
 
-namespace NexusClient.Network.Implementations.MessagePack
+namespace NexusClient.Network.Interfaces
 {
-	public interface MessagePackDto : IMessageDto
+	public interface ITransport<T> where T : IMessageDto
 	{
+		IMessageSer<T> Serializer { get; }
+
+		IMessageDes<T> Deserializer { get; }
+
+		T ReadMessage(byte[] buffer, uint messageSize);
+
+		bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize) where TObject : T;
 	}
 }

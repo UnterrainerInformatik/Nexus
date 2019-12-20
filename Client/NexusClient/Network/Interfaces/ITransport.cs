@@ -1,4 +1,4 @@
-﻿// ***************************************************************************
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -25,18 +25,16 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
-
 namespace NexusClient.Network.Interfaces
 {
-	public interface ITransport<T> where T : IMessageDto
+	public interface ITransport
 	{
-		IMessageSer<T> Serializer { get; }
+		bool IsP2PMessageAvailable(out uint messageSize);
 
-		IMessageDes<T> Deserializer { get; }
+		bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId);
 
-		T ReadMessage(byte[] buffer, uint messageSize);
+		bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType);
 
-		bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize) where TObject : T;
+		string Login();
 	}
 }

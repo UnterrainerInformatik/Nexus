@@ -25,32 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
-using System.Runtime.InteropServices;
 using NexusClient.Network.Interfaces;
 
-namespace NexusClient.Network.Implementations.MessagePack
+namespace NexusClient.Network.Converters.MessagePack
 {
-	public class MessagePackTransport : ITransport<MessagePackDto>
+	public class MessagePackDes : IMessageDes<MessagePackDto>
 	{
-		public IMessageSer<MessagePackDto> Serializer { get; }
-		public IMessageDes<MessagePackDto> Deserializer { get; }
-
-		public MessagePackTransport()
+		public MessagePackDto Deserialize(byte[] message)
 		{
-			Serializer = new MessagePackSer();
-			Deserializer = new MessagePackDes();
-		}
-
-		public MessagePackDto ReadMessage(byte[] buffer, uint messageSize)
-		{
-			return Deserializer.Deserialize(buffer);
-		}
-
-		public bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize) where TObject : MessagePackDto
-		{
-			messageSize = Serializer.Serialize(message, writer);
-			return true;
+			return global::MessagePack.MessagePackSerializer.Deserialize<MessagePackDto>(message);
 		}
 	}
 }

@@ -31,7 +31,7 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Steam
 {
-	public class SteamNetworking : INetworking
+	public class SteamTransport : ITransport
 	{
 		public bool IsP2PMessageAvailable(out uint messageSize)
 		{

@@ -30,22 +30,22 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Apis
 {
-	public struct MessageApi<TTrans, TSer, TDes, T> where TSer : IMessageSer<T>
+	public struct MessageApi<TConv, TSer, TDes, T> where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
-		where TTrans : ITransport<T>
+		where TConv : ITransport<T>
 		where T : IMessageDto
 	{
 		internal string[] Recipients { get; set; }
 		internal SendType TransportSendType { get; set; }
 
-		private TargetApi<TTrans, TSer, TDes, T> TargetApi { get; set; }
+		private TargetApi<TConv, TSer, TDes, T> TargetApi { get; set; }
 
-		public static MessageApi<TTrans, TSer, TDes, T> Create(TargetApi<TTrans, TSer, TDes, T> targetApi)
+		public static MessageApi<TConv, TSer, TDes, T> Create(TargetApi<TConv, TSer, TDes, T> targetApi)
 		{
-			return new MessageApi<TTrans, TSer, TDes, T> {TargetApi = targetApi, TransportSendType = SendType.RELIABLE};
+			return new MessageApi<TConv, TSer, TDes, T> {TargetApi = targetApi, TransportSendType = SendType.RELIABLE};
 		}
 
-		public MessageApi<TTrans, TSer, TDes, T> WithSendType(SendType type)
+		public MessageApi<TConv, TSer, TDes, T> WithSendType(SendType type)
 		{
 			TransportSendType = type;
 			return this;

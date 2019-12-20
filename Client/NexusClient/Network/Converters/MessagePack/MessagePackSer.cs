@@ -28,7 +28,7 @@
 using System.IO;
 using NexusClient.Network.Interfaces;
 
-namespace NexusClient.Network.Implementations.MessagePack
+namespace NexusClient.Network.Converters.MessagePack
 {
 	public class MessagePackSer : IMessageSer<MessagePackDto>
 	{

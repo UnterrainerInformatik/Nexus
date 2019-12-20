@@ -27,7 +27,7 @@
 
 namespace NexusClient.Network
 {
-	public partial class Network<TTrans, TSer, TDes, T>
+	public partial class Network<TConv, TSer, TDes, T>
 	{
 		private void ConsolidateHandlerGroups()
 		{
@@ -64,7 +64,7 @@ namespace NexusClient.Network
 			}
 		}
 
-		public object RegisterOrOverwriteHandlerGroup(HandlerGroup<TTrans, TSer, TDes, T> handlerGroup,
+		public object RegisterOrOverwriteHandlerGroup(HandlerGroup<TConv, TSer, TDes, T> handlerGroup,
 			object key = null)
 		{
 			lock (LockObject)
@@ -94,7 +94,7 @@ namespace NexusClient.Network
 			}
 		}
 
-		public HandlerGroup<TTrans, TSer, TDes, T> GetHandler(object key)
+		public HandlerGroup<TConv, TSer, TDes, T> GetHandler(object key)
 		{
 			lock (LockObject)
 			{

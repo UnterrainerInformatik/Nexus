@@ -26,7 +26,7 @@
 // ***************************************************************************
 
 using MessagePack;
-using NexusClient.Network.Implementations.MessagePack;
+using NexusClient.Network.Converters.MessagePack;
 
 namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {

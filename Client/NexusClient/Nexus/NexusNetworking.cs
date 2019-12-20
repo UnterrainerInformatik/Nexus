@@ -31,7 +31,7 @@ using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Nexus
 {
-	public class NexusNetworking : INetworking
+	public class NexusTransport : ITransport
 	{
 		public bool IsP2PMessageAvailable(out uint messageSize)
 		{

@@ -26,12 +26,12 @@
 // ***************************************************************************
 
 using System;
-using NexusClient.Network.Implementations.MessagePack;
+using NexusClient.Network.Converters.MessagePack;
 using NexusClient.Testing;
 
 namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {
-	public class TestHandlerGroup : HandlerGroup<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>
+	public class TestHandlerGroup : HandlerGroup<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
 		public TestServer Server { get; }
 		public int ElectionCallCount { get; private set; }

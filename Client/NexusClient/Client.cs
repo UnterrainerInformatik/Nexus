@@ -66,7 +66,7 @@ namespace NexusClient
 		public bool ConnectedToServer { get; set; }
 
 		private IConnection Connection { get; set; } = new SteamConnection();
-		private INetworking Networking { get; set; } = new SteamNetworking();
+		private ITransport Transport { get; set; } = new SteamTransport();
 
 		public Client()
 		{
@@ -131,9 +131,9 @@ namespace NexusClient
 		{
 			if (!ConnectedToServer) return null;
 
-			if (!Networking.IsP2PMessageAvailable(out var messageSize)) return null;
+			if (!Transport.IsP2PMessageAvailable(out var messageSize)) return null;
 
-			if (!Networking.ReadP2PMessage(buffer, messageSize, out var _, out var remoteSteamId)) return null;
+			if (!Transport.ReadP2PMessage(buffer, messageSize, out var _, out var remoteSteamId)) return null;
 
 			var result = new LowLevelMessage();
 			result.UserId = remoteSteamId.ToString();
@@ -181,7 +181,7 @@ namespace NexusClient
 		{
 			if (!ConnectedToServer) return false;
 
-			var result = Networking.SendP2PMessage(remoteSteamId.ToString(), data, (uint) length, type);
+			var result = Transport.SendP2PMessage(remoteSteamId.ToString(), data, (uint) length, type);
 
 			lock (errorsLockObject)
 			{

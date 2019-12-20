@@ -25,7 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network.Implementations.MessagePack;
+using NexusClient.Network.Converters.MessagePack;
 using NexusClient.Network.NUnitTests.TestInfrastructure;
 using NexusClient.Testing;
 using NUnit.Framework;
@@ -35,25 +35,25 @@ namespace NexusClient.Network.NUnitTests
 	[TestFixture()]
 	public class NetworkTests
 	{
-		private Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n1;
-		private Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n2;
+		private Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n1;
+		private Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n2;
 
 		private TestHandlerGroup hg;
 
 		[SetUp]
 		public void Setup()
 		{
-			TestServer Server = new TestServer();
-			TestNetworking networking = new TestNetworking(Server);
-			MessagePackTransport transport = new MessagePackTransport();
-			n1 = new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(networking,
-				transport);
+			var server = new TestServer();
+			var transport = new TestTransport(server);
+			var converter = new MessagePackConverter();
+			n1 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport,
+				converter);
 			n1.Initialize();
-			n2 = new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(networking,
-				transport);
+			n2 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport,
+				converter);
 			n2.Initialize();
 
-			hg = new TestHandlerGroup(Server);
+			hg = new TestHandlerGroup(server);
 			n1.RegisterOrOverwriteHandlerGroup(hg);
 			n1.AddParticipants(n2.UserId);
 			n2.AddParticipants(n1.UserId);

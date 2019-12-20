@@ -31,7 +31,7 @@ using Microsoft.Xna.Framework;
 
 namespace NexusClient.Network
 {
-	public partial class Network<TTrans, TSer, TDes, T>
+	public partial class Network<TConv, TSer, TDes, T>
 	{
 		private const int WRITE_BUFFER_SIZE = 1024 * 1024 * 8;
 		private readonly byte[] writeBuffer = new byte[WRITE_BUFFER_SIZE];
@@ -59,9 +59,9 @@ namespace NexusClient.Network
 
 		public LowLevelMessage? ReadNext()
 		{
-			if (!Networking.IsP2PMessageAvailable(out var messageSize)) return null;
+			if (!Transport.IsP2PMessageAvailable(out var messageSize)) return null;
 
-			if (!Networking.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
+			if (!Transport.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
 
 			var result = new LowLevelMessage
 			{
@@ -80,10 +80,10 @@ namespace NexusClient.Network
 			var w = GetWriterFor(messageType);
 			w.Write(UserId);
 			w.Flush();
-			Transport.WriteMessage(w.BaseStream, content, out var messageSize);
+			Converter.WriteMessage(w.BaseStream, content, out var messageSize);
 			foreach (var recipient in recipients)
 			{
-				Networking.SendP2PMessage(recipient, writeBuffer, messageSize, sendType);
+				Transport.SendP2PMessage(recipient, writeBuffer, messageSize, sendType);
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace NexusClient.Network
 			{
 				lock (LockObject)
 				{
-					var message = Transport.ReadMessage(m.Value.Data, m.Value.MessageSize);
+					var message = Converter.ReadMessage(m.Value.Data, m.Value.MessageSize);
 					foreach (var group in handlerGroups.Values)
 					{
 						if (group.Handle(m.Value.MessageType, message))
