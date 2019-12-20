@@ -44,7 +44,7 @@ namespace NexusClient.Testing
 
 		public string Login()
 		{
-			var userId = System.Guid.NewGuid().ToString();
+			var userId = Guid.NewGuid().ToString();
 			UserConnections.Add(userId, new Queue<TestMessage>());
 			return userId;
 		}
@@ -93,7 +93,7 @@ namespace NexusClient.Testing
 			m.SenderId = userId;
 			m.Size = length;
 			m.Buffer = new byte[length];
-			data.CopyTo(m.Buffer, 0);
+			Array.Copy(data, 0, m.Buffer, 0, length);
 			return true;
 		}
 	}

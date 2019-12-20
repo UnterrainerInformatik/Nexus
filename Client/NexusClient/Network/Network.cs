@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using NexusClient.Network.Apis;
@@ -91,11 +92,6 @@ namespace NexusClient.Network
 			}
 
 			return this;
-		}
-
-		public void Send(MessageApi<TTrans, TSer, TDes, T> m)
-		{
-			Transport.SendMessage(m.Content, m.TransportSendType);
 		}
 	}
 }

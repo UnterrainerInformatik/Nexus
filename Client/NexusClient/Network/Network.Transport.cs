@@ -65,13 +65,26 @@ namespace NexusClient.Network
 
 			var result = new LowLevelMessage
 			{
-				UserId = remoteSteamId.ToString(),
+				UserId = remoteSteamId,
 				MessageSize = messageSize,
 				Data = readBuffer,
 				Reader = GetReaderFor(out var t),
 				MessageType = t
 			};
 			return result;
+		}
+
+		public void Send<TObject>(Enum messageType, TObject content, SendType sendType, string[] recipients)
+			where TObject : T
+		{
+			var w = GetWriterFor(messageType);
+			w.Write(UserId);
+			w.Flush();
+			Transport.WriteMessage(w.BaseStream, content, out var messageSize);
+			foreach (var recipient in recipients)
+			{
+				Networking.SendP2PMessage(recipient, writeBuffer, messageSize, sendType);
+			}
 		}
 
 		public void Update(GameTime gt)

@@ -32,9 +32,13 @@ namespace NexusClient.Network.Implementations.MessagePack
 {
 	public class MessagePackSer : IMessageSer<MessagePackDto>
 	{
-		public void Serialize(MessagePackDto message, Stream stream)
+		public uint Serialize<TObject>(TObject message, Stream stream) where TObject : MessagePackDto
 		{
+			stream.Flush();
+			var p = stream.Position;
 			global::MessagePack.MessagePackSerializer.Serialize(stream, message);
+			stream.Flush();
+			return (uint) (stream.Position - p);
 		}
 	}
 }

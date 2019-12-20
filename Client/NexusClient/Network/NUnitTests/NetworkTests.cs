@@ -62,12 +62,10 @@ namespace NexusClient.Network.NUnitTests
 		[Test]
 		public void AddAndGetHandler()
 		{
-			n1.Message.ToAll().WithContent(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"})
-				.Send();
-			n2.Message.ToOthers().WithContent(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"})
-				.Send();
-			n1.Message.ToOthersExcept(n2.UserId).WithContent(TestType.ELECTION_CALL_ANSWER,
-				new TestContent() {TestField = "should not be received"}).Send();
+			n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
+			n2.Message.ToOthers().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"});
+			n1.Message.ToOthersExcept(n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
+				new TestContent() {TestField = "should not be received"});
 		}
 	}
 }

@@ -35,17 +35,14 @@ namespace NexusClient.Network.Apis
 		where TTrans : ITransport<T>
 		where T : IMessageDto
 	{
-		internal string Sender { get; set; }
 		internal string[] Recipients { get; set; }
 		internal SendType TransportSendType { get; set; }
-		internal Enum MessageType { get; set; }
-		internal T Content { get; set; }
 
 		private TargetApi<TTrans, TSer, TDes, T> TargetApi { get; set; }
 
 		public static MessageApi<TTrans, TSer, TDes, T> Create(TargetApi<TTrans, TSer, TDes, T> targetApi)
 		{
-			return new MessageApi<TTrans, TSer, TDes, T> {TargetApi = targetApi, Content = default(T), TransportSendType = SendType.RELIABLE};
+			return new MessageApi<TTrans, TSer, TDes, T> {TargetApi = targetApi, TransportSendType = SendType.RELIABLE};
 		}
 
 		public MessageApi<TTrans, TSer, TDes, T> WithSendType(SendType type)
@@ -54,16 +51,10 @@ namespace NexusClient.Network.Apis
 			return this;
 		}
 
-		public MessageApi<TTrans, TSer, TDes, T> WithContent(Enum messageType, T data)
+		public void Send<TObject>(Enum messageType, TObject data) where TObject : T
 		{
-			MessageType = messageType;
-			Content = data;
-			return this;
-		}
-
-		public void Send()
-		{
-			TargetApi.Send(this);
+			TargetApi.Send(messageType, data, TransportSendType, Recipients);
+			;
 		}
 	}
 }

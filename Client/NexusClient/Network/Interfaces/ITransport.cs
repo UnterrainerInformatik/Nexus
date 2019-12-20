@@ -25,6 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.IO;
+
 namespace NexusClient.Network.Interfaces
 {
 	public interface ITransport<T> where T : IMessageDto
@@ -35,6 +37,6 @@ namespace NexusClient.Network.Interfaces
 
 		T ReadMessage(byte[] buffer, uint messageSize);
 
-		bool SendMessage(T message, SendType sendType);
+		bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize) where TObject : T;
 	}
 }

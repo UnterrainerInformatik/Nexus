@@ -25,12 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using MessagePack;
 using NexusClient.Network.Implementations.MessagePack;
 
 namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {
+	[MessagePackObject()]
 	public struct TestContent : MessagePackDto
 	{
+		[Key(0)]
 		public string TestField { get; set; }
 	}
 }

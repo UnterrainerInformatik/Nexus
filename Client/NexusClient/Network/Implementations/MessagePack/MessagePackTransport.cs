@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System.IO;
+using System.Runtime.InteropServices;
 using NexusClient.Network.Interfaces;
 
 namespace NexusClient.Network.Implementations.MessagePack
@@ -46,11 +47,9 @@ namespace NexusClient.Network.Implementations.MessagePack
 			return Deserializer.Deserialize(buffer);
 		}
 
-		public bool SendMessage(MessagePackDto message, SendType sendType)
+		public bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize) where TObject : MessagePackDto
 		{
-			var buffer = new byte[2000];
-			Stream stream = new MemoryStream(buffer);
-			Serializer.Serialize(message, stream);
+			messageSize = Serializer.Serialize(message, writer);
 			return true;
 		}
 	}
