@@ -25,56 +25,54 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using MessagePack;
+using NexusClient.PerformanceTests.NUnitTests.MessagePackFormatters;
+using NexusClient.PerformanceTests.NUnitTests.Objects;
+using NUnit.Framework;
 
-namespace NexusClient.Testing
+namespace NexusClient.PerformanceTests.NUnitTests
 {
-	class TestNetworking : INetworking
+	[TestFixture]
+	[Category("Mappers.ZeroFormatter")]
+	public class TestsMessagePack
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
-
-		public TestNetworking(TestServer server)
+		[SetUp]
+		public void Setup()
 		{
-			Server = server;
+			MessagePackHelpers.Register();
 		}
 
-		public void Login()
+		[Test]
+		public void TestTimer()
 		{
-			UserId = Server.Login();
+			var template = Helpers.GetTimer();
+
+			var b = MessagePackSerializer.Serialize(template);
+			var t = MessagePackSerializer.Deserialize<Objects.Timer>(b);
+
+			Assert.IsTrue(Helpers.Equals(template, t));
 		}
 
-		public void Logout()
+		[Test]
+		public void TestHero()
 		{
-			Server.Logout(UserId);
-			UserId = null;
+			var template = Helpers.GetHero();
+
+			var b = MessagePackSerializer.Serialize(template);
+			var h = MessagePackSerializer.Deserialize<Hero>(b);
+
+			Assert.IsTrue(Helpers.Equals(template, h));
 		}
 
-		public bool IsP2PMessageAvailable(out uint messageSize)
+		[Test]
+		public void TestLevel()
 		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
+			var template = Helpers.GetLevel();
 
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
+			var b = MessagePackSerializer.Serialize(template);
+			var l = MessagePackSerializer.Deserialize<Level>(b);
 
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
-		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			Assert.IsTrue(Helpers.Equals(template, l));
 		}
 	}
 }

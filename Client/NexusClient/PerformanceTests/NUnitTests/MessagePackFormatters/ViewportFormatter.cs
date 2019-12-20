@@ -25,56 +25,29 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using JetBrains.Annotations;
+using MessagePack;
+using MessagePack.Formatters;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace NexusClient.Testing
+namespace NexusClient.PerformanceTests.NUnitTests.MessagePackFormatters
 {
-	class TestNetworking : INetworking
+	[PublicAPI]
+	public class ViewportFormatter : IMessagePackFormatter<Viewport>
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
-
-		public TestNetworking(TestServer server)
+		public void Serialize(ref MessagePackWriter writer, Viewport value, MessagePackSerializerOptions options)
 		{
-			Server = server;
+			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
+			formatter.Serialize(ref writer, new Rectangle(value.X, value.Y, value.Width, value.Height), options);
 		}
 
-		public void Login()
+		public Viewport Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
 		{
-			UserId = Server.Login();
-		}
-
-		public void Logout()
-		{
-			Server.Logout(UserId);
-			UserId = null;
-		}
-
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
-
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
-		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			var formatter = options.Resolver.GetFormatterWithVerify<Rectangle>();
+			return reader.TryReadNil()
+				? new Viewport(Rectangle.Empty)
+				: new Viewport(formatter.Deserialize(ref reader, options));
 		}
 	}
 }

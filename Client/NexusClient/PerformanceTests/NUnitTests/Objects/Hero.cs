@@ -25,56 +25,44 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using MessagePack;
+using Microsoft.Xna.Framework;
 
-namespace NexusClient.Testing
+namespace NexusClient.PerformanceTests.NUnitTests.Objects
 {
-	class TestNetworking : INetworking
+	[MessagePackObject]
+	public class Hero
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
+		[Key(0)]
+		public Vector2 Position { get; set; }
 
-		public TestNetworking(TestServer server)
-		{
-			Server = server;
-		}
+		[Key(1)]
+		public float Velocity { get; set; }
 
-		public void Login()
-		{
-			UserId = Server.Login();
-		}
+		[Key(2)]
+		public Vector2 Direction { get; set; }
 
-		public void Logout()
-		{
-			Server.Logout(UserId);
-			UserId = null;
-		}
+		[Key(3)]
+		public bool Shooting { get; set; }
 
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
+		[Key(4)]
+		public bool Running { get; set; }
 
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
+		[Key(5)]
+		public bool Building { get; set; }
 
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
+		[Key(6)]
+		public Timer Timer { get; set; }
+
+		private Timer SpecialAbilityTimer { get; }
+
+		public Hero()
 		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			SpecialAbilityTimer = new Timer();
+			SpecialAbilityTimer.Min = 0;
+			SpecialAbilityTimer.Max = 15;
+			SpecialAbilityTimer.Value = 10.3f;
+			SpecialAbilityTimer.Active = true;
 		}
 	}
 }

@@ -25,56 +25,30 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using MessagePack;
+using MessagePack.Formatters;
+using MessagePack.ImmutableCollection;
+using MessagePack.Resolvers;
 
-namespace NexusClient.Testing
+namespace NexusClient.PerformanceTests.NUnitTests.MessagePackFormatters
 {
-	class TestNetworking : INetworking
+	public static class MessagePackHelpers
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
-
-		public TestNetworking(TestServer server)
+		public static void Register()
 		{
-			Server = server;
-		}
-
-		public void Login()
-		{
-			UserId = Server.Login();
-		}
-
-		public void Logout()
-		{
-			Server.Logout(UserId);
-			UserId = null;
-		}
-
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
-
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
-		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			var resolver = CompositeResolver.Create(new IMessagePackFormatter[]
+			{
+				new GameTimeFormatter(),
+				new PointFormatter(),
+				new RectangleFormatter(),
+				new Vector2Formatter(),
+				new ViewportFormatter() // Uses RectangleFormatter, so has to come after that.
+			}, new IFormatterResolver[]
+			{
+				ImmutableCollectionResolver.Instance,
+				StandardResolver.Instance
+			});
+			MessagePackSerializerOptions.Standard.WithResolver(resolver);
 		}
 	}
 }

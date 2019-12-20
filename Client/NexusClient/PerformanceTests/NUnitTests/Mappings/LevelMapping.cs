@@ -25,56 +25,26 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using System;
+using NexusClient.PerformanceTests.Mappings;
+using NexusClient.PerformanceTests.NUnitTests.Objects;
 
-namespace NexusClient.Testing
+namespace NexusClient.PerformanceTests.NUnitTests.Mappings
 {
-	class TestNetworking : INetworking
+	public class LevelMapping<TParent> : Mapping<Level, TParent>
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
-
-		public TestNetworking(TestServer server)
+		public LevelMapping(Func<TParent, Level> load, Func<Level, TParent, TParent> save) : base(load, save)
 		{
-			Server = server;
-		}
-
-		public void Login()
-		{
-			UserId = Server.Login();
-		}
-
-		public void Logout()
-		{
-			Server.Logout(UserId);
-			UserId = null;
-		}
-
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
-
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
-		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			Add(new IntMapping<Level>(o => o.Number, (v, o) =>
+			{
+				o.Number = v;
+				return o;
+			}));
+			Add(new HeroMapping<Level>(o => o.Hero, (v, o) =>
+			{
+				o.Hero = v;
+				return o;
+			}));
 		}
 	}
 }

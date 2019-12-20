@@ -32,9 +32,9 @@ namespace NexusClient.Steam
 {
 	public class SteamConnection : IConnection
 	{
-		public bool ConnectToServer(out Guid userId)
+		public bool ConnectToServer(out string userId)
 		{
-			userId = new Guid();
+			userId = new Guid().ToString();
 			return true;
 		}
 

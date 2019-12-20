@@ -25,13 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-
 namespace NexusClient.Network.Interfaces
 {
 	public interface IConnection
 	{
-		bool ConnectToServer(out Guid userId);
+		bool ConnectToServer(out string userId);
 
 		bool DisconnectFromServer();
 	}

@@ -32,7 +32,7 @@ namespace NexusClient.Testing
 {
 	class TestConnection : IConnection
 	{
-		public bool ConnectToServer(out Guid userId)
+		public bool ConnectToServer(out string userId)
 		{
 			throw new NotImplementedException();
 		}

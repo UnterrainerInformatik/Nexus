@@ -1,4 +1,4 @@
-﻿// ***************************************************************************
+// ***************************************************************************
 // This is free and unencumbered software released into the public domain.
 // 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -25,56 +25,27 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using System;
+using System.IO;
+using JetBrains.Annotations;
 
-namespace NexusClient.Testing
+namespace NexusClient.PerformanceTests.Mappings
 {
-	class TestNetworking : INetworking
+	[PublicAPI]
+	public class StringMapping<T> : Mapping<string, T>
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
-
-		public TestNetworking(TestServer server)
+		public StringMapping(Func<T, string> load, Func<string, T, T> save) : base(load, save)
 		{
-			Server = server;
 		}
 
-		public void Login()
+		protected override string From(BinaryReader reader, T instance, string field)
 		{
-			UserId = Server.Login();
+			return reader.ReadString();
 		}
 
-		public void Logout()
+		protected override void To(BinaryWriter writer, T instance, string field)
 		{
-			Server.Logout(UserId);
-			UserId = null;
-		}
-
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
-
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
-		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			writer.Write(field);
 		}
 	}
 }

@@ -57,9 +57,8 @@ namespace NexusClient.Network.Bully
 
 	public class BullyHandlerGroup : HandlerGroup
 	{
-		private readonly Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n =
-			new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(new TestNetworking(),
-				new MessagePackTransport());
+		private TestServer Server { get; } = new TestServer();
+		private readonly Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto> n;
 
 		private readonly Timer.Timer electionStartedTimer = new Timer.Timer(2000f).SetIsActive(false);
 
@@ -71,6 +70,8 @@ namespace NexusClient.Network.Bully
 		/// </summary>
 		public BullyHandlerGroup(string localUserId)
 		{
+			n = new Network<MessagePackTransport, MessagePackSer, MessagePackDes, MessagePackDto>(
+				new TestNetworking(Server), new MessagePackTransport());
 			this.localUserId = localUserId;
 			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_ELECTION_CALL, BullyElectionCallReceived);
 			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER, BullyElectionCallAnswerReceived);
@@ -177,8 +178,8 @@ namespace NexusClient.Network.Bully
 			lock (LockObject)
 			{
 				foreach (var client in GetOthersWithLowerId())
-					n.Message.To(client).WithContent(
-				BullyMessageType.TEAM_BULLY_ELECTION_CALL, new BullyIdContent() {Id = localUserId }).Send();
+					n.Message.To(client).WithContent(BullyMessageType.TEAM_BULLY_ELECTION_CALL,
+						new BullyIdContent() {Id = localUserId}).Send();
 				electionStartedTimer.SetIsActive(true);
 			}
 		}

@@ -76,7 +76,7 @@ namespace NexusClient
 			reader = new BinaryReader(readStream);
 		}
 
-		public bool Connect(out Guid userId)
+		public bool Connect(out string userId)
 		{
 			return Connection.ConnectToServer(out userId);
 		}
