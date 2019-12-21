@@ -42,6 +42,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 			MessagePackHelpers.Register();
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestTimer()
 		{
@@ -53,6 +54,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 			Assert.IsTrue(Helpers.Equals(template, t));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestHero()
 		{
@@ -64,6 +66,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 			Assert.IsTrue(Helpers.Equals(template, h));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestLevel()
 		{

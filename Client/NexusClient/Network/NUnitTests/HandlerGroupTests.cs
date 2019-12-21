@@ -25,9 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.IO;
 using Moq;
+using NexusClient.Network.Converters.MessagePack;
 using NexusClient.Network.NUnitTests.TestInfrastructure;
-using NexusClient.Testing;
 using NUnit.Framework;
 
 namespace NexusClient.Network.NUnitTests
@@ -36,35 +37,43 @@ namespace NexusClient.Network.NUnitTests
 	public class HandlerGroupTests
 	{
 		private TestHandlerGroup hg;
+		private MessagePackConverter converter;
+		private TestContent content;
+		private readonly byte[] buffer = new byte[2000];
 
 		[SetUp]
 		public void Setup()
 		{
-			Mock<TestServer> server = new Mock<TestServer>();
+			var server = new Mock<TestServer>();
 			hg = new TestHandlerGroup(server.Object);
+			converter = new MessagePackConverter();
+
+			content = new TestContent();
+			var writeStream = new MemoryStream(buffer);
+			converter.Serializer.Serialize(content, writeStream);
 		}
 
 		[Test]
 		public void AddAndGetHandlerDoesNotThrowException()
 		{
-			var content = new TestContent();
-
-			hg.Handle("ELECTION_CALL",
-				new Message<TestContent> { Content = content, SenderId = "1", Type = TestType.ELECTION_CALL });
+			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL",
+				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Data = buffer}, converter);
 		}
 
 		[Test]
 		public void RightHandlersAreGettingCalled()
 		{
 			var content = new TestContent();
+			var writeStream = new MemoryStream(buffer);
+			converter.Serializer.Serialize(content, writeStream);
 
-			hg.Handle("ELECTION_CALL",
-				new Message<TestContent> {Content = content, SenderId = "1", Type = TestType.ELECTION_CALL});
+			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL",
+				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Data = buffer}, converter);
 			Assert.AreEqual(0, hg.ElectionCallAnswerCount);
 			Assert.AreEqual(1, hg.ElectionCallCount);
 
-			hg.Handle("ELECTION_CALL_ANSWER",
-				new Message<TestContent> {Content = content, SenderId = "2", Type = TestType.ELECTION_CALL_ANSWER});
+			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL_ANSWER",
+				new LowLevelMessage() {UserId = "2", MessageType = "ELECTION_CALL_ANSWER", Data = buffer}, converter);
 			Assert.AreEqual(1, hg.ElectionCallAnswerCount);
 			Assert.AreEqual(1, hg.ElectionCallCount);
 		}

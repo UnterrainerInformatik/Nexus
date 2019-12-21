@@ -25,6 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using NexusClient.Network.NUnitTests.TestInfrastructure;
+
 namespace NexusClient.Testing
 {
 	class TestBuilder

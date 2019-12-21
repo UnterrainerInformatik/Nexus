@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 
@@ -43,18 +44,20 @@ namespace NexusClient.Network
 		private readonly MemoryStream readStream;
 		private readonly BinaryReader reader;
 
-		public BinaryWriter GetWriterFor(Enum messageType)
+		public long SetMessageType(Enum messageType)
 		{
 			writeStream.Position = 0;
 			writer.Write(messageType.ToString());
-			return writer;
+			writer.Flush();
+			return writeStream.Position;
 		}
 
-		private BinaryReader GetReaderFor(out string messageType)
+		private string GetMessageType(out long length)
 		{
 			readStream.Position = 0;
-			messageType = reader.ReadString();
-			return reader;
+			var messageType = reader.ReadString();
+			length = readStream.Position;
+			return messageType;
 		}
 
 		public LowLevelMessage? ReadNext()
@@ -63,38 +66,33 @@ namespace NexusClient.Network
 
 			if (!Transport.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
 
-			var result = new LowLevelMessage
+			var t = GetMessageType(out var length);
+			// Get rid of the messageType-string.
+			Array.Copy(readBuffer, length, readBuffer, 0, messageSize - length);
+
+			return new LowLevelMessage
 			{
 				UserId = remoteSteamId,
 				MessageSize = messageSize,
 				Data = readBuffer,
-				Reader = GetReaderFor(out var t),
 				MessageType = t
 			};
-			return result;
 		}
 
-		public void Send<TObject>(Enum messageType, TObject content, SendType sendType, string[] recipients)
+		public void Send<TObject>(Enum messageType, TObject content, SendType sendType, IEnumerable<string> recipients)
 			where TObject : T
 		{
-			var w = GetWriterFor(messageType);
-			w.Write(UserId);
-			w.Flush();
-			Converter.WriteMessage(w.BaseStream, content, out var messageSize);
+			var length = SetMessageType(messageType);
+			Converter.WriteMessage(writeStream, content, out var messageSize);
 			foreach (var recipient in recipients)
-			{
-				Transport.SendP2PMessage(recipient, writeBuffer, messageSize, sendType);
-			}
+				Transport.SendP2PMessage(recipient, writeBuffer, messageSize + (uint)length, sendType);
 		}
 
 		public void Update(GameTime gt)
 		{
 			lock (LockObject)
 			{
-				foreach (var handler in handlerGroups.Values)
-				{
-					handler.Update(gt);
-				}
+				foreach (var handler in handlerGroups.Values) handler.Update(gt);
 
 				ConsolidateHandlerGroups();
 				HandleMessages();
@@ -105,20 +103,15 @@ namespace NexusClient.Network
 		{
 			var m = ReadNext();
 			while (m.HasValue)
-			{
 				lock (LockObject)
 				{
-					var message = Converter.ReadMessage(m.Value.Data, m.Value.MessageSize);
 					foreach (var group in handlerGroups.Values)
-					{
-						if (group.Handle(m.Value.MessageType, message))
+						if (group.Handle<TConv, T>(m.Value.MessageType, m.Value, Converter))
 							break;
-					}
 
 					ConsolidateHandlerGroups();
 					m = ReadNext();
 				}
-			}
 		}
 	}
 }

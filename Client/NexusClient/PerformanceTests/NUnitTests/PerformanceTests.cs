@@ -36,7 +36,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 	[TestFixture]
 	public class PerformanceTests
 	{
-		private const int PERFORMANCE_COUNT = 5000000;
+		private const int PERFORMANCE_COUNT = 50;
 		readonly TimerMapping<Objects.Timer> timerMapping = new TimerMapping<Objects.Timer>(null, null);
 
 		[Test]

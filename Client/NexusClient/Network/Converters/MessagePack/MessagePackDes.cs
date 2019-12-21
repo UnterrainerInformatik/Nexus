@@ -31,9 +31,9 @@ namespace NexusClient.Network.Converters.MessagePack
 {
 	public class MessagePackDes : IMessageDes<MessagePackDto>
 	{
-		public MessagePackDto Deserialize(byte[] message)
+		public TObject Deserialize<TObject>(byte[] message) where TObject : MessagePackDto
 		{
-			return global::MessagePack.MessagePackSerializer.Deserialize<MessagePackDto>(message);
+			return global::MessagePack.MessagePackSerializer.Deserialize<TObject>(message);
 		}
 	}
 }

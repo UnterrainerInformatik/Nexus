@@ -25,35 +25,57 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using NexusClient.Network.Interfaces;
+using NexusClient.Testing;
 
-namespace NexusClient.Network.Apis
+namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {
-	public struct MessageApi<TConv, TSer, TDes, T> where TSer : IMessageSer<T>
-		where TDes : IMessageDes<T>
-		where TConv : ITransport<T>
-		where T : IMessageDto
+	class TestTransport : ITransport
 	{
-		internal string[] Recipients { get; set; }
-		internal SendType TransportSendType { get; set; }
+		public TestServer Server { get; set; }
+		public string UserId { get; set; }
 
-		private TargetApi<TConv, TSer, TDes, T> TargetApi { get; set; }
-
-		public static MessageApi<TConv, TSer, TDes, T> Create(TargetApi<TConv, TSer, TDes, T> targetApi)
+		public TestTransport(TestServer server)
 		{
-			return new MessageApi<TConv, TSer, TDes, T> {TargetApi = targetApi, TransportSendType = SendType.RELIABLE};
+			Server = server;
 		}
 
-		public MessageApi<TConv, TSer, TDes, T> WithSendType(SendType type)
+		public string Login()
 		{
-			TransportSendType = type;
-			return this;
+			UserId = Server.Login();
+			return UserId;
 		}
 
-		public void Send<TObject>(Enum messageType, TObject data) where TObject : T
+		public void Logout()
 		{
-			TargetApi.Send(messageType, data, TransportSendType, Recipients);
+			Server.Logout(UserId);
+			UserId = null;
+		}
+
+		public bool IsP2PMessageAvailable(out uint messageSize)
+		{
+			var r = Server.IsMessageAvailableFor(UserId, out var size);
+			messageSize = size;
+			return r;
+		}
+
+		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
+		{
+			bytesRead = 0;
+			senderId = null;
+			if (!Server.ReadMessageFor(UserId, out var m))
+				return false;
+			senderId = m.SenderId;
+			if (buffer.Length < m.Size)
+				return false;
+			m.Buffer.CopyTo(buffer, 0);
+			bytesRead = m.Size;
+			return true;
+		}
+
+		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
+		{
+			return Server.SendMessageFor(UserId, recipientId, data, length);
 		}
 	}
 }

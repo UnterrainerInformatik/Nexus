@@ -41,9 +41,9 @@ namespace NexusClient.Network.Converters.MessagePack
 			Deserializer = new MessagePackDes();
 		}
 
-		public MessagePackDto ReadMessage(byte[] buffer, uint messageSize)
+		public TObject ReadMessage<TObject>(byte[] buffer, uint messageSize) where TObject : MessagePackDto
 		{
-			return Deserializer.Deserialize(buffer);
+			return Deserializer.Deserialize<TObject>(buffer);
 		}
 
 		public bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize)

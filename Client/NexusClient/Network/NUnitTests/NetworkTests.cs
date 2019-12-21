@@ -43,29 +43,45 @@ namespace NexusClient.Network.NUnitTests
 		[SetUp]
 		public void Setup()
 		{
+			Logger.Init();
 			var server = new TestServer();
-			var transport = new TestTransport(server);
+			var transport1 = new TestTransport(server);
+			var transport2 = new TestTransport(server);
 			var converter = new MessagePackConverter();
-			n1 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport,
+			n1 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport1,
 				converter);
 			n1.Initialize();
-			n2 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport,
+			n2 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport2,
 				converter);
 			n2.Initialize();
 
 			hg = new TestHandlerGroup(server);
 			n1.RegisterOrOverwriteHandlerGroup(hg);
 			n1.AddParticipants(n2.UserId);
+			n2.RegisterOrOverwriteHandlerGroup(hg);
 			n2.AddParticipants(n1.UserId);
 		}
 
 		[Test]
 		public void AddAndGetHandler()
 		{
+			var gt = new TestGameTime();
 			n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
 			n2.Message.ToOthers().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"});
 			n1.Message.ToOthersExcept(n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
 				new TestContent() {TestField = "should not be received"});
+
+			gt.Advance(1);
+			n1.Update(gt.Value());
+			n2.Update(gt.Value());
+
+			gt.Advance(1);
+			n1.Update(gt.Value());
+			n2.Update(gt.Value());
+
+			gt.Advance(1);
+			n1.Update(gt.Value());
+			n2.Update(gt.Value());
 		}
 	}
 }

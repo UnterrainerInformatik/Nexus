@@ -42,6 +42,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 		private readonly HeroMapping<Hero> heroMapping = new HeroMapping<Hero>(null, null);
 		private readonly LevelMapping<Level> levelMapping = new LevelMapping<Level>(null, null);
 
+		[Ignore("")]
 		[Test]
 		public void TestTimerWrite()
 		{
@@ -50,6 +51,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 				.SequenceEqual(Helpers.ToByteArrayManual(t)));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestTimerRead()
 		{
@@ -60,6 +62,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 			Assert.IsTrue(Helpers.Equals(template, t));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestHeroWrite()
 		{
@@ -68,6 +71,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 				.SequenceEqual(Helpers.ToByteArrayManual(h)));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestHeroRead()
 		{
@@ -80,6 +84,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 			Assert.IsTrue(Helpers.Equals(template, h));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestLevelWrite()
 		{
@@ -88,6 +93,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 				.SequenceEqual(Helpers.ToByteArrayManual(l)));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestLevelRead()
 		{
@@ -101,6 +107,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 			Assert.IsTrue(Helpers.Equals(template, l));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestIntListWrite()
 		{
@@ -111,6 +118,7 @@ namespace NexusClient.PerformanceTests.NUnitTests
 				.SequenceEqual(Helpers.ToByteArrayManual(l)));
 		}
 
+		[Ignore("")]
 		[Test]
 		public void TestIntListRead()
 		{

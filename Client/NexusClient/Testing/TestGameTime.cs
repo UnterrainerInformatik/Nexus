@@ -26,75 +26,33 @@
 // ***************************************************************************
 
 using System;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace NexusClient.Testing
 {
-	public class TestMessage
+	public class TestGameTime
 	{
-		public byte[] Buffer { get; set; }
-		public uint Size { get; set; }
-		public string SenderId { get; set; }
-	}
+		private readonly GameTime gt;
 
-	public class TestServer
-	{
-		protected readonly Dictionary<string, Queue<TestMessage>> UserConnections =
-			new Dictionary<string, Queue<TestMessage>>();
-
-		public string Login()
+		public TestGameTime() : this(0)
 		{
-			var userId = Guid.NewGuid().ToString();
-			UserConnections.Add(userId, new Queue<TestMessage>());
-			return userId;
 		}
 
-		public void Logout(string userId)
+		public TestGameTime(int seconds)
 		{
-			UserConnections.Remove(userId);
+			gt = new GameTime(TimeSpan.FromSeconds(seconds), TimeSpan.FromSeconds(0));
 		}
 
-		public bool IsLoggedIn(string userId)
+		public GameTime Value()
 		{
-			return UserConnections.TryGetValue(userId, out _);
+			return gt;
 		}
 
-		public Queue<TestMessage> GetQueueFor(string userId)
+		public GameTime Advance(int seconds)
 		{
-			return !UserConnections.TryGetValue(userId, out var q) ? null : q;
-		}
-
-		public bool IsMessageAvailableFor(string userId, out uint size)
-		{
-			size = 0;
-			var q = GetQueueFor(userId);
-			if (q == null) return false;
-
-			var m = q.Peek();
-			size = m.Size;
-			return true;
-		}
-
-		public bool GetMessageFor(string userId, out TestMessage message)
-		{
-			message = null;
-			var q = GetQueueFor(userId);
-			if (q == null) return false;
-			message = q.Dequeue();
-			return true;
-		}
-
-		public bool SendMessageFor(string userId, string recipientId, byte[] data, uint length)
-		{
-			var q = GetQueueFor(recipientId);
-			if (q == null)
-				return false;
-			var m = new TestMessage();
-			m.SenderId = userId;
-			m.Size = length;
-			m.Buffer = new byte[length];
-			Array.Copy(data, 0, m.Buffer, 0, length);
-			return true;
+			gt.TotalGameTime += TimeSpan.FromSeconds(seconds);
+			gt.ElapsedGameTime = TimeSpan.FromSeconds(seconds);
+			return gt;
 		}
 	}
 }

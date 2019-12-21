@@ -46,7 +46,7 @@ namespace NexusClient.Network
 	{
 		protected readonly object LockObject = new object();
 
-		public delegate void HandleMessageDelegate<T>(Message<T> message);
+		public delegate void HandleMessageDelegate<TD>(TD message, string senderId);
 
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
@@ -59,21 +59,22 @@ namespace NexusClient.Network
 
 		public bool Active { get; set; }
 
-		public void AddHandler<T>(Enum key, HandleMessageDelegate<T> handler)
+		public void AddHandler<TT>(Enum key, HandleMessageDelegate<TT> handler) where TT : T
 		{
 			handlerStore.Add(key.ToString(), convertDelegate(key, handler));
 		}
 
-		private HandlerStoreItem convertDelegate<T>(Enum messageType, HandleMessageDelegate<T> handler)
+		private HandlerStoreItem convertDelegate<TT>(Enum messageType, HandleMessageDelegate<TT> handler)
 		{
 			var s = new HandlerStoreItem();
-			s.Del = Delegate.CreateDelegate(typeof(HandleMessageDelegate<T>), handler.Target, handler.Method);
+			s.Del = Delegate.CreateDelegate(typeof(HandleMessageDelegate<TT>), handler.Target, handler.Method);
 			s.Type = handler.GetType();
 			s.MessageType = messageType;
 			return s;
 		}
 
-		public bool Handle<T>(string messageType, T message)
+		public bool Handle<TConv, TT>(string messageType, LowLevelMessage message, TConv converter)
+			where TConv : ITransport<TT> where TT : IMessageDto
 		{
 			if (!Active) return false;
 
@@ -81,8 +82,15 @@ namespace NexusClient.Network
 
 			var h = handlerStore[messageType];
 
+			var method = converter.GetType().GetMethod("ReadMessage");
+			if (method == null) return false;
+			var gType = h.Type.GetGenericArguments()[4];
+			var generic = method.MakeGenericMethod(gType);
+			var mObject = generic.Invoke(converter, new object[] {message.Data, message.MessageSize});
+			var m = Convert.ChangeType(mObject, gType);
+
 			var handler = Delegate.CreateDelegate(h.Type, h.Del.Target, h.Del.Method);
-			handler.DynamicInvoke(message);
+			handler.DynamicInvoke(m, message.UserId);
 
 			return true;
 		}

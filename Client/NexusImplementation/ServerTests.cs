@@ -39,7 +39,7 @@ using NUnit.Framework;
 
 namespace NexusImplementation
 {
-    [TestFixture]
+	[TestFixture]
     [System.ComponentModel.Category("REST")]
     public class ServerTests
     {
@@ -62,7 +62,8 @@ namespace NexusImplementation
         {
         }
 
-        [Test]
+		[Ignore("")]
+		[Test]
         [System.ComponentModel.Category("REST.Simple")]
         public void TestMessageString()
         {
@@ -74,7 +75,8 @@ namespace NexusImplementation
             Assert.AreEqual("{\"PingResult\":\"Pong\"}", response);
         }
 
-        [Test]
+		[Ignore("")]
+		[Test]
         [System.ComponentModel.Category("REST.Simple")]
         public void TestMessageJsonReader()
         {
@@ -88,7 +90,8 @@ namespace NexusImplementation
             Assert.AreEqual("Pong", result.Value);
         }
 
-        [Test]
+		[Ignore("")]
+		[Test]
         [System.ComponentModel.Category("REST.Simple")]
         public void TestMessageJsonObject()
         {

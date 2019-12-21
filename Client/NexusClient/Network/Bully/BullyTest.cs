@@ -53,57 +53,5 @@ namespace NexusClient.Network.Bully
 		{
 			
 		}
-
-		private void SetupLogging(string[] args)
-		{
-			var logFile =
-				Path.Combine(
-					SubFolder(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NexusClient"),
-					"debug.log");
-			
-			var debugFlag = false;
-			foreach (var t in args)
-			{
-				var a = t.ToLower().Trim();
-				if (a.Equals("-debug") || a.Equals("debug"))
-				{
-					debugFlag = true;
-				}
-			}
-
-			var config = new LoggerConfiguration();
-#if DEBUG
-			debugFlag = true;
-			config.WriteTo.Console();
-#endif
-			if (debugFlag)
-			{
-				config.MinimumLevel.Debug();
-			}
-			else
-			{
-				config.MinimumLevel.Error();
-			}
-			config.WriteTo.File(logFile);
-				Log.Logger = config.CreateLogger();
-		}
-
-		/// <summary>
-		///     Gets you the string for the specified sub-directory in the given folder.
-		///     Creates it, if it does not exist.
-		/// </summary>
-		/// <param name="targetPath">The target path.</param>
-		/// <param name="subDir">The sub dir.</param>
-		/// <returns></returns>
-		private static string SubFolder(string targetPath, string subDir)
-		{
-			var result = Path.Combine(targetPath, subDir + "\\");
-			if (!Directory.Exists(result))
-			{
-				Directory.CreateDirectory(result);
-			}
-
-			return result;
-		}
 	}
 }

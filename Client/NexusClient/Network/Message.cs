@@ -25,15 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-
 namespace NexusClient.Network
 {
 	public struct Message<T>
 	{
 		public string SenderId { get; set; }
-		public Enum Type { get; set; }
 		public T Content { get; set; }
-		public bool Handled { get; set; }
 	}
 }

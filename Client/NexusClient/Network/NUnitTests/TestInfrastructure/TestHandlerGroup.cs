@@ -27,7 +27,6 @@
 
 using System;
 using NexusClient.Network.Converters.MessagePack;
-using NexusClient.Testing;
 
 namespace NexusClient.Network.NUnitTests.TestInfrastructure
 {
@@ -44,16 +43,16 @@ namespace NexusClient.Network.NUnitTests.TestInfrastructure
 			AddHandler<TestContent>(TestType.ELECTION_CALL_ANSWER, ElectionCallAnswerReceived);
 		}
 
-		private void ElectionCallReceived(Message<TestContent> message)
+		private void ElectionCallReceived(TestContent message, string senderId)
 		{
 			ElectionCallCount++;
-			Console.Out.WriteLine($"Election-call message handled. TestField: [{message.Content.TestField}]");
+			Console.Out.WriteLine($"Election-call message handled. TestField: [{message.TestField}]");
 		}
 
-		private void ElectionCallAnswerReceived(Message<TestContent> message)
+		private void ElectionCallAnswerReceived(TestContent message, string senderId)
 		{
 			ElectionCallAnswerCount++;
-			Console.Out.WriteLine($"Election-call-answer message handled. TestField: [{message.Content.TestField}]");
+			Console.Out.WriteLine($"Election-call-answer message handled. TestField: [{message.TestField}]");
 		}
 	}
 }

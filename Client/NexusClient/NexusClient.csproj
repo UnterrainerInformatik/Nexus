@@ -139,6 +139,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logger.cs" />
     <Compile Include="Network\Interfaces\IMessageDto.cs" />
     <Compile Include="Network\NUnitTests\NetworkTests.cs" />
     <Compile Include="Network\NUnitTests\TestInfrastructure\TestContent.cs" />
@@ -192,7 +193,6 @@
     <Compile Include="Network\LowLevelMessage.cs" />
     <Compile Include="Network\Apis\TargetApi.cs" />
     <Compile Include="Network\Message.cs" />
-    <Compile Include="Client.cs" />
     <Compile Include="Network\Network.HandlersGroups.cs" />
     <Compile Include="Network\Network.Transport.cs" />
     <Compile Include="Network\NUnitTests\HandlerGroupTests.cs" />
@@ -206,8 +206,9 @@
     <Compile Include="Steam\SteamNetworking.cs" />
     <Compile Include="Testing\TestBuilder.cs" />
     <Compile Include="Testing\TestConnection.cs" />
-    <Compile Include="Testing\TestNetworking.cs" />
-    <Compile Include="Testing\TestServer.cs" />
+    <Compile Include="Testing\TestGameTime.cs" />
+    <Compile Include="Network\NUnitTests\TestInfrastructure\TestTransport.cs" />
+    <Compile Include="Network\NUnitTests\TestInfrastructure\TestServer.cs" />
     <Compile Include="Network\Bully\BullyHandlerGroup.cs" />
     <Compile Include="Network\Bully\BullyTest.cs" />
     <Compile Include="Network\Network.cs" />

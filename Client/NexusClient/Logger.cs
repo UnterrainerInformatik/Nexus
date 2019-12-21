@@ -25,57 +25,59 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Network;
-using NexusClient.Network.Interfaces;
+using System;
+using System.IO;
+using Serilog;
 
-namespace NexusClient.Testing
+namespace NexusClient
 {
-	class TestTransport : ITransport
+	public static class Logger
 	{
-		public TestServer Server { get; set; }
-		public string UserId { get; set; }
-
-		public TestTransport(TestServer server)
+		public static void Init()
 		{
-			Server = server;
+			Init(new string[0]);
 		}
 
-		public string Login()
+		public static void Init(string[] args)
 		{
-			UserId = Server.Login();
-			return UserId;
+			var logFile =
+				Path.Combine(
+					SubFolder(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Nexus"),
+					"debug.log");
+
+			var debugFlag = false;
+			foreach (var t in args)
+			{
+				var a = t.ToLower().Trim();
+				if (a.Equals("-debug") || a.Equals("debug")) debugFlag = true;
+			}
+
+			var config = new LoggerConfiguration();
+#if DEBUG
+			debugFlag = true;
+			config.WriteTo.Console();
+#endif
+			if (debugFlag)
+				config.MinimumLevel.Debug();
+			else
+				config.MinimumLevel.Error();
+			config.WriteTo.File(logFile);
+			Log.Logger = config.CreateLogger();
 		}
 
-		public void Logout()
+		/// <summary>
+		///     Gets you the string for the specified sub-directory in the given folder.
+		///     Creates it, if it does not exist.
+		/// </summary>
+		/// <param name="targetPath">The target path.</param>
+		/// <param name="subDir">The sub dir.</param>
+		/// <returns></returns>
+		private static string SubFolder(string targetPath, string subDir)
 		{
-			Server.Logout(UserId);
-			UserId = null;
-		}
+			var result = Path.Combine(targetPath, subDir + "\\");
+			if (!Directory.Exists(result)) Directory.CreateDirectory(result);
 
-		public bool IsP2PMessageAvailable(out uint messageSize)
-		{
-			var r = Server.IsMessageAvailableFor(UserId, out var size);
-			messageSize = size;
-			return r;
-		}
-
-		public bool ReadP2PMessage(byte[] buffer, uint messageSize, out uint bytesRead, out string senderId)
-		{
-			bytesRead = 0;
-			senderId = null;
-			if (!Server.GetMessageFor(UserId, out var m))
-				return false;
-			senderId = m.SenderId;
-			if (buffer.Length < m.Size)
-				return false;
-			m.Buffer.CopyTo(buffer, 0);
-			bytesRead = m.Size;
-			return true;
-		}
-
-		public bool SendP2PMessage(string recipientId, byte[] data, uint length, SendType sendType)
-		{
-			return Server.SendMessageFor(UserId, recipientId, data, length);
+			return result;
 		}
 	}
 }

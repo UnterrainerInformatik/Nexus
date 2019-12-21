@@ -27,8 +27,10 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NexusClient.Network.Apis;
 using NexusClient.Network.Interfaces;
+using Serilog;
 
 namespace NexusClient.Network
 {
@@ -58,6 +60,7 @@ namespace NexusClient.Network
 
 		public Network(ITransport transport, TConv converter)
 		{
+			Logger.Init();
 			Converter = converter;
 			Transport = transport;
 			Message = new TargetApi<TConv, TSer, TDes, T>(this);
@@ -71,17 +74,20 @@ namespace NexusClient.Network
 		public void Initialize()
 		{
 			UserId = Transport.Login();
+			Log.Debug($"[{UserId}] Initialize");
 		}
 
-		public Network<TConv, TSer, TDes, T> AddParticipants(params string[] userId)
+		public Network<TConv, TSer, TDes, T> AddParticipants(params string[] userIds)
 		{
-			foreach (var id in userId) Participants.Add(id, id);
+			Log.Debug($"[{UserId}] AddParticipants [{string.Join(",", userIds)}]");
+			foreach (var id in userIds) Participants.Add(id, id);
 			return this;
 		}
 
-		public Network<TConv, TSer, TDes, T> RemoveParticipants(params string[] userId)
+		public Network<TConv, TSer, TDes, T> RemoveParticipants(params string[] userIds)
 		{
-			foreach (var id in userId) Participants.Remove(id);
+			Log.Debug($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
+			foreach (var id in userIds) Participants.Remove(id);
 			return this;
 		}
 	}
