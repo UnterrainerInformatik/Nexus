@@ -27,7 +27,7 @@
 
 namespace NexusClient.Network
 {
-	public partial class Network<TConv, TSer, TDes, T>
+	public partial class Nexus<TConv, TSer, TDes, T>
 	{
 		private void ConsolidateHandlerGroups()
 		{
@@ -37,7 +37,7 @@ namespace NexusClient.Network
 				{
 					if (!removeList.Contains(item.Key))
 					{
-						item.Value.Network = this;
+						item.Value.Nexus = this;
 						handlerGroups.Add(item.Key, item.Value);
 					}
 					else
@@ -49,7 +49,7 @@ namespace NexusClient.Network
 				foreach (var key in removeList)
 				{
 					if (handlerGroups.TryGetValue(key, out var hg))
-						hg.Network = null;
+						hg.Nexus = null;
 					handlerGroups.Remove(key);
 				}
 
@@ -125,7 +125,7 @@ namespace NexusClient.Network
 			{
 				foreach (var hg in handlerGroups.Values)
 				{
-					hg.Network = null;
+					hg.Nexus = null;
 				}
 
 				handlerGroups.Clear();

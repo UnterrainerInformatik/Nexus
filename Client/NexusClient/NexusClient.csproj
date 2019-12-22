@@ -193,8 +193,8 @@
     <Compile Include="Network\LowLevelMessage.cs" />
     <Compile Include="Network\Apis\TargetApi.cs" />
     <Compile Include="Network\Message.cs" />
-    <Compile Include="Network\Network.HandlersGroups.cs" />
-    <Compile Include="Network\Network.Transport.cs" />
+    <Compile Include="Network\Nexus.HandlersGroups.cs" />
+    <Compile Include="Network\Nexus.Transport.cs" />
     <Compile Include="Network\NUnitTests\HandlerGroupTests.cs" />
     <Compile Include="Nexus\NexusConnection.cs" />
     <Compile Include="Nexus\NexusNetworking.cs" />
@@ -211,7 +211,7 @@
     <Compile Include="Network\NUnitTests\TestInfrastructure\TestServer.cs" />
     <Compile Include="Network\Bully\BullyHandlerGroup.cs" />
     <Compile Include="Network\Bully\BullyTest.cs" />
-    <Compile Include="Network\Network.cs" />
+    <Compile Include="Network\Nexus.cs" />
     <Compile Include="Network\Apis\MessageApi.cs" />
     <Compile Include="Network\HandlerGroup.cs" />
     <Compile Include="Network\Time.cs" />

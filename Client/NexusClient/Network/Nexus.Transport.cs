@@ -32,7 +32,7 @@ using Microsoft.Xna.Framework;
 
 namespace NexusClient.Network
 {
-	public partial class Network<TConv, TSer, TDes, T>
+	public partial class Nexus<TConv, TSer, TDes, T>
 	{
 		private const int WRITE_BUFFER_SIZE = 1024 * 1024 * 8;
 		private readonly byte[] writeBuffer = new byte[WRITE_BUFFER_SIZE];

@@ -27,14 +27,13 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using NexusClient.Network.Apis;
 using NexusClient.Network.Interfaces;
 using Serilog;
 
 namespace NexusClient.Network
 {
-	public partial class Network<TConv, TSer, TDes, T> where TConv : ITransport<T>
+	public partial class Nexus<TConv, TSer, TDes, T> where TConv : ITransport<T>
 		where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
 		where T : IMessageDto
@@ -58,7 +57,7 @@ namespace NexusClient.Network
 
 		private readonly List<object> removeList = new List<object>();
 
-		public Network(ITransport transport, TConv converter)
+		public Nexus(ITransport transport, TConv converter)
 		{
 			Logger.Init();
 			Converter = converter;
@@ -77,14 +76,14 @@ namespace NexusClient.Network
 			Log.Debug($"[{UserId}] Initialize");
 		}
 
-		public Network<TConv, TSer, TDes, T> AddParticipants(params string[] userIds)
+		public Nexus<TConv, TSer, TDes, T> AddParticipants(params string[] userIds)
 		{
 			Log.Debug($"[{UserId}] AddParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Add(id, id);
 			return this;
 		}
 
-		public Network<TConv, TSer, TDes, T> RemoveParticipants(params string[] userIds)
+		public Nexus<TConv, TSer, TDes, T> RemoveParticipants(params string[] userIds)
 		{
 			Log.Debug($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Remove(id);

@@ -50,7 +50,7 @@ namespace NexusClient.Network
 
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
-		public Network<TTrans, TSer, TDes, T> Network { get; internal set; }
+		public Nexus<TTrans, TSer, TDes, T> Nexus { get; internal set; }
 
 		protected HandlerGroup(bool active = true)
 		{

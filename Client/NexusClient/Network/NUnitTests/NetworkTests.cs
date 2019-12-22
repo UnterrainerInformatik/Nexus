@@ -35,8 +35,8 @@ namespace NexusClient.Network.NUnitTests
 	[TestFixture()]
 	public class NetworkTests
 	{
-		private Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n1;
-		private Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n2;
+		private Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n1;
+		private Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n2;
 
 		private TestHandlerGroup hg;
 
@@ -48,10 +48,10 @@ namespace NexusClient.Network.NUnitTests
 			var transport1 = new TestTransport(server);
 			var transport2 = new TestTransport(server);
 			var converter = new MessagePackConverter();
-			n1 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport1,
+			n1 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport1,
 				converter);
 			n1.Initialize();
-			n2 = new Network<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport2,
+			n2 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport2,
 				converter);
 			n2.Initialize();
 

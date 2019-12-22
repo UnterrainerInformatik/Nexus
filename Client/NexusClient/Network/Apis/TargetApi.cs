@@ -36,17 +36,17 @@ namespace NexusClient.Network.Apis
 		where TConv : ITransport<T>
 		where T : IMessageDto
 	{
-		private readonly Network<TConv, TSer, TDes, T> network;
+		private readonly Nexus<TConv, TSer, TDes, T> nexus;
 
-		internal TargetApi(Network<TConv, TSer, TDes, T> network)
+		internal TargetApi(Nexus<TConv, TSer, TDes, T> nexus)
 		{
-			this.network = network;
+			this.nexus = nexus;
 		}
 
 		internal void Send<TObject>(Enum messageType, TObject content, SendType sendType, string[] recipientIds)
 			where TObject : T
 		{
-			network.Send(messageType, content, sendType, recipientIds);
+			nexus.Send(messageType, content, sendType, recipientIds);
 		}
 
 		public MessageApi<TConv, TSer, TDes, T> To(params string[] userId)
@@ -59,7 +59,7 @@ namespace NexusClient.Network.Apis
 		public MessageApi<TConv, TSer, TDes, T> ToAll()
 		{
 			var m = MessageApi<TConv, TSer, TDes, T>.Create(this);
-			m.Recipients = network.Participants.Keys.ToArray();
+			m.Recipients = nexus.Participants.Keys.ToArray();
 			return m;
 		}
 
@@ -67,7 +67,7 @@ namespace NexusClient.Network.Apis
 		{
 			var m = MessageApi<TConv, TSer, TDes, T>.Create(this);
 			m.Recipients = new string[] { };
-			var l = network.Participants.Keys.Where(e => !userId.Contains(e));
+			var l = nexus.Participants.Keys.Where(e => !userId.Contains(e));
 			m.Recipients = l.ToArray();
 			return m;
 		}
@@ -76,7 +76,7 @@ namespace NexusClient.Network.Apis
 		{
 			var m = MessageApi<TConv, TSer, TDes, T>.Create(this);
 			m.Recipients = new string[] { };
-			var l = network.Participants.Keys.Where(e => !e.Equals(network.UserId));
+			var l = nexus.Participants.Keys.Where(e => !e.Equals(nexus.UserId));
 			m.Recipients = l.ToArray();
 			return m;
 		}
@@ -85,7 +85,7 @@ namespace NexusClient.Network.Apis
 		{
 			var m = MessageApi<TConv, TSer, TDes, T>.Create(this);
 			m.Recipients = new string[] { };
-			var l = network.Participants.Keys.Where(e => !userId.Contains(e) && !e.Equals(network.UserId));
+			var l = nexus.Participants.Keys.Where(e => !userId.Contains(e) && !e.Equals(nexus.UserId));
 			m.Recipients = l.ToArray();
 			return m;
 		}
@@ -93,7 +93,7 @@ namespace NexusClient.Network.Apis
 		public MessageApi<TConv, TSer, TDes, T> ToSelf()
 		{
 			var m = MessageApi<TConv, TSer, TDes, T>.Create(this);
-			m.Recipients = new[] {network.UserId};
+			m.Recipients = new[] {nexus.UserId};
 			return m;
 		}
 
