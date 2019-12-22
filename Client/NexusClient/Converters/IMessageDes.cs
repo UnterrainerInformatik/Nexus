@@ -25,10 +25,12 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.IO;
+
 namespace NexusClient.Converters
 {
 	public interface IMessageDes<in T> where T : IMessageDto
 	{
-		TObject Deserialize<TObject>(byte[] message) where TObject : T;
+		TObject Deserialize<TObject>(Stream stream) where TObject : T;
 	}
 }

@@ -87,7 +87,7 @@ namespace NexusClient.HandlerGroups
 			if (method == null) return false;
 			var gType = h.Type.GetGenericArguments()[4];
 			var generic = method.MakeGenericMethod(gType);
-			var mObject = generic.Invoke(converter, new object[] {message.Data, message.MessageSize});
+			var mObject = generic.Invoke(converter, new object[] {message.Stream, message.MessageSize});
 			var m = Convert.ChangeType(mObject, gType);
 
 			var handler = Delegate.CreateDelegate(h.Type, h.Del.Target, h.Del.Method);

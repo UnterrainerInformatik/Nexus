@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.IO;
 using JetBrains.Annotations;
 
 namespace NexusClient.Nexus
@@ -35,7 +36,7 @@ namespace NexusClient.Nexus
 		public string UserId { get; set; }
 
 		public string MessageType { get; set; }
-		public byte[] Data { get; set; }
+		public Stream Stream { get; set; }
 
 		public uint MessageSize { get; set; }
 	}

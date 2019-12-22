@@ -42,10 +42,13 @@ namespace NexusClient.NUnitTests
 		private MessagePackConverter converter;
 		private TestContent content;
 		private readonly byte[] buffer = new byte[2000];
+		private Stream stream; 
 
 		[SetUp]
 		public void Setup()
 		{
+			stream = new MemoryStream(buffer);
+
 			var server = new Mock<TestServer>();
 			hg = new TestHandlerGroup(server.Object);
 			converter = new MessagePackConverter();
@@ -59,23 +62,24 @@ namespace NexusClient.NUnitTests
 		public void AddAndGetHandlerDoesNotThrowException()
 		{
 			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL",
-				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Data = buffer}, converter);
+				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Stream = stream}, converter);
 		}
 
 		[Test]
 		public void RightHandlersAreGettingCalled()
 		{
-			var content = new TestContent();
 			var writeStream = new MemoryStream(buffer);
 			converter.Serializer.Serialize(content, writeStream);
 
 			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL",
-				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Data = buffer}, converter);
+				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Stream = stream }, converter);
+			stream.Position = 0;
 			Assert.AreEqual(0, hg.ElectionCallAnswerCount);
 			Assert.AreEqual(1, hg.ElectionCallCount);
 
 			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL_ANSWER",
-				new LowLevelMessage() {UserId = "2", MessageType = "ELECTION_CALL_ANSWER", Data = buffer}, converter);
+				new LowLevelMessage() {UserId = "2", MessageType = "ELECTION_CALL_ANSWER", Stream = stream }, converter);
+			stream.Position = 0;
 			Assert.AreEqual(1, hg.ElectionCallAnswerCount);
 			Assert.AreEqual(1, hg.ElectionCallCount);
 		}

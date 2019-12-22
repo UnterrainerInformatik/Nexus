@@ -52,11 +52,10 @@ namespace NexusClient.Nexus
 			return writeStream.Position;
 		}
 
-		private string GetMessageType(out long length)
+		private string GetMessageType()
 		{
 			readStream.Position = 0;
 			var messageType = reader.ReadString();
-			length = readStream.Position;
 			return messageType;
 		}
 
@@ -66,15 +65,13 @@ namespace NexusClient.Nexus
 
 			if (!Transport.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
 
-			var t = GetMessageType(out var length);
-			// Get rid of the messageType-string.
-			Array.Copy(readBuffer, length, readBuffer, 0, messageSize - length);
-
+			var t = GetMessageType();
+			
 			return new LowLevelMessage
 			{
 				UserId = remoteSteamId,
 				MessageSize = messageSize,
-				Data = readBuffer,
+				Stream = readStream,
 				MessageType = t
 			};
 		}

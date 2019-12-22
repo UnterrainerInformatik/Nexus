@@ -25,13 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.IO;
+
 namespace NexusClient.Converters.MessagePack
 {
 	public class MessagePackDes : IMessageDes<MessagePackDto>
 	{
-		public TObject Deserialize<TObject>(byte[] message) where TObject : MessagePackDto
+		public TObject Deserialize<TObject>(Stream stream) where TObject : MessagePackDto
 		{
-			return global::MessagePack.MessagePackSerializer.Deserialize<TObject>(message);
+			return global::MessagePack.MessagePackSerializer.Deserialize<TObject>(stream);
 		}
 	}
 }
