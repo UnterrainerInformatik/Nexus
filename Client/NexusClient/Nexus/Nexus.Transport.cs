@@ -44,29 +44,16 @@ namespace NexusClient.Nexus
 		private readonly MemoryStream readStream;
 		private readonly BinaryReader reader;
 
-		public long SetMessageType(Enum messageType)
-		{
-			writeStream.Position = 0;
-			writer.Write(messageType.ToString());
-			writer.Flush();
-			return writeStream.Position;
-		}
-
-		private string GetMessageType()
-		{
-			readStream.Position = 0;
-			var messageType = reader.ReadString();
-			return messageType;
-		}
-
 		public LowLevelMessage? ReadNext()
 		{
 			if (!Transport.IsP2PMessageAvailable(out var messageSize)) return null;
 
 			if (!Transport.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
 
-			var t = GetMessageType();
-			
+			readStream.Position = 0;
+			var t = reader.ReadString();
+			BitsReceivedLastSecond += messageSize;
+
 			return new LowLevelMessage
 			{
 				UserId = remoteSteamId,
@@ -79,20 +66,16 @@ namespace NexusClient.Nexus
 		public void Send<TObject>(Enum messageType, TObject content, SendType sendType, IEnumerable<string> recipients)
 			where TObject : T
 		{
-			var length = SetMessageType(messageType);
+			writeStream.Position = 0;
+			writer.Write(messageType.ToString());
 			Converter.WriteMessage(writeStream, content, out var messageSize);
+			writeStream.Flush();
+			var length = writeStream.Position;
+
 			foreach (var recipient in recipients)
-				Transport.SendP2PMessage(recipient, writeBuffer, messageSize + (uint)length, sendType);
-		}
-
-		public void Update(GameTime gt)
-		{
-			lock (LockObject)
 			{
-				foreach (var handler in handlerGroups.Values) handler.Update(gt);
-
-				ConsolidateHandlerGroups();
-				HandleMessages();
+				Transport.SendP2PMessage(recipient, writeBuffer, (uint) length, sendType);
+				BitsSentLastSecond += length;
 			}
 		}
 

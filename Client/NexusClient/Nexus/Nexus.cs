@@ -27,6 +27,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
 using NexusClient.Converters;
 using NexusClient.HandlerGroups;
 using NexusClient.Interfaces;
@@ -91,6 +92,19 @@ namespace NexusClient.Nexus
 			Log.Debug($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Remove(id);
 			return this;
+		}
+
+		public void Update(GameTime gt)
+		{
+			UpdatePerformanceCounters(gt);
+
+			lock (LockObject)
+			{
+				foreach (var handler in handlerGroups.Values) handler.Update(gt);
+
+				ConsolidateHandlerGroups();
+				HandleMessages();
+			}
 		}
 	}
 }
