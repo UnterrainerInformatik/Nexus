@@ -28,7 +28,7 @@
 using System.Collections.Generic;
 using System.IO;
 using NexusClient.Converters;
-using NexusClient.Handlergroups;
+using NexusClient.HandlerGroups;
 using NexusClient.Interfaces;
 using NexusClient.Nexus.Apis;
 using NexusClient.Utils;

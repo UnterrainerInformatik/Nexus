@@ -28,7 +28,7 @@
 using MessagePack;
 using NexusClient.Converters.MessagePack;
 
-namespace NexusClient.Handlergroups.Bully
+namespace NexusClient.HandlerGroups.Bully
 {
 	[MessagePackObject]
 	public struct BullyIdContent : MessagePackDto

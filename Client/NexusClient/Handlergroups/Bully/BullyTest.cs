@@ -27,7 +27,7 @@
 
 using NUnit.Framework;
 
-namespace NexusClient.Handlergroups.Bully
+namespace NexusClient.HandlerGroups.Bully
 {
 	enum State
 	{

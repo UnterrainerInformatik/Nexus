@@ -25,7 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Handlergroups;
+using NexusClient.HandlerGroups;
 
 namespace NexusClient.Nexus
 {

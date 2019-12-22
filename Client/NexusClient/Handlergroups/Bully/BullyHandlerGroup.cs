@@ -33,7 +33,7 @@ using NexusClient.Converters.MessagePack;
 using NexusClient.Network.Testing;
 using Serilog;
 
-namespace NexusClient.Handlergroups.Bully
+namespace NexusClient.HandlerGroups.Bully
 {
 	/// <summary>
 	///     1. If P has the lowest process id, it sends a Victory message to all other processes and becomes the new

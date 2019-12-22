@@ -31,7 +31,7 @@ using Microsoft.Xna.Framework;
 using NexusClient.Converters;
 using NexusClient.Nexus;
 
-namespace NexusClient.Handlergroups
+namespace NexusClient.HandlerGroups
 {
 	internal struct HandlerStoreItem
 	{

@@ -27,7 +27,7 @@
 
 using System;
 using NexusClient.Converters.MessagePack;
-using NexusClient.Handlergroups;
+using NexusClient.HandlerGroups;
 using NexusClient.Network.Testing;
 
 namespace NexusClient.NUnitTests.Infrastructure

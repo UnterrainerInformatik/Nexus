@@ -189,7 +189,7 @@
     <Compile Include="Converters\MessagePack\MessagePackDes.cs" />
     <Compile Include="Converters\MessagePack\MessagePackSer.cs" />
     <Compile Include="Converters\MessagePack\MessagePackConverter.cs" />
-    <Compile Include="Handlergroups\Bully\BullyIdContent.cs" />
+    <Compile Include="HandlerGroups\Bully\BullyIdContent.cs" />
     <Compile Include="Nexus\LowLevelMessage.cs" />
     <Compile Include="Nexus\Apis\TargetApi.cs" />
     <Compile Include="Nexus\Nexus.HandlersGroups.cs" />
@@ -205,11 +205,11 @@
     <Compile Include="Utils\TestGameTime.cs" />
     <Compile Include="Network\Testing\TestTransport.cs" />
     <Compile Include="Network\Testing\TestServer.cs" />
-    <Compile Include="Handlergroups\Bully\BullyHandlerGroup.cs" />
-    <Compile Include="Handlergroups\Bully\BullyTest.cs" />
+    <Compile Include="HandlerGroups\Bully\BullyHandlerGroup.cs" />
+    <Compile Include="HandlerGroups\Bully\BullyTest.cs" />
     <Compile Include="Nexus\Nexus.cs" />
     <Compile Include="Nexus\Apis\MessageApi.cs" />
-    <Compile Include="Handlergroups\HandlerGroup.cs" />
+    <Compile Include="HandlerGroups\HandlerGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
