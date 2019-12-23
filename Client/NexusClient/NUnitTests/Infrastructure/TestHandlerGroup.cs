@@ -25,10 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using NexusClient.Converters.MessagePack;
 using NexusClient.HandlerGroups;
 using NexusClient.Network.Testing;
+using Serilog;
 
 namespace NexusClient.NUnitTests.Infrastructure
 {
@@ -48,13 +48,15 @@ namespace NexusClient.NUnitTests.Infrastructure
 		private void ElectionCallReceived(TestContent message, string senderId)
 		{
 			ElectionCallCount++;
-			Console.Out.WriteLine($"Election-call message handled. TestField: [{message.TestField}]");
+			Log.Debug(
+				$"[{Nexus.UserId}]: Election-call message from [{senderId}] handled. TestField: [{message.TestField}]");
 		}
 
 		private void ElectionCallAnswerReceived(TestContent message, string senderId)
 		{
 			ElectionCallAnswerCount++;
-			Console.Out.WriteLine($"Election-call-answer message handled. TestField: [{message.TestField}]");
+			Log.Debug(
+				$"{Nexus.UserId}]: Election-call-answer message from [{senderId}] handled. TestField: [{message.TestField}]");
 		}
 	}
 }

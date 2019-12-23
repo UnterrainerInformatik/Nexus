@@ -28,7 +28,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Xna.Framework;
 
 namespace NexusClient.Nexus
 {
@@ -48,7 +47,7 @@ namespace NexusClient.Nexus
 		{
 			if (!Transport.IsP2PMessageAvailable(out var messageSize)) return null;
 
-			if (!Transport.ReadP2PMessage(readBuffer, messageSize, out _, out var remoteSteamId)) return null;
+			if (!Transport.ReadP2PMessage(readBuffer, messageSize, out _, out var senderId)) return null;
 
 			readStream.Position = 0;
 			var t = reader.ReadString();
@@ -56,10 +55,7 @@ namespace NexusClient.Nexus
 
 			return new LowLevelMessage
 			{
-				UserId = remoteSteamId,
-				MessageSize = messageSize,
-				Stream = readStream,
-				MessageType = t
+				UserId = senderId, MessageSize = messageSize, Stream = readStream, MessageType = t
 			};
 		}
 

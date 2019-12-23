@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NexusClient.Converters;
 
@@ -43,7 +44,7 @@ namespace NexusClient.Nexus.Apis
 			this.nexus = nexus;
 		}
 
-		internal void Send<TObject>(Enum messageType, TObject content, SendType sendType, string[] recipientIds)
+		internal void Send<TObject>(Enum messageType, TObject content, SendType sendType, IEnumerable<string> recipientIds)
 			where TObject : T
 		{
 			nexus.Send(messageType, content, sendType, recipientIds);

@@ -31,16 +31,15 @@ using NexusClient.Nexus;
 using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
 using NUnit.Framework;
+using Serilog;
 
-namespace NexusClient.NUnitTests
+namespace HandlerTests
 {
 	[TestFixture()]
 	public class NetworkTests
 	{
 		private Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n1;
 		private Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n2;
-
-		private TestHandlerGroup hg;
 
 		[SetUp]
 		public void Setup()
@@ -50,22 +49,21 @@ namespace NexusClient.NUnitTests
 			var transport1 = new TestTransport(server);
 			var transport2 = new TestTransport(server);
 			var converter = new MessagePackConverter();
-			n1 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport1,
-				converter);
+			var hg1 = new TestHandlerGroup(server);
+			var hg2 = new TestHandlerGroup(server);
+			n1 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport1, converter);
 			n1.Initialize();
-			n2 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport2,
-				converter);
+			n2 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport2, converter);
 			n2.Initialize();
 
-			hg = new TestHandlerGroup(server);
-			n1.RegisterOrOverwriteHandlerGroup(hg);
-			n1.AddParticipants(n2.UserId);
-			n2.RegisterOrOverwriteHandlerGroup(hg);
-			n2.AddParticipants(n1.UserId);
+			n1.RegisterOrOverwriteHandlerGroup(hg1);
+			n1.AddParticipants(n1.UserId, n2.UserId);
+			n2.RegisterOrOverwriteHandlerGroup(hg2);
+			n2.AddParticipants(n1.UserId, n2.UserId);
 		}
 
 		[Test]
-		public void AddAndGetHandler()
+		public void AddAndGetHandlerTest()
 		{
 			var gt = new TestGameTime();
 			n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
@@ -73,17 +71,28 @@ namespace NexusClient.NUnitTests
 			n1.Message.ToOthersExcept(n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
 				new TestContent() {TestField = "should not be received"});
 
-			gt.Advance(1);
-			n1.Update(gt.Value());
-			n2.Update(gt.Value());
+			for (var i = 0; i < 3; i++)
+			{
+				gt.Advance(1);
+				n1.Update(gt.Value());
+				n2.Update(gt.Value());
+			}
+		}
 
-			gt.Advance(1);
-			n1.Update(gt.Value());
-			n2.Update(gt.Value());
-
-			gt.Advance(1);
-			n1.Update(gt.Value());
-			n2.Update(gt.Value());
+		[Test]
+		public void MessagesDoNotMultiplyTest()
+		{
+			var gt = new TestGameTime();
+			
+			for (var i = 0; i < 3; i++)
+			{
+				Log.Debug(
+					$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
+				n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
+				gt.Advance(1);
+				n1.Update(gt.Value());
+				n2.Update(gt.Value());
+			}
 		}
 	}
 }

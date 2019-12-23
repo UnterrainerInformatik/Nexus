@@ -31,7 +31,7 @@ using NexusClient.Converters.MessagePack;
 namespace NexusClient.HandlerGroups.Bully
 {
 	[MessagePackObject]
-	public struct BullyIdContent : MessagePackDto
+	public struct BullyIdMessage : MessagePackDto
 	{
 		[Key(0)]
 		public string Id { get; set; }

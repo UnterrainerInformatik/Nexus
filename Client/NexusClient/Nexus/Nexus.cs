@@ -45,7 +45,7 @@ namespace NexusClient.Nexus
 		public string UserId { get; set; }
 
 		internal object LockObject = new object();
-		internal TargetApi<TConv, TSer, TDes, T> Message { get; }
+		public TargetApi<TConv, TSer, TDes, T> Message { get; }
 		internal TConv Converter { get; set; }
 		internal readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
 		internal ITransport Transport { get; set; }
@@ -77,19 +77,19 @@ namespace NexusClient.Nexus
 		public void Initialize()
 		{
 			UserId = Transport.Login();
-			Log.Debug($"[{UserId}] Initialize");
+			Log.Verbose($"[{UserId}] Initialize");
 		}
 
 		public Nexus<TConv, TSer, TDes, T> AddParticipants(params string[] userIds)
 		{
-			Log.Debug($"[{UserId}] AddParticipants [{string.Join(",", userIds)}]");
+			Log.Verbose($"[{UserId}] AddParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Add(id, id);
 			return this;
 		}
 
 		public Nexus<TConv, TSer, TDes, T> RemoveParticipants(params string[] userIds)
 		{
-			Log.Debug($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
+			Log.Verbose($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Remove(id);
 			return this;
 		}

@@ -48,13 +48,13 @@ namespace NexusClient.Network.Testing
 		{
 			var userId = $"user{LastUserId++}";
 			UserConnections.Add(userId, new Queue<TestMessage>());
-			Log.Information($"[{userId}] Login");
+			Log.Verbose($"[{userId}] Login");
 			return userId;
 		}
 
 		public void Logout(string userId)
 		{
-			Log.Information($"[{userId}] Logout");
+			Log.Verbose($"[{userId}] Logout");
 			UserConnections.Remove(userId);
 		}
 
@@ -70,7 +70,7 @@ namespace NexusClient.Network.Testing
 
 		public bool IsMessageAvailableFor(string userId, out uint size)
 		{
-			Log.Information($"[{userId}] IsMessageAvailable");
+			Log.Verbose($"[{userId}] IsMessageAvailable");
 			size = 0;
 			var q = GetQueueFor(userId);
 			if (q == null || q.Count == 0) return false;
@@ -82,22 +82,23 @@ namespace NexusClient.Network.Testing
 
 		public bool ReadMessageFor(string userId, out TestMessage message)
 		{
-			Log.Information($"[{userId}] GetMessage");
+			Log.Verbose($"[{userId}] GetMessage");
 			message = null;
 			var q = GetQueueFor(userId);
 			if (q == null) return false;
 			message = q.Dequeue();
+			Log.Verbose($"[{userId}] ...message sender is [{message.SenderId}]");
 			return true;
 		}
 
-		public bool SendMessageFor(string userId, string recipientId, byte[] data, uint length)
+		public bool SendMessageFor(string senderId, string recipientId, byte[] data, uint length)
 		{
-			Log.Information($"[{userId}] SendMessage");
+			Log.Verbose($"[{senderId}] SendMessage to [{recipientId}]");
 			var q = GetQueueFor(recipientId);
 			if (q == null)
 				return false;
 			var m = new TestMessage();
-			m.SenderId = userId;
+			m.SenderId = senderId;
 			m.Size = length;
 			m.Buffer = new byte[length];
 			Buffer.BlockCopy(data, 0, m.Buffer, 0, (int) length);

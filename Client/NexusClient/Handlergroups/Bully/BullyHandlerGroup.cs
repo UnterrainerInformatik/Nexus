@@ -70,9 +70,9 @@ namespace NexusClient.HandlerGroups.Bully
 		public BullyHandlerGroup(string localUserId)
 		{
 			this.localUserId = localUserId;
-			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_ELECTION_CALL, BullyElectionCallReceived);
-			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER, BullyElectionCallAnswerReceived);
-			AddHandler<BullyIdContent>(BullyMessageType.TEAM_BULLY_VICTORY_DISTRIBUTION,
+			AddHandler<BullyIdMessage>(BullyMessageType.TEAM_BULLY_ELECTION_CALL, BullyElectionCallReceived);
+			AddHandler<BullyIdMessage>(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER, BullyElectionCallAnswerReceived);
+			AddHandler<BullyIdMessage>(BullyMessageType.TEAM_BULLY_VICTORY_DISTRIBUTION,
 				BullyVictoryDistributionReceived);
 		}
 
@@ -101,56 +101,56 @@ namespace NexusClient.HandlerGroups.Bully
 			}
 		}
 
-		private void BullyElectionCallReceived(BullyIdContent message, string senderId)
+		private void BullyElectionCallReceived(BullyIdMessage message, string senderId)
 		{
 			lock (LockObject)
 			{
 				if (string.Compare(localUserId, message.Id, StringComparison.InvariantCulture) < 0)
 				{
+					Log.Debug($"[{localUserId}]: Bully-ElectionCall received from userId [{message.Id}] - " +
+							$"own ID is smaller; answering and restarting election process.");
 					Nexus.Message.To(senderId).Send(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER,
-						new BullyIdContent() {Id = localUserId});
+						new BullyIdMessage() { Id = localUserId });
 					StartBullyElection();
-					Log.Debug($"Bully-ElectionCall received from userId [{message.Id}] - " +
-							$"own ID is smaller [{localUserId}]; answering and restarting election process.");
 				}
 				else
 				{
+					Log.Debug($"[{localUserId}]: Bully-ElectionCall received from userId [{message.Id}] - " +
+							$"own ID is bigger; new leader apprentice; waiting for victory message.");
 					waitingForVictoryMessageTimer.SetIsActive(true);
-					Log.Debug($"Bully-ElectionCall received from userId [{message.Id}] - " +
-							$"own ID is bigger [{localUserId}]; new leader apprentice; waiting for victory message.");
 				}
 			}
 		}
 
-		private void BullyElectionCallAnswerReceived(BullyIdContent message, string senderId)
+		private void BullyElectionCallAnswerReceived(BullyIdMessage message, string senderId)
 		{
 			lock (LockObject)
 			{
+				if (string.Compare(localUserId, message.Id, StringComparison.InvariantCulture) < 0)
+					Log.Debug($"[{localUserId}]: Bully-ElectionAnswer received from userId [{message.Id}] - " +
+							$"own ID is smaller; different election; keeping quiet.");
+				else
+					Log.Debug($"[{localUserId}]: Bully-ElectionAnswer received from userId [{message.Id}] - " +
+							$"own ID is bigger.");
 				electionStartedTimer.Reset().SetIsActive(false);
-				if (string.Compare(localUserId, message.Id, StringComparison.InvariantCulture) < 0)
-					Log.Debug($"Bully-ElectionAnswer received from userId [{message.Id}] - " +
-							$"own ID is smaller [{localUserId}]; different election; keeping quiet.");
-				else
-					Log.Debug($"Bully-ElectionAnswer received from userId [{message.Id}] - " +
-							$"own ID is bigger [{localUserId}]; .");
 			}
 		}
 
-		private void BullyVictoryDistributionReceived(BullyIdContent message, string senderId)
+		private void BullyVictoryDistributionReceived(BullyIdMessage message, string senderId)
 		{
 			lock (LockObject)
 			{
 				if (string.Compare(localUserId, message.Id, StringComparison.InvariantCulture) < 0)
 				{
+					Log.Debug($"[{localUserId}]: Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
+							$"own ID is smaller; starting election");
 					StartBullyElection();
-					Log.Debug($"Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
-							$"own ID is smaller [{localUserId}]; starting election");
 				}
 				else
 				{
-					LeaderId = senderId;
-					Log.Debug($"Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
+					Log.Debug($"[{localUserId}]: Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
 							$"[{senderId}] is now the leader.");
+					LeaderId = senderId;
 				}
 			}
 		}
@@ -174,7 +174,7 @@ namespace NexusClient.HandlerGroups.Bully
 			{
 				foreach (var client in GetOthersWithLowerId())
 					Nexus.Message.To(client).Send(BullyMessageType.TEAM_BULLY_ELECTION_CALL,
-						new BullyIdContent() {Id = localUserId});
+						new BullyIdMessage() {Id = localUserId});
 				electionStartedTimer.SetIsActive(true);
 			}
 		}
@@ -183,7 +183,7 @@ namespace NexusClient.HandlerGroups.Bully
 		{
 			LeaderId = localUserId;
 			Nexus.Message.ToOthers().Send(BullyMessageType.TEAM_BULLY_VICTORY_DISTRIBUTION,
-				new BullyIdContent() {Id = localUserId});
+				new BullyIdMessage() {Id = localUserId});
 		}
 
 		public string GetLowestIdUser()

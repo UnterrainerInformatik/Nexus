@@ -61,8 +61,8 @@
     <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.3.15\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.7.1.189, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Portable.3.7.1.189\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Moq, Version=4.13.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.13.1\lib\net45\Moq.dll</HintPath>
@@ -140,11 +140,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nexus\Nexus.PerfCounters.cs" />
+    <Compile Include="NUnitTests\Infrastructure\TestHandlerGroup.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Converters\IMessageDto.cs" />
-    <Compile Include="NUnitTests\NetworkTests.cs" />
     <Compile Include="NUnitTests\Infrastructure\TestContent.cs" />
-    <Compile Include="NUnitTests\Infrastructure\TestHandlerGroup.cs" />
     <Compile Include="NUnitTests\Infrastructure\TestType.cs" />
     <Compile Include="Converters\PerformanceTests\BinarySerializable.cs" />
     <Compile Include="Converters\PerformanceTests\Mappings\ListMapping.cs" />
@@ -190,7 +189,7 @@
     <Compile Include="Converters\MessagePack\MessagePackDes.cs" />
     <Compile Include="Converters\MessagePack\MessagePackSer.cs" />
     <Compile Include="Converters\MessagePack\MessagePackConverter.cs" />
-    <Compile Include="HandlerGroups\Bully\BullyIdContent.cs" />
+    <Compile Include="HandlerGroups\Bully\BullyIdMessage.cs" />
     <Compile Include="Nexus\LowLevelMessage.cs" />
     <Compile Include="Nexus\Apis\TargetApi.cs" />
     <Compile Include="Nexus\Nexus.HandlersGroups.cs" />
@@ -207,7 +206,6 @@
     <Compile Include="Network\Testing\TestTransport.cs" />
     <Compile Include="Network\Testing\TestServer.cs" />
     <Compile Include="HandlerGroups\Bully\BullyHandlerGroup.cs" />
-    <Compile Include="HandlerGroups\Bully\BullyTest.cs" />
     <Compile Include="Nexus\Nexus.cs" />
     <Compile Include="Nexus\Apis\MessageApi.cs" />
     <Compile Include="HandlerGroups\HandlerGroup.cs" />

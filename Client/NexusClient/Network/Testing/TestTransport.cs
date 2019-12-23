@@ -30,7 +30,7 @@ using NexusClient.Nexus;
 
 namespace NexusClient.Network.Testing
 {
-	class TestTransport : ITransport
+	public class TestTransport : ITransport
 	{
 		public TestServer Server { get; set; }
 		public string UserId { get; set; }

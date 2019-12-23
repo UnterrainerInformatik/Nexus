@@ -30,7 +30,7 @@ using NexusClient.Interfaces;
 
 namespace NexusClient.Network.Testing
 {
-	class TestConnection : IConnection
+	public class TestConnection : IConnection
 	{
 		public bool ConnectToServer(out string userId)
 		{
