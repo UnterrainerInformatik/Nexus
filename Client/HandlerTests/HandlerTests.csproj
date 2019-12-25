@@ -46,6 +46,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="TestHandlerTests.cs" />
     <Compile Include="Bully\BullyTest.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="NetworkTests.cs" />

@@ -26,6 +26,8 @@
 // ***************************************************************************
 
 using System.IO;
+using MessagePack;
+using Nerdbank.Streams;
 
 namespace NexusClient.Converters.MessagePack
 {
@@ -33,7 +35,13 @@ namespace NexusClient.Converters.MessagePack
 	{
 		public TObject Deserialize<TObject>(Stream stream) where TObject : MessagePackDto
 		{
-			return global::MessagePack.MessagePackSerializer.Deserialize<TObject>(stream);
+			TObject result;
+			using (var subStream = stream.ReadSubstream())
+			{
+				result = MessagePackSerializer.Deserialize<TObject>(subStream);
+			}
+
+			return result;
 		}
 	}
 }

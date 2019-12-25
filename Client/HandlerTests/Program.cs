@@ -1,4 +1,5 @@
 ﻿using System;
+using HandlerTests.Bully;
 
 namespace HandlerTests
 {
@@ -12,9 +13,12 @@ namespace HandlerTests
         /// </summary>
         [STAThread]
         static void Main()
-        {
-            using (var game = new Game1())
-                game.Run();
+		{
+			var t = new BullyTest();
+			t.Setup();
+			t.WhenCallerIsHighestIdCallerGetsUpdateTest();
+			//using (var game = new Game1())
+            //    game.Run();
         }
     }
 }

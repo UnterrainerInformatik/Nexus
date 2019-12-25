@@ -37,6 +37,6 @@ namespace NexusClient.Converters
 
 		TObject ReadMessage<TObject>(Stream stream, uint messageSize) where TObject : T;
 
-		bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize) where TObject : T;
+		bool WriteMessage<TObject>(Stream stream, TObject message, out uint messageSize) where TObject : T;
 	}
 }

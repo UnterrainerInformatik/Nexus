@@ -68,6 +68,7 @@ namespace HandlerTests.Bully
 		[SetUp]
 		public void Setup()
 		{
+			Logger.Init();
 			server = new TestServer();
 			converter = new MessagePackConverter();
 			nexi = new Dictionary<string, NexusObjects>();
@@ -120,7 +121,7 @@ namespace HandlerTests.Bully
 			Update(gt.Value());
 			nexi["user9"].BullyHandlerGroup.StartBullyElection();
 
-			for (var i = 0; i < 5; i++)
+			for (var i = 0; i < 10; i++)
 			{
 				Log.Debug(
 					$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");

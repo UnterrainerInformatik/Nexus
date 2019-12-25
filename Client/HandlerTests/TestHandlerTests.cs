@@ -25,63 +25,77 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.IO;
-using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
 using NexusClient.Network.Testing;
 using NexusClient.Nexus;
 using NexusClient.NUnitTests.Infrastructure;
+using NexusClient.Utils;
 using NUnit.Framework;
+using Serilog;
 
-namespace NexusClient.NUnitTests
+namespace HandlerTests
 {
-	[TestFixture()]
-	public class HandlerGroupTests
+	public class NexusObjects
 	{
-		private TestHandlerGroup hg;
+		public Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> Nexus { get; }
+		private TestTransport Transport { get; }
+		public TestHandlerGroup TestHandlerGroup { get; }
+		public readonly string UserId;
+
+		public NexusObjects(TestServer server, MessagePackConverter converter)
+		{
+			Transport = new TestTransport(server);
+			Nexus = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(Transport,
+				converter);
+			Nexus.Initialize();
+			UserId = Nexus.UserId;
+
+			TestHandlerGroup = new TestHandlerGroup(server);
+			Nexus.RegisterOrOverwriteHandlerGroup(TestHandlerGroup);
+		}
+	}
+
+	[TestFixture]
+	class TestHandlerTests
+	{
+		private TestServer server;
+		private Dictionary<string, NexusObjects> nexi;
 		private MessagePackConverter converter;
-		private TestContent content;
-		private readonly byte[] buffer = new byte[2000];
-		private Stream stream; 
 
 		[SetUp]
 		public void Setup()
 		{
-			stream = new MemoryStream(buffer);
-
-			var server = new Mock<TestServer>();
-			hg = new TestHandlerGroup(server.Object);
+			Logger.Init();
+			server = new TestServer();
 			converter = new MessagePackConverter();
+			nexi = new Dictionary<string, NexusObjects>();
+			for (var i = 0; i < 2; i++)
+			{
+				var nexusObjects = new NexusObjects(server, converter);
+				nexi.Add(nexusObjects.UserId, nexusObjects);
+			}
 
-			content = new TestContent();
-			var writeStream = new MemoryStream(buffer);
-			converter.Serializer.Serialize(content, writeStream);
+			foreach (var nexusObjects in nexi.Values) nexusObjects.Nexus.AddParticipants(nexi.Keys.ToArray());
 		}
 
 		[Test]
-		public void AddAndGetHandlerDoesNotThrowException()
+		public void AddingHandlersWorksTest()
 		{
-			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL",
-				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Stream = stream}, converter);
+			var gt = new TestGameTime();
+			Update(gt.Value());
+
+			Log.Debug(
+				$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
+			gt.Advance(1);
+			Update(gt.Value());
 		}
 
-		[Test]
-		public void RightHandlersAreGettingCalled()
+		private void Update(GameTime gt)
 		{
-			var writeStream = new MemoryStream(buffer);
-			converter.Serializer.Serialize(content, writeStream);
-
-			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL",
-				new LowLevelMessage() {UserId = "1", MessageType = "ELECTION_CALL", Stream = stream }, converter);
-			stream.Position = 0;
-			Assert.AreEqual(0, hg.ElectionCallAnswerCount);
-			Assert.AreEqual(1, hg.ElectionCallCount);
-
-			hg.Handle<MessagePackConverter, MessagePackDto>("ELECTION_CALL_ANSWER",
-				new LowLevelMessage() {UserId = "2", MessageType = "ELECTION_CALL_ANSWER", Stream = stream }, converter);
-			stream.Position = 0;
-			Assert.AreEqual(1, hg.ElectionCallAnswerCount);
-			Assert.AreEqual(1, hg.ElectionCallCount);
+			foreach (var nexusObject in nexi.Values) nexusObject.Nexus.Update(gt);
 		}
 	}
 }

@@ -30,7 +30,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
-using NexusClient.Network.Testing;
 using Serilog;
 
 namespace NexusClient.HandlerGroups.Bully
@@ -57,11 +56,10 @@ namespace NexusClient.HandlerGroups.Bully
 
 	public class BullyHandlerGroup : HandlerGroup<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
-		private TestServer Server { get; } = new TestServer();
-
 		private readonly Timer.Timer electionStartedTimer = new Timer.Timer(2000f).SetIsActive(false);
-
 		private readonly Timer.Timer waitingForVictoryMessageTimer = new Timer.Timer(2000f).SetIsActive(false);
+		private bool reElectSentThisUpdateCycle;
+		private bool victorySentThisUpdateCycle;
 
 		/// <summary>
 		///     This handler helps electing a leader in a distributed environment.
@@ -83,6 +81,8 @@ namespace NexusClient.HandlerGroups.Bully
 		{
 			lock (LockObject)
 			{
+				reElectSentThisUpdateCycle = false;
+				victorySentThisUpdateCycle = false;
 				base.Update(gt);
 
 				if (electionStartedTimer.Update(gt))
@@ -110,7 +110,7 @@ namespace NexusClient.HandlerGroups.Bully
 					Log.Debug($"[{localUserId}]: Bully-ElectionCall received from userId [{message.Id}] - " +
 							$"own ID is smaller; answering and restarting election process.");
 					Nexus.Message.To(senderId).Send(BullyMessageType.TEAM_BULLY_ELECTION_ANSWER,
-						new BullyIdMessage() { Id = localUserId });
+						new BullyIdMessage() {Id = localUserId});
 					StartBullyElection();
 				}
 				else
@@ -142,14 +142,16 @@ namespace NexusClient.HandlerGroups.Bully
 			{
 				if (string.Compare(localUserId, message.Id, StringComparison.InvariantCulture) < 0)
 				{
-					Log.Debug($"[{localUserId}]: Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
-							$"own ID is smaller; starting election");
+					Log.Debug(
+						$"[{localUserId}]: Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
+						$"own ID is smaller; starting election");
 					StartBullyElection();
 				}
 				else
 				{
-					Log.Debug($"[{localUserId}]: Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
-							$"[{senderId}] is now the leader.");
+					Log.Debug(
+						$"[{localUserId}]: Bully-VictoryDistribution received from [{senderId}] for userId [{message.Id}] - " +
+						$"[{senderId}] is now the leader.");
 					LeaderId = senderId;
 				}
 			}
@@ -165,17 +167,26 @@ namespace NexusClient.HandlerGroups.Bully
 			if (GetLowestIdUser() == localUserId)
 			{
 				// If we have the lowest ID, we broadcast victory immediately.
-				AnnounceVictory();
+				if (!victorySentThisUpdateCycle)
+				{
+					victorySentThisUpdateCycle = true;
+					AnnounceVictory();
+				}
+
 				return;
 			}
 
 			// Broadcast an election call to all potential leaders.
 			lock (LockObject)
 			{
-				foreach (var client in GetOthersWithLowerId())
-					Nexus.Message.To(client).Send(BullyMessageType.TEAM_BULLY_ELECTION_CALL,
-						new BullyIdMessage() {Id = localUserId});
-				electionStartedTimer.SetIsActive(true);
+				if (!reElectSentThisUpdateCycle)
+				{
+					reElectSentThisUpdateCycle = true;
+					foreach (var client in GetOthersWithLowerId())
+						Nexus.Message.To(client).Send(BullyMessageType.TEAM_BULLY_ELECTION_CALL,
+							new BullyIdMessage() {Id = localUserId});
+					electionStartedTimer.SetIsActive(true);
+				}
 			}
 		}
 

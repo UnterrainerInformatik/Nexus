@@ -45,10 +45,10 @@ namespace NexusClient.Converters.MessagePack
 			return Deserializer.Deserialize<TObject>(stream);
 		}
 
-		public bool WriteMessage<TObject>(Stream writer, TObject message, out uint messageSize)
+		public bool WriteMessage<TObject>(Stream stream, TObject message, out uint messageSize)
 			where TObject : MessagePackDto
 		{
-			messageSize = Serializer.Serialize(message, writer);
+			messageSize = Serializer.Serialize(message, stream);
 			return true;
 		}
 	}

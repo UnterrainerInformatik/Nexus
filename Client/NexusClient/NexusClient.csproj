@@ -194,7 +194,6 @@
     <Compile Include="Nexus\Apis\TargetApi.cs" />
     <Compile Include="Nexus\Nexus.HandlersGroups.cs" />
     <Compile Include="Nexus\Nexus.Transport.cs" />
-    <Compile Include="NUnitTests\HandlerGroupTests.cs" />
     <Compile Include="Network\Nexus\NexusConnection.cs" />
     <Compile Include="Network\Nexus\NexusTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

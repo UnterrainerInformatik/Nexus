@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System.IO;
+using Nerdbank.Streams;
 
 namespace NexusClient.Converters.MessagePack
 {
@@ -35,7 +36,11 @@ namespace NexusClient.Converters.MessagePack
 		{
 			stream.Flush();
 			var p = stream.Position;
-			global::MessagePack.MessagePackSerializer.Serialize(stream, message);
+			using (var subStream = stream.WriteSubstream())
+			{
+				global::MessagePack.MessagePackSerializer.Serialize(subStream, message);
+				subStream.Flush();
+			}
 			stream.Flush();
 			return (uint) (stream.Position - p);
 		}
