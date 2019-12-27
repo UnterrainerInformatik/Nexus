@@ -39,7 +39,7 @@ namespace NexusClient.Nexus
 				{
 					if (!removeList.Contains(item.Key))
 					{
-						item.Value.Nexus = this;
+						item.Value.Initialize(this);
 						handlerGroups.Add(item.Key, item.Value);
 					}
 					else
@@ -57,6 +57,7 @@ namespace NexusClient.Nexus
 
 				foreach (var item in addAfterRemovingList)
 				{
+					item.Value.Initialize(this);
 					handlerGroups.Add(item.Key, item.Value);
 				}
 

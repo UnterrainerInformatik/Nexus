@@ -82,7 +82,7 @@ namespace NexusClient.Nexus
 				lock (LockObject)
 				{
 					foreach (var group in handlerGroups.Values)
-						if (group.Handle<TConv, T>(m.Value.MessageType, m.Value, Converter))
+						if (group.Handle(m.Value.MessageType, m.Value))
 							break;
 
 					ConsolidateHandlerGroups();
