@@ -27,7 +27,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using NexusClient.Converters;
@@ -37,16 +36,14 @@ namespace NexusClient.HandlerGroups
 {
 	internal struct HandlerStoreItem
 	{
-		public Delegate Del { get; set; }
+		public Delegate HandlerDelegate { get; set; }
 		public Type Type { get; set; }
-		public Enum MessageType { get; set; }
 
 		public Type GenericType { get; set; }
-		public MethodInfo GenericMethod { get; set; }
-		public Delegate Handler { get; set; }
+		public MethodInfo GenericReadMessageMethod { get; set; }
 	}
 
-	public abstract class HandlerGroup<TTrans, TSer, TDes, T> where TTrans : ITransport<T>
+	public abstract class HandlerGroup<TTrans, TSer, TDes, T> where TTrans : IConverter<T>
 		where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
 		where T : IMessageDto
@@ -55,7 +52,7 @@ namespace NexusClient.HandlerGroups
 
 		protected MethodInfo method;
 
-		public delegate void HandleMessageDelegate<TD>(TD message, string senderId);
+		public delegate void HandleMessageDelegate<in TD>(TD message, string senderId);
 
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
@@ -72,13 +69,14 @@ namespace NexusClient.HandlerGroups
 		{
 			Nexus = nexus;
 			method = Nexus.Converter.GetType().GetMethod("ReadMessage");
-			if(method == null) throw new ArgumentException("The converter you passed doesn't have a method 'ReadMessage'.");
+			if (method == null)
+				throw new ArgumentException("The converter you passed doesn't have a method 'ReadMessage'.");
 
-			List<string> keys = new List<string>(handlerStore.Keys); 
+			var keys = new List<string>(handlerStore.Keys);
 			foreach (var key in keys)
 			{
 				var item = handlerStore[key];
-				item.GenericMethod = method.MakeGenericMethod(item.GenericType);
+				item.GenericReadMessageMethod = method.MakeGenericMethod(item.GenericType);
 				handlerStore.Remove(key);
 				handlerStore.Add(key, item);
 			}
@@ -86,17 +84,16 @@ namespace NexusClient.HandlerGroups
 
 		public void AddHandler<TT>(Enum key, HandleMessageDelegate<TT> handler) where TT : T
 		{
-			handlerStore.Add(key.ToString(), ConvertDelegate(key, handler));
+			handlerStore.Add(key.ToString(), ConvertDelegate(handler));
 		}
 
-		private HandlerStoreItem ConvertDelegate<TT>(Enum messageType, HandleMessageDelegate<TT> handler)
+		private HandlerStoreItem ConvertDelegate<TT>(HandleMessageDelegate<TT> handler)
 		{
 			var item = new HandlerStoreItem();
-			item.Del = Delegate.CreateDelegate(typeof(HandleMessageDelegate<TT>), handler.Target, handler.Method);
+			item.HandlerDelegate =
+				Delegate.CreateDelegate(typeof(HandleMessageDelegate<TT>), handler.Target, handler.Method);
 			item.Type = handler.GetType();
-			item.MessageType = messageType;
-			item.GenericType = item.Type.GetGenericArguments()[4];
-			item.Handler = Delegate.CreateDelegate(item.Type, item.Del.Target, item.Del.Method);
+			item.GenericType = handler.GetType().GetGenericArguments()[4];
 			return item;
 		}
 
@@ -108,9 +105,10 @@ namespace NexusClient.HandlerGroups
 
 			var h = handlerStore[messageType];
 
-			var mObject = h.GenericMethod.Invoke(Nexus.Converter, new object[] {message.Stream, message.MessageSize});
+			var mObject =
+				h.GenericReadMessageMethod.Invoke(Nexus.Converter, new object[] {message.Stream, message.MessageSize});
 			var m = Convert.ChangeType(mObject, h.GenericType);
-			h.Handler.DynamicInvoke(m, message.UserId);
+			h.HandlerDelegate.DynamicInvoke(m, message.UserId);
 
 			return true;
 		}

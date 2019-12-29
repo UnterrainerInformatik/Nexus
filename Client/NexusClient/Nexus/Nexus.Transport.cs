@@ -64,7 +64,7 @@ namespace NexusClient.Nexus
 		{
 			writeStream.Position = 0;
 			writer.Write(messageType.ToString());
-			Converter.WriteMessage(writeStream, content, out var messageSize);
+			Converter.WriteMessage(writeStream, content, out _);
 			writeStream.Flush();
 			var length = writeStream.Position;
 

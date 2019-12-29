@@ -29,7 +29,7 @@ using System.IO;
 
 namespace NexusClient.Converters.MessagePack
 {
-	public class MessagePackConverter : ITransport<MessagePackDto>
+	public class MessagePackConverter : IConverter<MessagePackDto>
 	{
 		public IMessageSer<MessagePackDto> Serializer { get; }
 		public IMessageDes<MessagePackDto> Deserializer { get; }

@@ -63,7 +63,7 @@ namespace NexusClient.Network.Testing
 			return UserConnections.TryGetValue(userId, out _);
 		}
 
-		public Queue<TestMessage> GetQueueFor(string userId)
+		private Queue<TestMessage> GetQueueFor(string userId)
 		{
 			return !UserConnections.TryGetValue(userId, out var q) ? null : q;
 		}

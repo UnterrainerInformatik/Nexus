@@ -29,7 +29,7 @@ using System.IO;
 
 namespace NexusClient.Converters
 {
-	public interface ITransport<T> where T : IMessageDto
+	public interface IConverter<in T> where T : IMessageDto
 	{
 		IMessageSer<T> Serializer { get; }
 

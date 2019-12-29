@@ -32,7 +32,7 @@ namespace NexusClient.Nexus.Apis
 {
 	public struct MessageApi<TConv, TSer, TDes, T> where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
-		where TConv : ITransport<T>
+		where TConv : IConverter<T>
 		where T : IMessageDto
 	{
 		internal string[] Recipients { get; set; }

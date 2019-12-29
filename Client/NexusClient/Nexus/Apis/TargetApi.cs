@@ -34,7 +34,7 @@ namespace NexusClient.Nexus.Apis
 {
 	public class TargetApi<TConv, TSer, TDes, T> where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
-		where TConv : ITransport<T>
+		where TConv : IConverter<T>
 		where T : IMessageDto
 	{
 		private readonly Nexus<TConv, TSer, TDes, T> nexus;
