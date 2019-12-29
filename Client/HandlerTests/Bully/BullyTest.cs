@@ -25,59 +25,23 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using NexusClient.Converters.MessagePack;
 using NexusClient.HandlerGroups.Bully;
-using NexusClient.Network.Testing;
-using NexusClient.Nexus.Implementations;
+using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
 using NUnit.Framework;
 using Serilog;
 
 namespace HandlerTests.Bully
 {
-	public class NexusClient
-	{
-		public MessagePackNexus Nexus { get; }
-		private TestTransport Transport { get; }
-		public BullyHandlerGroup BullyHandlerGroup { get; }
-		public readonly string UserId;
-
-		public NexusClient(TestServer server, MessagePackConverter converter)
-		{
-			Transport = new TestTransport(server);
-			Nexus = new MessagePackNexus(Transport, converter);
-			Nexus.Initialize();
-			UserId = Nexus.UserId;
-
-			BullyHandlerGroup = new BullyHandlerGroup(UserId);
-			Nexus.RegisterOrOverwriteHandlerGroup(BullyHandlerGroup);
-		}
-	}
-
 	[TestFixture]
-	class BullyTest
+	class BullyTest : HandlerTestBase
 	{
-		private TestServer server;
-		private Dictionary<string, NexusClient> clients;
-		private MessagePackConverter converter;
-
 		[SetUp]
 		public void Setup()
 		{
-			Logger.Init();
-			server = new TestServer();
-			converter = new MessagePackConverter();
-			clients = new Dictionary<string, NexusClient>();
-			for (var i = 0; i < 20; i++)
-			{
-				var client = new NexusClient(server, converter);
-				clients.Add(client.UserId, client);
-			}
-
-			foreach (var client in clients.Values) client.Nexus.AddParticipants(clients.Keys.ToArray());
+			Initialize(20,
+				(clientName, handlerDictionary) => { handlerDictionary.Add(new BullyHandlerGroup(clientName)); });
 		}
 
 		[Test]
@@ -85,7 +49,7 @@ namespace HandlerTests.Bully
 		{
 			var gt = new TestGameTime();
 			Update(gt.Value());
-			clients["user1"].BullyHandlerGroup.StartBullyElection();
+			clients["user1"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 
 			for (var i = 0; i < 5; i++)
 			{
@@ -102,7 +66,7 @@ namespace HandlerTests.Bully
 		{
 			var gt = new TestGameTime();
 			Update(gt.Value());
-			clients["user2"].BullyHandlerGroup.StartBullyElection();
+			clients["user2"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 
 			for (var i = 0; i < 5; i++)
 			{
@@ -119,7 +83,7 @@ namespace HandlerTests.Bully
 		{
 			var gt = new TestGameTime();
 			Update(gt.Value());
-			clients["user9"].BullyHandlerGroup.StartBullyElection();
+			clients["user9"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 
 			for (var i = 0; i < 50; i++)
 			{
@@ -137,7 +101,7 @@ namespace HandlerTests.Bully
 			foreach (var nexusObject in clients.Values)
 			{
 				if (!"user1".Equals(nexusObject.UserId)) s += " | ";
-				s += nexusObject.BullyHandlerGroup.LeaderId ?? "null";
+				s += nexusObject.Handlers.Get<BullyHandlerGroup>().LeaderId ?? "null";
 			}
 
 			s += " ] ###";

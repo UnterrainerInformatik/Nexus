@@ -29,7 +29,7 @@ using NexusClient.HandlerGroups;
 
 namespace NexusClient.Nexus
 {
-	public abstract partial class Nexus<TConv, TSer, TDes, T>
+	public abstract partial class Nexus<TCnv, TSer, TDes, TDto>
 	{
 		private void ConsolidateHandlerGroups()
 		{
@@ -67,7 +67,7 @@ namespace NexusClient.Nexus
 			}
 		}
 
-		public object RegisterOrOverwriteHandlerGroup(HandlerGroup<TConv, TSer, TDes, T> handlerGroup,
+		public object RegisterOrOverwriteHandlerGroup(HandlerGroup<TCnv, TSer, TDes, TDto> handlerGroup,
 			object key = null)
 		{
 			lock (LockObject)
@@ -97,7 +97,7 @@ namespace NexusClient.Nexus
 			}
 		}
 
-		public HandlerGroup<TConv, TSer, TDes, T> GetHandler(object key)
+		public HandlerGroup<TCnv, TSer, TDes, TDto> GetHandler(object key)
 		{
 			lock (LockObject)
 			{

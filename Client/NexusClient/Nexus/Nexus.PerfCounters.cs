@@ -29,7 +29,7 @@ using Microsoft.Xna.Framework;
 
 namespace NexusClient.Nexus
 {
-	public abstract partial class Nexus<TConv, TSer, TDes, T>
+	public abstract partial class Nexus<TCnv, TSer, TDes, TDto>
 	{
 		private const float BITS_CLEAR_TIMER = 1000f;
 		private float bitsClearTimer = BITS_CLEAR_TIMER;

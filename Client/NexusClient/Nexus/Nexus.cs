@@ -37,36 +37,36 @@ using Serilog;
 
 namespace NexusClient.Nexus
 {
-	public abstract partial class Nexus<TConv, TSer, TDes, T> where TConv : IConverter<T>
-		where TSer : IMessageSer<T>
-		where TDes : IMessageDes<T>
-		where T : IMessageDto
+	public abstract partial class Nexus<TCnv, TSer, TDes, TDto> where TCnv : IConverter<TDto>
+		where TSer : IMessageSer<TDto>
+		where TDes : IMessageDes<TDto>
+		where TDto : IMessageDto
 	{
 		public string UserId { get; set; }
 
 		internal object LockObject = new object();
-		public TargetApi<TConv, TSer, TDes, T> Message { get; }
-		internal TConv Converter { get; set; }
+		public TargetApi<TCnv, TSer, TDes, TDto> Message { get; }
+		internal TCnv Converter { get; set; }
 		internal readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
 		internal ITransport Transport { get; set; }
 
-		private readonly Dictionary<object, HandlerGroup<TConv, TSer, TDes, T>> handlerGroups =
-			new Dictionary<object, HandlerGroup<TConv, TSer, TDes, T>>();
+		private readonly Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>> handlerGroups =
+			new Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>>();
 
-		private readonly Dictionary<object, HandlerGroup<TConv, TSer, TDes, T>> addList =
-			new Dictionary<object, HandlerGroup<TConv, TSer, TDes, T>>();
+		private readonly Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>> addList =
+			new Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>>();
 
-		private readonly Dictionary<object, HandlerGroup<TConv, TSer, TDes, T>> addAfterRemovingList =
-			new Dictionary<object, HandlerGroup<TConv, TSer, TDes, T>>();
+		private readonly Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>> addAfterRemovingList =
+			new Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>>();
 
 		private readonly List<object> removeList = new List<object>();
 
-		public Nexus(ITransport transport, TConv converter)
+		public Nexus(ITransport transport, TCnv converter)
 		{
 			Logger.Init();
 			Converter = converter;
 			Transport = transport;
-			Message = new TargetApi<TConv, TSer, TDes, T>(this);
+			Message = new TargetApi<TCnv, TSer, TDes, TDto>(this);
 
 			writeStream = new MemoryStream(writeBuffer);
 			writer = new BinaryWriter(writeStream);
@@ -80,14 +80,14 @@ namespace NexusClient.Nexus
 			Log.Verbose($"[{UserId}] Initialize");
 		}
 
-		public Nexus<TConv, TSer, TDes, T> AddParticipants(params string[] userIds)
+		public Nexus<TCnv, TSer, TDes, TDto> AddParticipants(params string[] userIds)
 		{
 			Log.Verbose($"[{UserId}] AddParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Add(id, id);
 			return this;
 		}
 
-		public Nexus<TConv, TSer, TDes, T> RemoveParticipants(params string[] userIds)
+		public Nexus<TCnv, TSer, TDes, TDto> RemoveParticipants(params string[] userIds)
 		{
 			Log.Verbose($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
 			foreach (var id in userIds) Participants.Remove(id);

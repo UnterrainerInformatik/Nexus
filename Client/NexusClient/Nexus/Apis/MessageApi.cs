@@ -30,28 +30,28 @@ using NexusClient.Converters;
 
 namespace NexusClient.Nexus.Apis
 {
-	public struct MessageApi<TConv, TSer, TDes, T> where TSer : IMessageSer<T>
-		where TDes : IMessageDes<T>
-		where TConv : IConverter<T>
-		where T : IMessageDto
+	public struct MessageApi<TCnv, TSer, TDes, TDto> where TSer : IMessageSer<TDto>
+		where TDes : IMessageDes<TDto>
+		where TCnv : IConverter<TDto>
+		where TDto : IMessageDto
 	{
 		internal string[] Recipients { get; set; }
 		internal SendType TransportSendType { get; set; }
 
-		private TargetApi<TConv, TSer, TDes, T> TargetApi { get; set; }
+		private TargetApi<TCnv, TSer, TDes, TDto> TargetApi { get; set; }
 
-		public static MessageApi<TConv, TSer, TDes, T> Create(TargetApi<TConv, TSer, TDes, T> targetApi)
+		public static MessageApi<TCnv, TSer, TDes, TDto> Create(TargetApi<TCnv, TSer, TDes, TDto> targetApi)
 		{
-			return new MessageApi<TConv, TSer, TDes, T> {TargetApi = targetApi, TransportSendType = SendType.RELIABLE};
+			return new MessageApi<TCnv, TSer, TDes, TDto> {TargetApi = targetApi, TransportSendType = SendType.RELIABLE};
 		}
 
-		public MessageApi<TConv, TSer, TDes, T> WithSendType(SendType type)
+		public MessageApi<TCnv, TSer, TDes, TDto> WithSendType(SendType type)
 		{
 			TransportSendType = type;
 			return this;
 		}
 
-		public void Send<TObject>(Enum messageType, TObject data) where TObject : T
+		public void Send<TObject>(Enum messageType, TObject data) where TObject : TDto
 		{
 			TargetApi.Send(messageType, data, TransportSendType, Recipients);
 		}

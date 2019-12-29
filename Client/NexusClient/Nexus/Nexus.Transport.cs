@@ -31,7 +31,7 @@ using System.IO;
 
 namespace NexusClient.Nexus
 {
-	public abstract partial class Nexus<TConv, TSer, TDes, T>
+	public abstract partial class Nexus<TCnv, TSer, TDes, TDto>
 	{
 		private const int WRITE_BUFFER_SIZE = 1024 * 1024 * 8;
 		private readonly byte[] writeBuffer = new byte[WRITE_BUFFER_SIZE];
@@ -60,7 +60,7 @@ namespace NexusClient.Nexus
 		}
 
 		public void Send<TObject>(Enum messageType, TObject content, SendType sendType, IEnumerable<string> recipients)
-			where TObject : T
+			where TObject : TDto
 		{
 			writeStream.Position = 0;
 			writer.Write(messageType.ToString());

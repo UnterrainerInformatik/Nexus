@@ -142,6 +142,7 @@
     <Compile Include="Nexus\Implementations\MessagePackNexus.cs" />
     <Compile Include="Nexus\Nexus.PerfCounters.cs" />
     <Compile Include="NUnitTests\Infrastructure\TestHandlerGroup.cs" />
+    <Compile Include="NUnitTests\Infrastructure\HandlerTestBase.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Converters\IMessageDto.cs" />
     <Compile Include="NUnitTests\Infrastructure\TestContent.cs" />

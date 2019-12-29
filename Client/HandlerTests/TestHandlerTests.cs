@@ -25,12 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using NexusClient.Converters.MessagePack;
-using NexusClient.Network.Testing;
-using NexusClient.Nexus.Implementations;
 using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
 using NUnit.Framework;
@@ -38,46 +33,13 @@ using Serilog;
 
 namespace HandlerTests
 {
-	public class NexusClient
-	{
-		public MessagePackNexus Nexus { get; }
-		private TestTransport Transport { get; }
-		public TestHandlerGroup TestHandlerGroup { get; }
-		public readonly string UserId;
-
-		public NexusClient(TestServer server, MessagePackConverter converter)
-		{
-			Transport = new TestTransport(server);
-			Nexus = new MessagePackNexus(Transport, converter);
-			Nexus.Initialize();
-			UserId = Nexus.UserId;
-
-			TestHandlerGroup = new TestHandlerGroup(server);
-			Nexus.RegisterOrOverwriteHandlerGroup(TestHandlerGroup);
-		}
-	}
-
 	[TestFixture]
-	class TestHandlerTests
+	class TestHandlerTests : HandlerTestBase
 	{
-		private TestServer server;
-		private Dictionary<string, NexusClient> clients;
-		private MessagePackConverter converter;
-
 		[SetUp]
 		public void Setup()
 		{
-			Logger.Init();
-			server = new TestServer();
-			converter = new MessagePackConverter();
-			clients = new Dictionary<string, NexusClient>();
-			for (var i = 0; i < 2; i++)
-			{
-				var nexusObjects = new NexusClient(server, converter);
-				clients.Add(nexusObjects.UserId, nexusObjects);
-			}
-
-			foreach (var nexusObjects in clients.Values) nexusObjects.Nexus.AddParticipants(clients.Keys.ToArray());
+			Initialize(2, (clientName, handlerDictionary) => { handlerDictionary.Add(new TestHandlerGroup(server)); });
 		}
 
 		[Test]

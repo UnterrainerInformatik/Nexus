@@ -43,10 +43,10 @@ namespace NexusClient.HandlerGroups
 		public MethodInfo GenericReadMessageMethod { get; set; }
 	}
 
-	public abstract class HandlerGroup<TTrans, TSer, TDes, T> where TTrans : IConverter<T>
-		where TSer : IMessageSer<T>
-		where TDes : IMessageDes<T>
-		where T : IMessageDto
+	public abstract class HandlerGroup<TTpt, TSer, TDes, TDto> where TTpt : IConverter<TDto>
+		where TSer : IMessageSer<TDto>
+		where TDes : IMessageDes<TDto>
+		where TDto : IMessageDto
 	{
 		protected readonly object LockObject = new object();
 
@@ -56,7 +56,7 @@ namespace NexusClient.HandlerGroups
 
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
-		public Nexus<TTrans, TSer, TDes, T> Nexus { get; internal set; }
+		public Nexus<TTpt, TSer, TDes, TDto> Nexus { get; internal set; }
 
 		protected HandlerGroup(bool active = true)
 		{
@@ -65,7 +65,7 @@ namespace NexusClient.HandlerGroups
 
 		public bool Active { get; set; }
 
-		public void Initialize(Nexus<TTrans, TSer, TDes, T> nexus)
+		public void Initialize(Nexus<TTpt, TSer, TDes, TDto> nexus)
 		{
 			Nexus = nexus;
 			method = Nexus.Converter.GetType().GetMethod("ReadMessage");
@@ -82,7 +82,7 @@ namespace NexusClient.HandlerGroups
 			}
 		}
 
-		public void AddHandler<TT>(Enum key, HandleMessageDelegate<TT> handler) where TT : T
+		public void AddHandler<TT>(Enum key, HandleMessageDelegate<TT> handler) where TT : TDto
 		{
 			handlerStore.Add(key.ToString(), ConvertDelegate(handler));
 		}

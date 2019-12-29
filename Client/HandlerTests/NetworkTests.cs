@@ -27,7 +27,6 @@
 
 using NexusClient.Converters.MessagePack;
 using NexusClient.Network.Testing;
-using NexusClient.Nexus;
 using NexusClient.Nexus.Implementations;
 using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
@@ -66,7 +65,7 @@ namespace HandlerTests
 		[Test]
 		public void AddAndGetHandlerTest()
 		{
-			var gt = new TestGameTime();
+			var gameTime = new TestGameTime();
 			n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
 			n2.Message.ToOthers().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"});
 			n1.Message.ToOthersExcept(n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
@@ -74,25 +73,25 @@ namespace HandlerTests
 
 			for (var i = 0; i < 3; i++)
 			{
-				gt.Advance(1);
-				n1.Update(gt.Value());
-				n2.Update(gt.Value());
+				gameTime.Advance(1);
+				n1.Update(gameTime.Value());
+				n2.Update(gameTime.Value());
 			}
 		}
 
 		[Test]
 		public void MessagesDoNotMultiplyTest()
 		{
-			var gt = new TestGameTime();
-			
+			var gameTime = new TestGameTime();
+
 			for (var i = 0; i < 3; i++)
 			{
 				Log.Debug(
-					$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
+					$"--- t = {gameTime.Value().TotalGameTime} seconds----------------------------------------------------------");
 				n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
-				gt.Advance(1);
-				n1.Update(gt.Value());
-				n2.Update(gt.Value());
+				gameTime.Advance(1);
+				n1.Update(gameTime.Value());
+				n2.Update(gameTime.Value());
 			}
 		}
 	}
