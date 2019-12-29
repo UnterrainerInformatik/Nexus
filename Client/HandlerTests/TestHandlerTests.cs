@@ -38,14 +38,14 @@ using Serilog;
 
 namespace HandlerTests
 {
-	public class NexusObjects
+	public class NexusClient
 	{
 		public Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> Nexus { get; }
 		private TestTransport Transport { get; }
 		public TestHandlerGroup TestHandlerGroup { get; }
 		public readonly string UserId;
 
-		public NexusObjects(TestServer server, MessagePackConverter converter)
+		public NexusClient(TestServer server, MessagePackConverter converter)
 		{
 			Transport = new TestTransport(server);
 			Nexus = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(Transport,
@@ -62,7 +62,7 @@ namespace HandlerTests
 	class TestHandlerTests
 	{
 		private TestServer server;
-		private Dictionary<string, NexusObjects> nexi;
+		private Dictionary<string, NexusClient> clients;
 		private MessagePackConverter converter;
 
 		[SetUp]
@@ -71,14 +71,14 @@ namespace HandlerTests
 			Logger.Init();
 			server = new TestServer();
 			converter = new MessagePackConverter();
-			nexi = new Dictionary<string, NexusObjects>();
+			clients = new Dictionary<string, NexusClient>();
 			for (var i = 0; i < 2; i++)
 			{
-				var nexusObjects = new NexusObjects(server, converter);
-				nexi.Add(nexusObjects.UserId, nexusObjects);
+				var nexusObjects = new NexusClient(server, converter);
+				clients.Add(nexusObjects.UserId, nexusObjects);
 			}
 
-			foreach (var nexusObjects in nexi.Values) nexusObjects.Nexus.AddParticipants(nexi.Keys.ToArray());
+			foreach (var nexusObjects in clients.Values) nexusObjects.Nexus.AddParticipants(clients.Keys.ToArray());
 		}
 
 		[Test]
@@ -95,7 +95,7 @@ namespace HandlerTests
 
 		private void Update(GameTime gt)
 		{
-			foreach (var nexusObject in nexi.Values) nexusObject.Nexus.Update(gt);
+			foreach (var nexusObject in clients.Values) nexusObject.Nexus.Update(gt);
 		}
 	}
 }
