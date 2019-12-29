@@ -31,7 +31,7 @@ using System.IO;
 
 namespace NexusClient.Nexus
 {
-	public partial class Nexus<TConv, TSer, TDes, T>
+	public abstract partial class Nexus<TConv, TSer, TDes, T>
 	{
 		private const int WRITE_BUFFER_SIZE = 1024 * 1024 * 8;
 		private readonly byte[] writeBuffer = new byte[WRITE_BUFFER_SIZE];

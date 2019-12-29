@@ -25,29 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Microsoft.Xna.Framework;
+using NexusClient.Converters.MessagePack;
+using NexusClient.Interfaces;
 
-namespace NexusClient.Nexus
+namespace NexusClient.Nexus.Implementations
 {
-	public abstract partial class Nexus<TConv, TSer, TDes, T>
+	public class MessagePackNexus : Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
-		private const float BITS_CLEAR_TIMER = 1000f;
-		private float bitsClearTimer = BITS_CLEAR_TIMER;
-
-		public long BitsSentLastSecond { get; set; }
-		public long BitsReceivedLastSecond { get; set; }
-		public long CurrentMessageSize => writeStream.Position;
-
-		private void UpdatePerformanceCounters(GameTime gt)
+		public MessagePackNexus(ITransport transport, MessagePackConverter converter) : base(transport, converter)
 		{
-			var elapsed = (float) gt.ElapsedGameTime.TotalMilliseconds;
-			bitsClearTimer -= elapsed;
-			if (!(bitsClearTimer <= 0f))
-				return;
-
-			bitsClearTimer = BITS_CLEAR_TIMER - bitsClearTimer % BITS_CLEAR_TIMER;
-			BitsSentLastSecond = 0;
-			BitsReceivedLastSecond = 0;
 		}
 	}
 }

@@ -29,7 +29,7 @@ using NexusClient.HandlerGroups;
 
 namespace NexusClient.Nexus
 {
-	public partial class Nexus<TConv, TSer, TDes, T>
+	public abstract partial class Nexus<TConv, TSer, TDes, T>
 	{
 		private void ConsolidateHandlerGroups()
 		{

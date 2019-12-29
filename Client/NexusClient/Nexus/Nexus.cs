@@ -37,7 +37,7 @@ using Serilog;
 
 namespace NexusClient.Nexus
 {
-	public partial class Nexus<TConv, TSer, TDes, T> where TConv : IConverter<T>
+	public abstract partial class Nexus<TConv, TSer, TDes, T> where TConv : IConverter<T>
 		where TSer : IMessageSer<T>
 		where TDes : IMessageDes<T>
 		where T : IMessageDto

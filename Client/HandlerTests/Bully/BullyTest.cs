@@ -31,7 +31,7 @@ using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
 using NexusClient.HandlerGroups.Bully;
 using NexusClient.Network.Testing;
-using NexusClient.Nexus;
+using NexusClient.Nexus.Implementations;
 using NexusClient.Utils;
 using NUnit.Framework;
 using Serilog;
@@ -40,7 +40,7 @@ namespace HandlerTests.Bully
 {
 	public class NexusClient
 	{
-		public Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> Nexus { get; }
+		public MessagePackNexus Nexus { get; }
 		private TestTransport Transport { get; }
 		public BullyHandlerGroup BullyHandlerGroup { get; }
 		public readonly string UserId;
@@ -48,8 +48,7 @@ namespace HandlerTests.Bully
 		public NexusClient(TestServer server, MessagePackConverter converter)
 		{
 			Transport = new TestTransport(server);
-			Nexus = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(Transport,
-				converter);
+			Nexus = new MessagePackNexus(Transport, converter);
 			Nexus.Initialize();
 			UserId = Nexus.UserId;
 
@@ -77,6 +76,7 @@ namespace HandlerTests.Bully
 				var client = new NexusClient(server, converter);
 				clients.Add(client.UserId, client);
 			}
+
 			foreach (var client in clients.Values) client.Nexus.AddParticipants(clients.Keys.ToArray());
 		}
 
@@ -86,7 +86,7 @@ namespace HandlerTests.Bully
 			var gt = new TestGameTime();
 			Update(gt.Value());
 			clients["user1"].BullyHandlerGroup.StartBullyElection();
-			
+
 			for (var i = 0; i < 5; i++)
 			{
 				Log.Debug(

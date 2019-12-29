@@ -28,6 +28,7 @@
 using NexusClient.Converters.MessagePack;
 using NexusClient.Network.Testing;
 using NexusClient.Nexus;
+using NexusClient.Nexus.Implementations;
 using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
 using NUnit.Framework;
@@ -38,8 +39,8 @@ namespace HandlerTests
 	[TestFixture()]
 	public class NetworkTests
 	{
-		private Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n1;
-		private Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> n2;
+		private MessagePackNexus n1;
+		private MessagePackNexus n2;
 
 		[SetUp]
 		public void Setup()
@@ -51,9 +52,9 @@ namespace HandlerTests
 			var converter = new MessagePackConverter();
 			var hg1 = new TestHandlerGroup(server);
 			var hg2 = new TestHandlerGroup(server);
-			n1 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport1, converter);
+			n1 = new MessagePackNexus(transport1, converter);
 			n1.Initialize();
-			n2 = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(transport2, converter);
+			n2 = new MessagePackNexus(transport2, converter);
 			n2.Initialize();
 
 			n1.RegisterOrOverwriteHandlerGroup(hg1);

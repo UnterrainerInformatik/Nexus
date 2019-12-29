@@ -30,7 +30,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
 using NexusClient.Network.Testing;
-using NexusClient.Nexus;
+using NexusClient.Nexus.Implementations;
 using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
 using NUnit.Framework;
@@ -40,7 +40,7 @@ namespace HandlerTests
 {
 	public class NexusClient
 	{
-		public Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> Nexus { get; }
+		public MessagePackNexus Nexus { get; }
 		private TestTransport Transport { get; }
 		public TestHandlerGroup TestHandlerGroup { get; }
 		public readonly string UserId;
@@ -48,8 +48,7 @@ namespace HandlerTests
 		public NexusClient(TestServer server, MessagePackConverter converter)
 		{
 			Transport = new TestTransport(server);
-			Nexus = new Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>(Transport,
-				converter);
+			Nexus = new MessagePackNexus(Transport, converter);
 			Nexus.Initialize();
 			UserId = Nexus.UserId;
 
