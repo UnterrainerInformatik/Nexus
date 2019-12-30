@@ -60,8 +60,8 @@ namespace HandlerTests.Bully
 		{
 			clients["user1"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 			Iterate(5);
-			AdvanceMillis(4000);
-			Iterate(1);
+			AdvanceMillis(5000);
+			Iterate(2);
 		}
 
 		[Test]
@@ -69,17 +69,17 @@ namespace HandlerTests.Bully
 		{
 			clients["user2"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 			Iterate(5);
-			AdvanceMillis(4000);
-			Iterate(1);
+			AdvanceMillis(5000);
+			Iterate(2);
 		}
 
 		[Test]
 		public void WhenCallerIsHighestIdCallerGetsUpdateTest()
 		{
 			clients["user9"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
-			Iterate(50);
-			AdvanceMillis(4000);
-			Iterate(1);
+			Iterate(10);
+			AdvanceMillis(5000);
+			Iterate(2);
 		}
 
 		private void PrintLeaders()

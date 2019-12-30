@@ -33,7 +33,5 @@ namespace NexusClient.HandlerGroups.Bully
 	[MessagePackObject]
 	public struct BullyMessage : MessagePackDto
 	{
-		[Key(0)]
-		public string ElectionId { get; set; }
 	}
 }

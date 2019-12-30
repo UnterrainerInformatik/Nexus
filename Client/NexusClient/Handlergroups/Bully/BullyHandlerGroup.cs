@@ -62,11 +62,10 @@ namespace NexusClient.HandlerGroups.Bully
 		private readonly string localUserId;
 		private readonly Timer.Timer electionStartedTimer = new Timer.Timer(2000f).SetIsActive(false);
 		private readonly Timer.Timer waitingForVictoryMessageTimer = new Timer.Timer(4000f).SetIsActive(false);
-		private readonly Timer.Timer waitingForEnd = new Timer.Timer(2000f).SetIsActive(false);
+		private readonly Timer.Timer cooldownTimer = new Timer.Timer(4000f).SetIsActive(false);
 		private bool keepQuiet;
 		private bool reElectSentThisUpdateCycle;
 		private bool victorySentThisUpdateCycle;
-		private string electionId;
 
 		/// <summary>
 		///     This handler helps electing a leader in a distributed environment.
@@ -91,20 +90,20 @@ namespace NexusClient.HandlerGroups.Bully
 				{
 					// No answer to our election-call. We obviously are the lowest ID.
 					ResetAndDisableTimers();
-					AnnounceVictory(electionId);
-					waitingForEnd.SetIsActive(true);
+					AnnounceVictory();
+					cooldownTimer.SetIsActive(true);
 				}
 
 				if (waitingForVictoryMessageTimer.Update(gt))
 				{
 					// No victory message received after getting an answer from potential leader.
 					ResetAndDisableTimers();
-					StartBullyElection(electionId);
+					Start();
 				}
 
-				if (waitingForEnd.Update(gt))
+				if (cooldownTimer.Update(gt))
 				{
-					waitingForEnd.Reset().SetIsActive(false);
+					cooldownTimer.Reset().SetIsActive(false);
 					ElectionInProgress = false;
 				}
 
@@ -122,8 +121,8 @@ namespace NexusClient.HandlerGroups.Bully
 					Log.Debug($"[{localUserId}](q={keepQuiet}): Bully-Election received from [{senderId}] - " +
 							$"own ID is smaller; answering and restarting election process.");
 					Nexus.Message.To(senderId).Send(BullyMessageType.BULLY_ALIVE,
-						new BullyMessage() {ElectionId = message.ElectionId});
-					if (!keepQuiet) StartBullyElection(message.ElectionId);
+						new BullyMessage());
+					if (!keepQuiet) Start();
 				}
 				else
 				{
@@ -150,7 +149,6 @@ namespace NexusClient.HandlerGroups.Bully
 					{
 						ResetAndDisableTimers();
 						keepQuiet = true;
-						electionId = message.ElectionId;
 						waitingForVictoryMessageTimer.Reset().SetIsActive(true);
 					}
 				}
@@ -174,7 +172,7 @@ namespace NexusClient.HandlerGroups.Bully
 					LeaderId = senderId;
 					keepQuiet = true;
 					ResetAndDisableTimers();
-					waitingForEnd.Reset().SetIsActive(true);
+					cooldownTimer.Reset().SetIsActive(true);
 				}
 			}
 		}
@@ -187,10 +185,10 @@ namespace NexusClient.HandlerGroups.Bully
 
 		public void StartBullyElection()
 		{
-			if (!ElectionInProgress) StartBullyElection(Guid.NewGuid().ToString());
+			if (!ElectionInProgress) Start();
 		}
 
-		private void StartBullyElection(string eId)
+		private void Start()
 		{
 			ElectionInProgress = true;
 			ResetAndDisableTimers();
@@ -200,32 +198,32 @@ namespace NexusClient.HandlerGroups.Bully
 			{
 				if (GetLowestIdUser() == localUserId)
 				{
-					AnnounceVictory(eId);
+					AnnounceVictory();
+					cooldownTimer.Reset().SetIsActive(true);
 					return;
 				}
 
-				SendElectionCallToPotentialLeaders(eId);
+				SendElectionCallToPotentialLeaders();
 			}
 		}
 
-		private void SendElectionCallToPotentialLeaders(string eId)
+		private void SendElectionCallToPotentialLeaders()
 		{
 			if (reElectSentThisUpdateCycle) return;
 
 			reElectSentThisUpdateCycle = true;
 			foreach (var client in GetOthersWithLowerId())
-				Nexus.Message.To(client).Send(BullyMessageType.BULLY_ELECTION, new BullyMessage() {ElectionId = eId});
-			electionId = eId;
+				Nexus.Message.To(client).Send(BullyMessageType.BULLY_ELECTION, new BullyMessage());
 			electionStartedTimer.SetIsActive(true);
 		}
 
-		private void AnnounceVictory(string eId)
+		private void AnnounceVictory()
 		{
 			if (victorySentThisUpdateCycle) return;
 
 			victorySentThisUpdateCycle = true;
 			LeaderId = localUserId;
-			Nexus.Message.ToOthers().Send(BullyMessageType.BULLY_VICTORY, new BullyMessage() {ElectionId = eId});
+			Nexus.Message.ToOthers().Send(BullyMessageType.BULLY_VICTORY, new BullyMessage());
 		}
 
 		public string GetLowestIdUser()
