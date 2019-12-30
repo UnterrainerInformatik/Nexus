@@ -101,7 +101,6 @@ namespace NexusClient.Nexus
 			lock (LockObject)
 			{
 				foreach (var handler in handlerGroups.Values) handler.Update(gt);
-
 				ConsolidateHandlerGroups();
 				HandleMessages();
 			}

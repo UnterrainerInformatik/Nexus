@@ -122,6 +122,7 @@ namespace NexusClient.NUnitTests.Infrastructure
 				addHandlersToClientDelegate.Invoke(nexusObjects.UserId, nexusObjects.Handlers);
 				foreach (var handler in nexusObjects.Handlers.Values)
 					nexusObjects.Nexus.RegisterOrOverwriteHandlerGroup(handler);
+				nexusObjects.Nexus.Update(gameTime.Value());
 				clients.Add(nexusObjects.UserId, nexusObjects);
 			}
 

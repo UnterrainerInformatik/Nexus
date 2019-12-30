@@ -47,37 +47,39 @@ namespace HandlerTests.Bully
 		{
 			for (var i = 0; i < numberOfIterations; i++)
 			{
-				AdvanceFrame();
 				DebugLogGameTime();
+				PrintElectionInProgress();
 				PrintLeaders();
 				Update();
+				AdvanceFrame();
 			}
 		}
 
 		[Test]
 		public void WhenCallerIsLowestIdCallerWinsTest()
 		{
-			Update();
 			clients["user1"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 			Iterate(5);
+			AdvanceMillis(4000);
+			Iterate(1);
 		}
 
 		[Test]
 		public void WhenCallerIsSecondLowestIdCallerGetsUpdateTest()
 		{
-			var gt = new TestGameTime();
-			Update();
 			clients["user2"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 			Iterate(5);
+			AdvanceMillis(4000);
+			Iterate(1);
 		}
 
 		[Test]
 		public void WhenCallerIsHighestIdCallerGetsUpdateTest()
 		{
-			var gt = new TestGameTime();
-			Update();
 			clients["user9"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
 			Iterate(50);
+			AdvanceMillis(4000);
+			Iterate(1);
 		}
 
 		private void PrintLeaders()
@@ -87,6 +89,20 @@ namespace HandlerTests.Bully
 			{
 				if (!"user1".Equals(nexusObject.UserId)) s += " | ";
 				s += nexusObject.Handlers.Get<BullyHandlerGroup>().LeaderId ?? "null";
+			}
+
+			s += " ] ###";
+			Log.Debug(s);
+		}
+
+		private void PrintElectionInProgress()
+		{
+			var s = "### In-progress: [ ";
+			foreach (var nexusObject in clients.Values)
+			{
+				if (!"user1".Equals(nexusObject.UserId)) s += " | ";
+				if (nexusObject.Handlers.Get<BullyHandlerGroup>().ElectionInProgress) s += "yes";
+				else s += "no ";
 			}
 
 			s += " ] ###";

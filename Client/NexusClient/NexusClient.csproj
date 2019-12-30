@@ -200,7 +200,7 @@
     <Compile Include="Converters\MessagePack\MessagePackDes.cs" />
     <Compile Include="Converters\MessagePack\MessagePackSer.cs" />
     <Compile Include="Converters\MessagePack\MessagePackConverter.cs" />
-    <Compile Include="HandlerGroups\Bully\BullyIdMessage.cs" />
+    <Compile Include="HandlerGroups\Bully\BullyMessage.cs" />
     <Compile Include="Nexus\LowLevelMessage.cs" />
     <Compile Include="Nexus\Apis\TargetApi.cs" />
     <Compile Include="Nexus\Nexus.HandlersGroups.cs" />
