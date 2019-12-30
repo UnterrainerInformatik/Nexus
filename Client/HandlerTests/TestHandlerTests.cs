@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Microsoft.Xna.Framework;
 using NexusClient.NUnitTests.Infrastructure;
-using NexusClient.Utils;
 using NUnit.Framework;
-using Serilog;
 
 namespace HandlerTests
 {
@@ -45,18 +42,9 @@ namespace HandlerTests
 		[Test]
 		public void AddingHandlersWorksTest()
 		{
-			var gt = new TestGameTime();
-			Update(gt.Value());
-
-			Log.Debug(
-				$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
-			gt.Advance(1);
-			Update(gt.Value());
-		}
-
-		private void Update(GameTime gt)
-		{
-			foreach (var nexusObject in clients.Values) nexusObject.Nexus.Update(gt);
+			Update();
+			AdvanceFrame();
+			Update();
 		}
 	}
 }

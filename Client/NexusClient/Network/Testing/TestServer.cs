@@ -27,27 +27,73 @@
 
 using System;
 using System.Collections.Generic;
+using Faders;
+using Microsoft.Xna.Framework;
 using Serilog;
 
 namespace NexusClient.Network.Testing
 {
-	public class TestMessage
+	public class Connection
+	{
+		public string UserId { get; set; }
+
+		public TimeSpan LatencyFixed { get; set; }
+		public Interval<double> LatencyRandInMilliseconds { get; set; }
+
+		public List<TestMessage> Messages { get; set; }
+
+		public static Connection Create(string userId)
+		{
+			return new Connection()
+			{
+				UserId = userId,
+				LatencyFixed = TimeSpan.FromMilliseconds(1),
+				LatencyRandInMilliseconds = new Interval<double>(0, 0),
+				Messages = new List<TestMessage>()
+			};
+		}
+	}
+
+	public class TestMessageComparer : IComparer<TestMessage>
+	{
+		public int Compare(TestMessage x, TestMessage y)
+		{
+			return x.WillBeReceivedAt.CompareTo(y.WillBeReceivedAt) * -1;
+		}
+	}
+
+	public struct TestMessage
 	{
 		public byte[] Buffer { get; set; }
 		public uint Size { get; set; }
 		public string SenderId { get; set; }
+		public TimeSpan WillBeReceivedAt { get; set; }
+
+		public bool LatencyHasExpired(GameTime gt)
+		{
+			return gt.TotalGameTime.CompareTo(WillBeReceivedAt) >= 0;
+		}
 	}
 
 	public class TestServer
 	{
 		protected int LastUserId { get; set; } = 1;
-		protected readonly Dictionary<string, Queue<TestMessage>> UserConnections =
-			new Dictionary<string, Queue<TestMessage>>();
+		protected readonly Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
+		protected GameTime currentGameTime = new GameTime(TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(0));
+
+		private readonly TestMessageComparer testMessageComparer = new TestMessageComparer();
+		private byte[] uint64Buffer;
+		private readonly Random random = new Random();
+
+		public void Update(GameTime gt)
+		{
+			currentGameTime = gt;
+		}
 
 		public string Login()
 		{
 			var userId = $"user{LastUserId++}";
-			UserConnections.Add(userId, new Queue<TestMessage>());
+			Connections.Add(userId, Connection.Create(userId));
 			Log.Verbose($"[{userId}] Login");
 			return userId;
 		}
@@ -55,27 +101,83 @@ namespace NexusClient.Network.Testing
 		public void Logout(string userId)
 		{
 			Log.Verbose($"[{userId}] Logout");
-			UserConnections.Remove(userId);
+			Connections.Remove(userId);
 		}
 
 		public bool IsLoggedIn(string userId)
 		{
-			return UserConnections.TryGetValue(userId, out _);
+			return Connections.TryGetValue(userId, out _);
 		}
 
-		private Queue<TestMessage> GetQueueFor(string userId)
+		/// <summary>
+		///     Resets the latency settings for the given user to the default values.
+		///     The defaults are:
+		///     Fixed-latency = 1ms
+		///     Random-latency = [0ms, 0ms]
+		/// </summary>
+		/// <param name="userId">The ID of the user to set the latency for.</param>
+		public void LatencyResetFor(string userId)
 		{
-			return !UserConnections.TryGetValue(userId, out var q) ? null : q;
+			LatencyFixedFor(userId, TimeSpan.FromMilliseconds(0));
+			LatencyRandInMillisecondsFor(userId, new Interval<double>(0, 0));
+		}
+
+		/// <summary>
+		///     Latency is calculated upon sending a message.
+		/// </summary>
+		/// <param name="userId">The ID of the user to set the latency for.</param>
+		/// <param name="value">The fixed latency (value is always added; default is 1ms).</param>
+		public void LatencyFixedFor(string userId, TimeSpan value)
+		{
+			GetConnectionFor(userId).LatencyFixed = value;
+		}
+
+		/// <summary>
+		///     Latency is calculated upon sending a message.
+		/// </summary>
+		/// <param name="userId">The ID of the user to set the latency for.</param>
+		/// <param name="interval">
+		///     An interval in between an additional latency-value is picked and added to the overall-latency
+		///     for the message currently being sent (defaults to new Interval<double>(0,0))</double>
+		/// </param>
+		public void LatencyRandInMillisecondsFor(string userId, Interval<double> interval)
+		{
+			GetConnectionFor(userId).LatencyRandInMilliseconds = interval;
+		}
+
+		private Connection GetConnectionFor(string userId)
+		{
+			return !Connections.TryGetValue(userId, out var q) ? null : q;
+		}
+
+		private double RandomIn(Interval<double> interval)
+		{
+			if (interval.Min.CompareTo(interval.Max) == 0) return 0d;
+
+			uint64Buffer = new byte[8];
+			random.NextBytes(uint64Buffer);
+			var uLong = BitConverter.ToUInt64(uint64Buffer, 0);
+			return interval.Min + ((double) uLong / ulong.MaxValue) * (interval.Max - interval.Min);
+		}
+
+		private TimeSpan CalculateLatency(Connection conn)
+		{
+			return TimeSpan.FromMilliseconds(0d).Add(conn.LatencyFixed)
+				.Add(TimeSpan.FromMilliseconds(RandomIn(conn.LatencyRandInMilliseconds)));
 		}
 
 		public bool IsMessageAvailableFor(string userId, out uint size)
 		{
 			Log.Verbose($"[{userId}] IsMessageAvailable");
 			size = 0;
-			var q = GetQueueFor(userId);
-			if (q == null || q.Count == 0) return false;
+			var conn = GetConnectionFor(userId);
+			var messages = conn.Messages;
+			if (messages == null || messages.Count == 0) return false;
 
-			var m = q.Peek();
+			messages.Sort(testMessageComparer);
+			var m = messages[0];
+			if (!m.LatencyHasExpired(currentGameTime)) return false;
+
 			size = m.Size;
 			return true;
 		}
@@ -83,10 +185,17 @@ namespace NexusClient.Network.Testing
 		public bool ReadMessageFor(string userId, out TestMessage message)
 		{
 			Log.Verbose($"[{userId}] GetMessage");
-			message = null;
-			var q = GetQueueFor(userId);
-			if (q == null) return false;
-			message = q.Dequeue();
+			message = new TestMessage();
+			var conn = GetConnectionFor(userId);
+			var messages = conn.Messages;
+			if (messages == null) return false;
+
+			messages.Sort(testMessageComparer);
+			var m = messages[0];
+			if (!m.LatencyHasExpired(currentGameTime)) return false;
+
+			messages.RemoveAt(0);
+			message = m;
 			Log.Verbose($"[{userId}] ...message sender is [{message.SenderId}]");
 			return true;
 		}
@@ -94,15 +203,19 @@ namespace NexusClient.Network.Testing
 		public bool SendMessageFor(string senderId, string recipientId, byte[] data, uint length)
 		{
 			Log.Verbose($"[{senderId}] SendMessage to [{recipientId}]");
-			var q = GetQueueFor(recipientId);
-			if (q == null)
-				return false;
-			var m = new TestMessage();
-			m.SenderId = senderId;
-			m.Size = length;
-			m.Buffer = new byte[length];
+			var conn = GetConnectionFor(recipientId);
+			var messages = conn.Messages;
+			if (messages == null) return false;
+
+			var m = new TestMessage
+			{
+				SenderId = senderId,
+				Size = length,
+				Buffer = new byte[length],
+				WillBeReceivedAt = currentGameTime.TotalGameTime.Add(CalculateLatency(conn))
+			};
 			Buffer.BlockCopy(data, 0, m.Buffer, 0, (int) length);
-			q.Enqueue(m);
+			messages.Add(m);
 			return true;
 		}
 	}

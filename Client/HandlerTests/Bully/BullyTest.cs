@@ -25,7 +25,6 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Microsoft.Xna.Framework;
 using NexusClient.HandlerGroups.Bully;
 using NexusClient.NUnitTests.Infrastructure;
 using NexusClient.Utils;
@@ -44,55 +43,41 @@ namespace HandlerTests.Bully
 				(clientName, handlerDictionary) => { handlerDictionary.Add(new BullyHandlerGroup(clientName)); });
 		}
 
+		public void Iterate(int numberOfIterations)
+		{
+			for (var i = 0; i < numberOfIterations; i++)
+			{
+				AdvanceFrame();
+				DebugLogGameTime();
+				PrintLeaders();
+				Update();
+			}
+		}
+
 		[Test]
 		public void WhenCallerIsLowestIdCallerWinsTest()
 		{
-			var gt = new TestGameTime();
-			Update(gt.Value());
+			Update();
 			clients["user1"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
-
-			for (var i = 0; i < 5; i++)
-			{
-				Log.Debug(
-					$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
-				PrintLeaders();
-				gt.Advance(1);
-				Update(gt.Value());
-			}
+			Iterate(5);
 		}
 
 		[Test]
 		public void WhenCallerIsSecondLowestIdCallerGetsUpdateTest()
 		{
 			var gt = new TestGameTime();
-			Update(gt.Value());
+			Update();
 			clients["user2"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
-
-			for (var i = 0; i < 5; i++)
-			{
-				Log.Debug(
-					$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
-				PrintLeaders();
-				gt.Advance(1);
-				Update(gt.Value());
-			}
+			Iterate(5);
 		}
 
 		[Test]
 		public void WhenCallerIsHighestIdCallerGetsUpdateTest()
 		{
 			var gt = new TestGameTime();
-			Update(gt.Value());
+			Update();
 			clients["user9"].Handlers.Get<BullyHandlerGroup>().StartBullyElection();
-
-			for (var i = 0; i < 50; i++)
-			{
-				Log.Debug(
-					$"--- t = {gt.Value().TotalGameTime} seconds----------------------------------------------------------");
-				PrintLeaders();
-				gt.Advance(1);
-				Update(gt.Value());
-			}
+			Iterate(50);
 		}
 
 		private void PrintLeaders()
@@ -106,11 +91,6 @@ namespace HandlerTests.Bully
 
 			s += " ] ###";
 			Log.Debug(s);
-		}
-
-		private void Update(GameTime gt)
-		{
-			foreach (var nexusObject in clients.Values) nexusObject.Nexus.Update(gt);
 		}
 	}
 }

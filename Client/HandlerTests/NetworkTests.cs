@@ -40,12 +40,13 @@ namespace HandlerTests
 	{
 		private MessagePackNexus n1;
 		private MessagePackNexus n2;
+		private TestServer server;
 
 		[SetUp]
 		public void Setup()
 		{
 			Logger.Init();
-			var server = new TestServer();
+			server = new TestServer();
 			var transport1 = new TestTransport(server);
 			var transport2 = new TestTransport(server);
 			var converter = new MessagePackConverter();
@@ -73,9 +74,10 @@ namespace HandlerTests
 
 			for (var i = 0; i < 3; i++)
 			{
-				gameTime.Advance(1);
+				gameTime.AdvanceFrame();
 				n1.Update(gameTime.Value());
 				n2.Update(gameTime.Value());
+				server.Update(gameTime.Value());
 			}
 		}
 
@@ -89,9 +91,10 @@ namespace HandlerTests
 				Log.Debug(
 					$"--- t = {gameTime.Value().TotalGameTime} seconds----------------------------------------------------------");
 				n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
-				gameTime.Advance(1);
+				gameTime.AdvanceFrame();
 				n1.Update(gameTime.Value());
 				n2.Update(gameTime.Value());
+				server.Update(gameTime.Value());
 			}
 		}
 	}

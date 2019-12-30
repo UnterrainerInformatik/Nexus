@@ -28,11 +28,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
 using NexusClient.HandlerGroups;
 using NexusClient.Network.Testing;
 using NexusClient.Nexus.Implementations;
 using NexusClient.Utils;
+using Serilog;
 
 namespace NexusClient.NUnitTests.Infrastructure
 {
@@ -103,11 +105,11 @@ namespace NexusClient.NUnitTests.Infrastructure
 	public class HandlerTestBase
 	{
 		protected TestServer server;
-		protected TestGameTime gameTime;
+		private TestGameTime gameTime;
 		protected Dictionary<string, NexusClient> clients;
 		protected MessagePackConverter converter;
 
-		public void Initialize(int numberOfClients, AddHandlersToClient addHandlersToClientDelegate)
+		protected virtual void Initialize(int numberOfClients, AddHandlersToClient addHandlersToClientDelegate)
 		{
 			Logger.Init();
 			gameTime = new TestGameTime();
@@ -124,6 +126,38 @@ namespace NexusClient.NUnitTests.Infrastructure
 			}
 
 			foreach (var nexusObjects in clients.Values) nexusObjects.Nexus.AddParticipants(clients.Keys.ToArray());
+		}
+
+		protected GameTime AdvanceFrame()
+		{
+			return gameTime.AdvanceFrame();
+		}
+
+		protected GameTime AdvanceFrames(int numberOfFrames)
+		{
+			return gameTime.AdvanceFrames(numberOfFrames);
+		}
+
+		protected GameTime AdvanceMillis(double milliseconds)
+		{
+			return gameTime.AdvanceMillis(milliseconds);
+		}
+
+		protected GameTime GameTime()
+		{
+			return gameTime.Value();
+		}
+
+		protected virtual void DebugLogGameTime()
+		{
+			Log.Debug(
+				$"--- gameTime = {gameTime.Value().TotalGameTime:c} ----------------------------------------------------------");
+		}
+
+		protected virtual void Update()
+		{
+			foreach (var nexusObject in clients.Values) nexusObject.Nexus.Update(gameTime.Value());
+			server.Update(gameTime.Value());
 		}
 	}
 }

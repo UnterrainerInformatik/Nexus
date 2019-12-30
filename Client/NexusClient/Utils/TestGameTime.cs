@@ -38,9 +38,9 @@ namespace NexusClient.Utils
 		{
 		}
 
-		public TestGameTime(int seconds)
+		public TestGameTime(double milliseconds)
 		{
-			gt = new GameTime(TimeSpan.FromSeconds(seconds), TimeSpan.FromSeconds(0));
+			gt = new GameTime(TimeSpan.FromMilliseconds(milliseconds), TimeSpan.FromMilliseconds(0));
 		}
 
 		public GameTime Value()
@@ -48,10 +48,20 @@ namespace NexusClient.Utils
 			return gt;
 		}
 
-		public GameTime Advance(int seconds)
+		public GameTime AdvanceFrame()
 		{
-			gt.TotalGameTime += TimeSpan.FromSeconds(seconds);
-			gt.ElapsedGameTime = TimeSpan.FromSeconds(seconds);
+			return AdvanceFrames(1);
+		}
+
+		public GameTime AdvanceFrames(int numberOfFrames)
+		{
+			return AdvanceMillis((1000d / 60d) * (double) numberOfFrames);
+		}
+
+		public GameTime AdvanceMillis(double milliseconds)
+		{
+			gt.TotalGameTime += TimeSpan.FromMilliseconds(milliseconds);
+			gt.ElapsedGameTime = TimeSpan.FromMilliseconds(milliseconds);
 			return gt;
 		}
 	}
