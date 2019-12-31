@@ -58,7 +58,7 @@ namespace NexusClient.HandlerGroups.Bully
 	{
 		public string LeaderId { get; set; }
 		public bool ElectionInProgress { get; private set; }
-
+		
 		private readonly string localUserId;
 		private readonly Timer.Timer electionStartedTimer = new Timer.Timer(2000f).SetIsActive(false);
 		private readonly Timer.Timer waitingForVictoryMessageTimer = new Timer.Timer(4000f).SetIsActive(false);
@@ -223,7 +223,7 @@ namespace NexusClient.HandlerGroups.Bully
 
 			victorySentThisUpdateCycle = true;
 			LeaderId = localUserId;
-			Nexus.Message.ToOthers().Send(BullyMessageType.BULLY_VICTORY, new BullyMessage());
+			Nexus.Message.ToOthers(Participants).Send(BullyMessageType.BULLY_VICTORY, new BullyMessage());
 		}
 
 		public string GetLowestIdUser()
@@ -231,7 +231,7 @@ namespace NexusClient.HandlerGroups.Bully
 			lock (LockObject)
 			{
 				var winnerId =
-					Nexus.Participants.Values.SingleOrDefault(p => p == Nexus.Participants.Values.Min(q => q)) ??
+					Participants.SingleOrDefault(p => p == Participants.Min(q => q)) ??
 					localUserId;
 				if (string.Compare(localUserId, winnerId, StringComparison.InvariantCulture) < 0)
 					winnerId = localUserId;
@@ -243,7 +243,7 @@ namespace NexusClient.HandlerGroups.Bully
 		{
 			lock (LockObject)
 			{
-				return Nexus.Participants.Values.Where(e =>
+				return Participants.Where(e =>
 					String.Compare(localUserId, e, StringComparison.InvariantCulture) > 0);
 			}
 		}

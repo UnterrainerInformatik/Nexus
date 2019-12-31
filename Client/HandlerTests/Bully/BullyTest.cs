@@ -27,7 +27,6 @@
 
 using NexusClient.HandlerGroups.Bully;
 using NexusClient.NUnitTests.Infrastructure;
-using NexusClient.Utils;
 using NUnit.Framework;
 using Serilog;
 
@@ -39,8 +38,12 @@ namespace HandlerTests.Bully
 		[SetUp]
 		public void Setup()
 		{
-			Initialize(20,
-				(clientName, handlerDictionary) => { handlerDictionary.Add(new BullyHandlerGroup(clientName)); });
+			BullyHandlerGroup handler = null;
+			Initialize(20, (clientName, handlerDictionary) =>
+			{
+				handler = new BullyHandlerGroup(clientName);
+				handlerDictionary.Add(handler);
+			});
 		}
 
 		public void Iterate(int numberOfIterations)

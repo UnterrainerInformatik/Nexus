@@ -57,6 +57,7 @@ namespace NexusClient.HandlerGroups
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
 		public Nexus<TTpt, TSer, TDes, TDto> Nexus { get; internal set; }
+		public HashSet<string> Participants { get; } = new HashSet<string>();
 
 		protected HandlerGroup(bool active = true)
 		{

@@ -109,7 +109,8 @@ namespace NexusClient.NUnitTests.Infrastructure
 		protected Dictionary<string, NexusClient> clients;
 		protected MessagePackConverter converter;
 
-		protected virtual void Initialize(int numberOfClients, AddHandlersToClient addHandlersToClientDelegate)
+		protected virtual void Initialize(int numberOfClients, AddHandlersToClient addHandlersToClientDelegate,
+			bool addAllClientsToBeHandlerParticipants = true)
 		{
 			Logger.Init();
 			gameTime = new TestGameTime();
@@ -126,7 +127,13 @@ namespace NexusClient.NUnitTests.Infrastructure
 				clients.Add(nexusObjects.UserId, nexusObjects);
 			}
 
-			foreach (var nexusObjects in clients.Values) nexusObjects.Nexus.AddParticipants(clients.Keys.ToArray());
+			if (!addAllClientsToBeHandlerParticipants) return;
+			{
+				foreach (var client in clients.Values)
+				foreach (var handler in client.Handlers.Values)
+				foreach (var id in clients.Keys.ToArray())
+					handler.Participants.Add(id);
+			}
 		}
 
 		protected GameTime AdvanceFrame()

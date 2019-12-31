@@ -47,7 +47,6 @@ namespace NexusClient.Nexus
 		internal object LockObject = new object();
 		public TargetApi<TCnv, TSer, TDes, TDto> Message { get; }
 		internal TCnv Converter { get; set; }
-		internal readonly Dictionary<string, string> Participants = new Dictionary<string, string>();
 		internal ITransport Transport { get; set; }
 
 		private readonly Dictionary<object, HandlerGroup<TCnv, TSer, TDes, TDto>> handlerGroups =
@@ -61,7 +60,7 @@ namespace NexusClient.Nexus
 
 		private readonly List<object> removeList = new List<object>();
 
-		public Nexus(ITransport transport, TCnv converter)
+		protected Nexus(ITransport transport, TCnv converter)
 		{
 			Logger.Init();
 			Converter = converter;
@@ -78,20 +77,6 @@ namespace NexusClient.Nexus
 		{
 			UserId = Transport.Login();
 			Log.Verbose($"[{UserId}] Initialize");
-		}
-
-		public Nexus<TCnv, TSer, TDes, TDto> AddParticipants(params string[] userIds)
-		{
-			Log.Verbose($"[{UserId}] AddParticipants [{string.Join(",", userIds)}]");
-			foreach (var id in userIds) Participants.Add(id, id);
-			return this;
-		}
-
-		public Nexus<TCnv, TSer, TDes, TDto> RemoveParticipants(params string[] userIds)
-		{
-			Log.Verbose($"[{UserId}] RemoveParticipants [{string.Join(",", userIds)}]");
-			foreach (var id in userIds) Participants.Remove(id);
-			return this;
 		}
 
 		public void Update(GameTime gt)

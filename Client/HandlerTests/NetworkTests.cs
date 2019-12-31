@@ -40,6 +40,8 @@ namespace HandlerTests
 	{
 		private MessagePackNexus n1;
 		private MessagePackNexus n2;
+		private TestHandlerGroup hg1;
+		private TestHandlerGroup hg2;
 		private TestServer server;
 
 		[SetUp]
@@ -50,26 +52,31 @@ namespace HandlerTests
 			var transport1 = new TestTransport(server);
 			var transport2 = new TestTransport(server);
 			var converter = new MessagePackConverter();
-			var hg1 = new TestHandlerGroup(server);
-			var hg2 = new TestHandlerGroup(server);
+			hg1 = new TestHandlerGroup(server);
+			hg2 = new TestHandlerGroup(server);
+
 			n1 = new MessagePackNexus(transport1, converter);
 			n1.Initialize();
 			n2 = new MessagePackNexus(transport2, converter);
 			n2.Initialize();
 
 			n1.RegisterOrOverwriteHandlerGroup(hg1);
-			n1.AddParticipants(n1.UserId, n2.UserId);
+			hg1.Participants.Add(n1.UserId);
+			hg1.Participants.Add(n2.UserId);
 			n2.RegisterOrOverwriteHandlerGroup(hg2);
-			n2.AddParticipants(n1.UserId, n2.UserId);
+			hg2.Participants.Add(n1.UserId);
+			hg2.Participants.Add(n2.UserId);
 		}
 
 		[Test]
 		public void AddAndGetHandlerTest()
 		{
 			var gameTime = new TestGameTime();
-			n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
-			n2.Message.ToOthers().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"});
-			n1.Message.ToOthersExcept(n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
+			n1.Message.To(hg1.Participants)
+				.Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
+			n2.Message.ToOthers(hg2.Participants)
+				.Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"});
+			n1.Message.ToOthersExcept(hg1.Participants, n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
 				new TestContent() {TestField = "should not be received"});
 
 			for (var i = 0; i < 3; i++)
@@ -90,7 +97,8 @@ namespace HandlerTests
 			{
 				Log.Debug(
 					$"--- t = {gameTime.Value().TotalGameTime} seconds----------------------------------------------------------");
-				n1.Message.ToAll().Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
+				n1.Message.To(hg1.Participants)
+					.Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
 				gameTime.AdvanceFrame();
 				n1.Update(gameTime.Value());
 				n2.Update(gameTime.Value());

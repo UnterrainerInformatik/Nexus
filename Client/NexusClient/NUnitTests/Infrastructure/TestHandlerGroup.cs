@@ -37,7 +37,7 @@ namespace NexusClient.NUnitTests.Infrastructure
 		public TestServer Server { get; }
 		public int ElectionCallCount { get; private set; }
 		public int ElectionCallAnswerCount { get; private set; }
-
+		
 		public TestHandlerGroup(TestServer server)
 		{
 			Server = server;
