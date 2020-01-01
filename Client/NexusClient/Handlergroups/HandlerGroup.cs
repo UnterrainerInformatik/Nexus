@@ -31,6 +31,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using NexusClient.Converters;
 using NexusClient.Nexus;
+using NexusClient.Nexus.Apis;
 
 namespace NexusClient.HandlerGroups
 {
@@ -43,20 +44,21 @@ namespace NexusClient.HandlerGroups
 		public MethodInfo GenericReadMessageMethod { get; set; }
 	}
 
-	public abstract class HandlerGroup<TTpt, TSer, TDes, TDto> where TTpt : IConverter<TDto>
+	public abstract class HandlerGroup<TCnv, TSer, TDes, TDto> where TCnv : IConverter<TDto>
 		where TSer : IMessageSer<TDto>
 		where TDes : IMessageDes<TDto>
 		where TDto : IMessageDto
 	{
 		protected readonly object LockObject = new object();
-
 		protected MethodInfo method;
-
-		public delegate void HandleMessageDelegate<in TD>(TD message, string senderId);
 
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
-		public Nexus<TTpt, TSer, TDes, TDto> Nexus { get; internal set; }
+
+		public delegate void HandleMessageDelegate<in TD>(TD message, string senderId);
+
+		public HandlerTargetApi<TCnv, TSer, TDes, TDto> Message { get; internal set; }
+		public Nexus<TCnv, TSer, TDes, TDto> Nexus { get; internal set; }
 		public HashSet<string> Participants { get; } = new HashSet<string>();
 
 		protected HandlerGroup(bool active = true)
@@ -66,9 +68,10 @@ namespace NexusClient.HandlerGroups
 
 		public bool Active { get; set; }
 
-		public void Initialize(Nexus<TTpt, TSer, TDes, TDto> nexus)
+		public void Initialize(Nexus<TCnv, TSer, TDes, TDto> nexus)
 		{
 			Nexus = nexus;
+			Message = new HandlerTargetApi<TCnv, TSer, TDes, TDto>(Nexus, this);
 			method = Nexus.Converter.GetType().GetMethod("ReadMessage");
 			if (method == null)
 				throw new ArgumentException("The converter you passed doesn't have a method 'ReadMessage'.");

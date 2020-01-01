@@ -120,7 +120,7 @@ namespace NexusClient.HandlerGroups.Bully
 				{
 					Log.Debug($"[{localUserId}](q={keepQuiet}): Bully-Election received from [{senderId}] - " +
 							$"own ID is smaller; answering and restarting election process.");
-					Nexus.Message.To(senderId).Send(BullyMessageType.BULLY_ALIVE,
+					Message.To(senderId).Send(BullyMessageType.BULLY_ALIVE,
 						new BullyMessage());
 					if (!keepQuiet) Start();
 				}
@@ -213,7 +213,7 @@ namespace NexusClient.HandlerGroups.Bully
 
 			reElectSentThisUpdateCycle = true;
 			foreach (var client in GetOthersWithLowerId())
-				Nexus.Message.To(client).Send(BullyMessageType.BULLY_ELECTION, new BullyMessage());
+				Message.To(client).Send(BullyMessageType.BULLY_ELECTION, new BullyMessage());
 			electionStartedTimer.SetIsActive(true);
 		}
 
@@ -223,7 +223,7 @@ namespace NexusClient.HandlerGroups.Bully
 
 			victorySentThisUpdateCycle = true;
 			LeaderId = localUserId;
-			Nexus.Message.ToOthers(Participants).Send(BullyMessageType.BULLY_VICTORY, new BullyMessage());
+			Message.ToOthers().Send(BullyMessageType.BULLY_VICTORY, new BullyMessage());
 		}
 
 		public string GetLowestIdUser()
