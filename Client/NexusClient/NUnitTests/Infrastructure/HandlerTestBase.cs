@@ -87,7 +87,7 @@ namespace NexusClient.NUnitTests.Infrastructure
 		public MessagePackNexus Nexus { get; }
 		private TestTransport Transport { get; }
 
-		public DictionaryByType Handlers = new DictionaryByType();
+		public readonly DictionaryByType Handlers = new DictionaryByType();
 
 		public readonly string UserId;
 

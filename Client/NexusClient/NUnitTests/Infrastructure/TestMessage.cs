@@ -28,10 +28,12 @@
 using MessagePack;
 using NexusClient.Converters.MessagePack;
 
-namespace NexusClient.HandlerGroups.Bully
+namespace NexusClient.NUnitTests.Infrastructure
 {
-	[MessagePackObject]
-	public struct BullyMessage : MessagePackDto
+	[MessagePackObject()]
+	public struct TestMessage : MessagePackDto
 	{
+		[Key(0)]
+		public string TestField { get; set; }
 	}
 }

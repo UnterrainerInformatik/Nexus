@@ -73,11 +73,11 @@ namespace HandlerTests
 		{
 			var gameTime = new TestGameTime();
 			n1.Message.To(hg1.Participants)
-				.Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
+				.Send(TestMessageType.ELECTION_CALL, new NexusClient.NUnitTests.Infrastructure.TestMessage() { TestField = "test from user1"});
 			n2.Message.ToOthers(hg2.Participants)
-				.Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user2"});
-			n1.Message.ToOthersExcept(hg1.Participants, n2.UserId).Send(TestType.ELECTION_CALL_ANSWER,
-				new TestContent() {TestField = "should not be received"});
+				.Send(TestMessageType.ELECTION_CALL, new NexusClient.NUnitTests.Infrastructure.TestMessage() { TestField = "test from user2"});
+			n1.Message.ToOthersExcept(hg1.Participants, n2.UserId).Send(TestMessageType.ELECTION_CALL_ANSWER,
+				new NexusClient.NUnitTests.Infrastructure.TestMessage() { TestField = "should not be received"});
 
 			for (var i = 0; i < 3; i++)
 			{
@@ -98,7 +98,7 @@ namespace HandlerTests
 				Log.Debug(
 					$"--- t = {gameTime.Value().TotalGameTime} seconds----------------------------------------------------------");
 				n1.Message.To(hg1.Participants)
-					.Send(TestType.ELECTION_CALL, new TestContent() {TestField = "test from user1"});
+					.Send(TestMessageType.ELECTION_CALL, new NexusClient.NUnitTests.Infrastructure.TestMessage() { TestField = "test from user1"});
 				gameTime.AdvanceFrame();
 				n1.Update(gameTime.Value());
 				n2.Update(gameTime.Value());

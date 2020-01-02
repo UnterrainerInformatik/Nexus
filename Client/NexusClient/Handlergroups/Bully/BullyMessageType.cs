@@ -25,11 +25,12 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace NexusClient.NUnitTests.Infrastructure
+namespace NexusClient.HandlerGroups.Bully
 {
-	public enum TestType
+	public enum BullyMessageType
 	{
-		ELECTION_CALL,
-		ELECTION_CALL_ANSWER
+		BULLY_ELECTION,
+		BULLY_ALIVE,
+		BULLY_VICTORY
 	}
 }

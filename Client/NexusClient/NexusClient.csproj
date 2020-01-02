@@ -148,6 +148,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HandlerGroups\Bully\BullyMessageType.cs" />
+    <Compile Include="HandlerGroups\Ping\DTOs\PingData.cs" />
+    <Compile Include="HandlerGroups\Ping\PingHandlerGroup.cs" />
+    <Compile Include="HandlerGroups\Ping\DTOs\PingBroadcastMessage.cs" />
+    <Compile Include="HandlerGroups\Ping\DTOs\PongMessage.cs" />
+    <Compile Include="HandlerGroups\Ping\DTOs\PingMessage.cs" />
+    <Compile Include="HandlerGroups\Ping\PingMessageType.cs" />
     <Compile Include="Nexus\Apis\HanderTargetApi.cs" />
     <Compile Include="Nexus\Implementations\MessagePackNexus.cs" />
     <Compile Include="Nexus\Nexus.PerfCounters.cs" />
@@ -155,8 +162,8 @@
     <Compile Include="NUnitTests\Infrastructure\HandlerTestBase.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Converters\IMessageDto.cs" />
-    <Compile Include="NUnitTests\Infrastructure\TestContent.cs" />
-    <Compile Include="NUnitTests\Infrastructure\TestType.cs" />
+    <Compile Include="NUnitTests\Infrastructure\TestMessage.cs" />
+    <Compile Include="NUnitTests\Infrastructure\TestMessageType.cs" />
     <Compile Include="Converters\PerformanceTests\BinarySerializable.cs" />
     <Compile Include="Converters\PerformanceTests\Mappings\ListMapping.cs" />
     <Compile Include="Converters\PerformanceTests\Mappings\BoolMapping.cs" />
@@ -201,7 +208,7 @@
     <Compile Include="Converters\MessagePack\MessagePackDes.cs" />
     <Compile Include="Converters\MessagePack\MessagePackSer.cs" />
     <Compile Include="Converters\MessagePack\MessagePackConverter.cs" />
-    <Compile Include="HandlerGroups\Bully\BullyMessage.cs" />
+    <Compile Include="HandlerGroups\Bully\DTOs\BullyMessage.cs" />
     <Compile Include="Nexus\LowLevelMessage.cs" />
     <Compile Include="Nexus\Apis\TargetApi.cs" />
     <Compile Include="Nexus\Nexus.HandlersGroups.cs" />
@@ -231,6 +238,7 @@
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.5.124-alpha\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.5.124-alpha\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

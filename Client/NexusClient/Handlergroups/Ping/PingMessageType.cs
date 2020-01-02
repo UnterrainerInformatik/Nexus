@@ -25,15 +25,12 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using MessagePack;
-using NexusClient.Converters.MessagePack;
-
-namespace NexusClient.NUnitTests.Infrastructure
+namespace NexusClient.HandlerGroups.Ping
 {
-	[MessagePackObject()]
-	public struct TestContent : MessagePackDto
+	public enum PingMessageType
 	{
-		[Key(0)]
-		public string TestField { get; set; }
+		PING,
+		PONG,
+		BROADCAST
 	}
 }

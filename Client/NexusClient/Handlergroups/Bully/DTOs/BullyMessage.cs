@@ -25,38 +25,13 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using MessagePack;
 using NexusClient.Converters.MessagePack;
-using NexusClient.HandlerGroups;
-using NexusClient.Network.Testing;
-using Serilog;
 
-namespace NexusClient.NUnitTests.Infrastructure
+namespace NexusClient.HandlerGroups.Bully.DTOs
 {
-	public class TestHandlerGroup : HandlerGroup<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
+	[MessagePackObject]
+	public struct BullyMessage : MessagePackDto
 	{
-		public TestServer Server { get; }
-		public int ElectionCallCount { get; private set; }
-		public int ElectionCallAnswerCount { get; private set; }
-		
-		public TestHandlerGroup(TestServer server)
-		{
-			Server = server;
-			AddHandler<TestMessage>(TestMessageType.ELECTION_CALL, ElectionCallReceived);
-			AddHandler<TestMessage>(TestMessageType.ELECTION_CALL_ANSWER, ElectionCallAnswerReceived);
-		}
-
-		private void ElectionCallReceived(TestMessage message, string senderId)
-		{
-			ElectionCallCount++;
-			Log.Debug(
-				$"[{Nexus.UserId}]: Election-call message from [{senderId}] handled. TestField: [{message.TestField}]");
-		}
-
-		private void ElectionCallAnswerReceived(TestMessage message, string senderId)
-		{
-			ElectionCallAnswerCount++;
-			Log.Debug(
-				$"{Nexus.UserId}]: Election-call-answer message from [{senderId}] handled. TestField: [{message.TestField}]");
-		}
 	}
 }

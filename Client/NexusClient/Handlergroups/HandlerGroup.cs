@@ -68,7 +68,7 @@ namespace NexusClient.HandlerGroups
 
 		public bool Active { get; set; }
 
-		public void Initialize(Nexus<TCnv, TSer, TDes, TDto> nexus)
+		public virtual void Initialize(Nexus<TCnv, TSer, TDes, TDto> nexus)
 		{
 			Nexus = nexus;
 			Message = new HandlerTargetApi<TCnv, TSer, TDes, TDto>(Nexus, this);
@@ -81,8 +81,7 @@ namespace NexusClient.HandlerGroups
 			{
 				var item = handlerStore[key];
 				item.GenericReadMessageMethod = method.MakeGenericMethod(item.GenericType);
-				handlerStore.Remove(key);
-				handlerStore.Add(key, item);
+				handlerStore[key] = item;
 			}
 		}
 

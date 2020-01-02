@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
+using NexusClient.HandlerGroups.Bully.DTOs;
 using Serilog;
 
 namespace NexusClient.HandlerGroups.Bully
@@ -47,19 +48,11 @@ namespace NexusClient.HandlerGroups.Bully
 	///     starts the election process at the beginning, by sending an Election message to lower-numbered processes.
 	///     5. If P receives a Coordinator message, it treats the sender as the coordinator
 	/// </summary>
-	public enum BullyMessageType
-	{
-		BULLY_ELECTION,
-		BULLY_ALIVE,
-		BULLY_VICTORY
-	}
-
 	public class BullyHandlerGroup : HandlerGroup<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
 	{
 		public string LeaderId { get; set; }
 		public bool ElectionInProgress { get; private set; }
-		
-		private readonly string localUserId;
+
 		private readonly Timer.Timer electionStartedTimer = new Timer.Timer(2000f).SetIsActive(false);
 		private readonly Timer.Timer waitingForVictoryMessageTimer = new Timer.Timer(4000f).SetIsActive(false);
 		private readonly Timer.Timer cooldownTimer = new Timer.Timer(4000f).SetIsActive(false);
@@ -71,9 +64,8 @@ namespace NexusClient.HandlerGroups.Bully
 		///     This handler helps electing a leader in a distributed environment.
 		///     It implements a Bully-algorithm with the smallest ID winning the elections instead of the biggest one.
 		/// </summary>
-		public BullyHandlerGroup(string localUserId)
+		public BullyHandlerGroup()
 		{
-			this.localUserId = localUserId;
 			AddHandler<BullyMessage>(BullyMessageType.BULLY_ELECTION, BullyElectionReceived);
 			AddHandler<BullyMessage>(BullyMessageType.BULLY_ALIVE, BullyAliveReceived);
 			AddHandler<BullyMessage>(BullyMessageType.BULLY_VICTORY, BullyVictoryReceived);
@@ -116,18 +108,17 @@ namespace NexusClient.HandlerGroups.Bully
 			lock (LockObject)
 			{
 				ElectionInProgress = true;
-				if (string.Compare(localUserId, senderId, StringComparison.InvariantCulture) < 0)
+				if (string.Compare(Nexus.UserId, senderId, StringComparison.InvariantCulture) < 0)
 				{
-					Log.Debug($"[{localUserId}](q={keepQuiet}): Bully-Election received from [{senderId}] - " +
+					Log.Debug($"[{Nexus.UserId}](q={keepQuiet}): Bully-Election received from [{senderId}] - " +
 							$"own ID is smaller; answering and restarting election process.");
-					Message.To(senderId).Send(BullyMessageType.BULLY_ALIVE,
-						new BullyMessage());
+					Message.To(senderId).Send(BullyMessageType.BULLY_ALIVE, new BullyMessage());
 					if (!keepQuiet) Start();
 				}
 				else
 				{
-					Log.Warning($"[{localUserId}](q={keepQuiet}): Bully-Election received from [{senderId}] - " +
-							$"own ID is bigger; this actually should never happen.");
+					Log.Warning($"[{Nexus.UserId}](q={keepQuiet}): Bully-Election received from [{senderId}] - " +
+								$"own ID is bigger; this actually should never happen.");
 				}
 			}
 		}
@@ -136,14 +127,14 @@ namespace NexusClient.HandlerGroups.Bully
 		{
 			lock (LockObject)
 			{
-				if (string.Compare(localUserId, senderId, StringComparison.InvariantCulture) < 0)
+				if (string.Compare(Nexus.UserId, senderId, StringComparison.InvariantCulture) < 0)
 				{
-					Log.Warning($"[{localUserId}](q={keepQuiet}): Bully-Alive received from [{senderId}] - " +
-							$"own ID is smaller; this actually should never happen.");
+					Log.Warning($"[{Nexus.UserId}](q={keepQuiet}): Bully-Alive received from [{senderId}] - " +
+								$"own ID is smaller; this actually should never happen.");
 				}
 				else
 				{
-					Log.Debug($"[{localUserId}](q={keepQuiet}): Bully-Alive received from [{senderId}] - " +
+					Log.Debug($"[{Nexus.UserId}](q={keepQuiet}): Bully-Alive received from [{senderId}] - " +
 							$"own ID is bigger; this comes from sending an election-call before; quietly waiting for victory-call.");
 					if (!keepQuiet)
 					{
@@ -160,14 +151,14 @@ namespace NexusClient.HandlerGroups.Bully
 			lock (LockObject)
 			{
 				ElectionInProgress = true;
-				if (string.Compare(localUserId, senderId, StringComparison.InvariantCulture) < 0)
+				if (string.Compare(Nexus.UserId, senderId, StringComparison.InvariantCulture) < 0)
 				{
-					Log.Warning($"[{localUserId}](q={keepQuiet}): Bully-Victory received from [{senderId}] - " +
-							$"own ID is smaller; this actually should never happen.");
+					Log.Warning($"[{Nexus.UserId}](q={keepQuiet}): Bully-Victory received from [{senderId}] - " +
+								$"own ID is smaller; this actually should never happen.");
 				}
 				else
 				{
-					Log.Debug($"[{localUserId}](q={keepQuiet}): Bully-Victory received from [{senderId}] - " +
+					Log.Debug($"[{Nexus.UserId}](q={keepQuiet}): Bully-Victory received from [{senderId}] - " +
 							$"[{senderId}] is now the leader.");
 					LeaderId = senderId;
 					keepQuiet = true;
@@ -193,10 +184,10 @@ namespace NexusClient.HandlerGroups.Bully
 			ElectionInProgress = true;
 			ResetAndDisableTimers();
 			keepQuiet = false;
-			LeaderId = localUserId;
+			LeaderId = Nexus.UserId;
 			lock (LockObject)
 			{
-				if (GetLowestIdUser() == localUserId)
+				if (GetLowestIdUser() == Nexus.UserId)
 				{
 					AnnounceVictory();
 					cooldownTimer.Reset().SetIsActive(true);
@@ -222,7 +213,7 @@ namespace NexusClient.HandlerGroups.Bully
 			if (victorySentThisUpdateCycle) return;
 
 			victorySentThisUpdateCycle = true;
-			LeaderId = localUserId;
+			LeaderId = Nexus.UserId;
 			Message.ToOthers().Send(BullyMessageType.BULLY_VICTORY, new BullyMessage());
 		}
 
@@ -230,11 +221,9 @@ namespace NexusClient.HandlerGroups.Bully
 		{
 			lock (LockObject)
 			{
-				var winnerId =
-					Participants.SingleOrDefault(p => p == Participants.Min(q => q)) ??
-					localUserId;
-				if (string.Compare(localUserId, winnerId, StringComparison.InvariantCulture) < 0)
-					winnerId = localUserId;
+				var winnerId = Participants.SingleOrDefault(p => p == Participants.Min(q => q)) ?? Nexus.UserId;
+				if (string.Compare(Nexus.UserId, winnerId, StringComparison.InvariantCulture) < 0)
+					winnerId = Nexus.UserId;
 				return winnerId;
 			}
 		}
@@ -243,8 +232,7 @@ namespace NexusClient.HandlerGroups.Bully
 		{
 			lock (LockObject)
 			{
-				return Participants.Where(e =>
-					String.Compare(localUserId, e, StringComparison.InvariantCulture) > 0);
+				return Participants.Where(e => String.Compare(Nexus.UserId, e, StringComparison.InvariantCulture) > 0);
 			}
 		}
 	}

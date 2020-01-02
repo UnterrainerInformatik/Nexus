@@ -41,7 +41,7 @@ namespace HandlerTests.Bully
 			BullyHandlerGroup handler = null;
 			Initialize(20, (clientName, handlerDictionary) =>
 			{
-				handler = new BullyHandlerGroup(clientName);
+				handler = new BullyHandlerGroup();
 				handlerDictionary.Add(handler);
 			});
 		}

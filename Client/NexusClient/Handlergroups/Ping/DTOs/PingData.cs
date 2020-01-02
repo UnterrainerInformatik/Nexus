@@ -25,38 +25,43 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NexusClient.Converters.MessagePack;
-using NexusClient.HandlerGroups;
-using NexusClient.Network.Testing;
-using Serilog;
+using System;
+using MessagePack;
 
-namespace NexusClient.NUnitTests.Infrastructure
+namespace NexusClient.HandlerGroups.Ping.DTOs
 {
-	public class TestHandlerGroup : HandlerGroup<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto>
+	[MessagePackObject]
+	public struct PingData
 	{
-		public TestServer Server { get; }
-		public int ElectionCallCount { get; private set; }
-		public int ElectionCallAnswerCount { get; private set; }
-		
-		public TestHandlerGroup(TestServer server)
+		[Key(0)]
+		public string UserId { get; set; }
+
+		[Key(1)]
+		public DateTime ServerLastPingSentUtc { get; set; }
+
+		[Key(2)]
+		public DateTime ServerLastPingSentAndReceivedUtc { get; set; }
+
+		[Key(3)]
+		public DateTime ClientLastPingReceivedUtc { get; set; }
+
+		[Key(4)]
+		public DateTime ServerLastPongReceivedUtc { get; set; }
+
+		public PingData(DateTime defaultValue)
 		{
-			Server = server;
-			AddHandler<TestMessage>(TestMessageType.ELECTION_CALL, ElectionCallReceived);
-			AddHandler<TestMessage>(TestMessageType.ELECTION_CALL_ANSWER, ElectionCallAnswerReceived);
+			UserId = "";
+			ServerLastPingSentUtc = defaultValue;
+			ServerLastPingSentAndReceivedUtc = defaultValue;
+			ClientLastPingReceivedUtc = defaultValue;
+			ServerLastPongReceivedUtc = defaultValue;
 		}
 
-		private void ElectionCallReceived(TestMessage message, string senderId)
-		{
-			ElectionCallCount++;
-			Log.Debug(
-				$"[{Nexus.UserId}]: Election-call message from [{senderId}] handled. TestField: [{message.TestField}]");
-		}
+		[IgnoreMember]
+		public double TotalSecondsSinceLastPing => DateTime.UtcNow.Subtract(ClientLastPingReceivedUtc).TotalSeconds;
 
-		private void ElectionCallAnswerReceived(TestMessage message, string senderId)
-		{
-			ElectionCallAnswerCount++;
-			Log.Debug(
-				$"{Nexus.UserId}]: Election-call-answer message from [{senderId}] handled. TestField: [{message.TestField}]");
-		}
+		[IgnoreMember]
+		public double LastRoundtripInMilliseconds =>
+			ServerLastPongReceivedUtc.Subtract(ServerLastPingSentUtc).TotalMilliseconds;
 	}
 }
