@@ -55,7 +55,7 @@ namespace NexusClient.HandlerGroups
 		private readonly Dictionary<string, HandlerStoreItem> handlerStore = new Dictionary<string, HandlerStoreItem>();
 
 
-		public delegate void HandleMessageDelegate<in TD>(TD message, string senderId);
+		public delegate void HandleMessageDelegate<in Td>(Td message, string senderId);
 
 		public HandlerTargetApi<TCnv, TSer, TDes, TDto> Message { get; internal set; }
 		public Nexus<TCnv, TSer, TDes, TDto> Nexus { get; internal set; }
@@ -85,18 +85,20 @@ namespace NexusClient.HandlerGroups
 			}
 		}
 
-		public void AddHandler<TT>(Enum key, HandleMessageDelegate<TT> handler) where TT : TDto
+		public void AddHandler<T>(Enum key, HandleMessageDelegate<T> handler) where T : TDto
 		{
 			handlerStore.Add(key.ToString(), ConvertDelegate(handler));
 		}
 
-		private HandlerStoreItem ConvertDelegate<TT>(HandleMessageDelegate<TT> handler)
+		private HandlerStoreItem ConvertDelegate<T>(HandleMessageDelegate<T> handler)
 		{
-			var item = new HandlerStoreItem();
-			item.HandlerDelegate =
-				Delegate.CreateDelegate(typeof(HandleMessageDelegate<TT>), handler.Target, handler.Method);
-			item.Type = handler.GetType();
-			item.GenericType = handler.GetType().GetGenericArguments()[4];
+			var item = new HandlerStoreItem
+			{
+				HandlerDelegate =
+				Delegate.CreateDelegate(typeof(HandleMessageDelegate<T>), handler.Target, handler.Method),
+				Type = handler.GetType(),
+				GenericType = handler.GetType().GetGenericArguments()[4]
+			};
 			return item;
 		}
 

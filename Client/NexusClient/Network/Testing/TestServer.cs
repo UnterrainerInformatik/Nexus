@@ -58,7 +58,7 @@ namespace NexusClient.Network.Testing
 	{
 		public int Compare(TestMessage x, TestMessage y)
 		{
-			return x.WillBeReceivedAt.CompareTo(y.WillBeReceivedAt) * -1;
+			return x.WillBeReceivedAt.CompareTo(y.WillBeReceivedAt);
 		}
 	}
 

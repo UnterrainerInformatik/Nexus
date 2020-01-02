@@ -35,8 +35,5 @@ namespace NexusClient.HandlerGroups.Ping.DTOs
 	{
 		[Key(0)]
 		public double ServerLastPingSentUtc { get; set; }
-		[Key(1)]
-		public double ClientLastPingReceivedUtc { get; set; }
-
 	}
 }

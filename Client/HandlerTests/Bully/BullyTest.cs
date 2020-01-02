@@ -38,11 +38,9 @@ namespace HandlerTests.Bully
 		[SetUp]
 		public void Setup()
 		{
-			BullyHandlerGroup handler = null;
-			Initialize(20, (clientName, handlerDictionary) =>
+			Initialize(9, (clientName, handlerDictionary) =>
 			{
-				handler = new BullyHandlerGroup();
-				handlerDictionary.Add(handler);
+				handlerDictionary.Add(new BullyHandlerGroup());
 			});
 		}
 

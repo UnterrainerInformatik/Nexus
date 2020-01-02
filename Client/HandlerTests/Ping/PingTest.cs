@@ -25,28 +25,36 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using MessagePack;
-using NexusClient.Converters.MessagePack;
+using NexusClient.HandlerGroups.Ping;
+using NexusClient.NUnitTests.Infrastructure;
+using NUnit.Framework;
 
-namespace NexusClient.HandlerGroups.Ping.DTOs
+namespace HandlerTests.Ping
 {
-	[MessagePackObject]
-	public struct PingData : MessagePackDto
+	[TestFixture]
+	class PingTest : HandlerTestBase
 	{
-		[Key(0)]
-		public string UserId { get; set; }
+		[SetUp]
+		public void Setup()
+		{
+			Initialize(3,
+				(clientName, handlerDictionary) => { handlerDictionary.Add(new PingHandlerGroup(true, 1f)); });
+		}
 
-		[Key(1)]
-		public DateTime MessageSentUtc { get; set; }
+		public void Iterate(int numberOfIterations)
+		{
+			for (var i = 0; i < numberOfIterations; i++)
+			{
+				DebugLogGameTime();
+				Update();
+				AdvanceFrame();
+			}
+		}
 
-		[Key(2)]
-		public DateTime MessageReceivedUtc { get; set; }
-
-		[Key(3)]
-		public double LastRoundtripTimeInMillis { get; set; }
-
-		[IgnoreMember]
-		public double TotalSecondsSinceLastContact => DateTime.UtcNow.Subtract(MessageReceivedUtc).TotalSeconds;
+		[Test]
+		public void JustPingingAroundTest()
+		{
+			Iterate(5);
+		}
 	}
 }
