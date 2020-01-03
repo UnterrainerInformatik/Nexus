@@ -31,7 +31,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using NexusClient.Converters.MessagePack;
 using NexusClient.HandlerGroups.Ping.DTOs;
-using NexusClient.Nexus;
 using Serilog;
 
 namespace NexusClient.HandlerGroups.Ping
@@ -61,14 +60,6 @@ namespace NexusClient.HandlerGroups.Ping
 			AddHandler<PingBroadcastMessage>(PingMessageType.BROADCAST, BroadcastMessageReceived);
 		}
 
-		public override void Initialize(
-			Nexus<MessagePackConverter, MessagePackSer, MessagePackDes, MessagePackDto> nexus)
-		{
-			base.Initialize(nexus);
-			LocalPingDataAboutUsers.Add(Nexus.UserId,
-				new PingData() {UserId = Nexus.UserId});
-		}
-
 		public override void Update(GameTime gt)
 		{
 			base.Update(gt);
@@ -76,19 +67,26 @@ namespace NexusClient.HandlerGroups.Ping
 			if (!IsActivelyPinging) return;
 			if (!Timer.Update(gt)) return;
 
-			Log.Debug($"[{Nexus.UserId}]: Pinging clients at [{DateTime.UtcNow:hh:mm:ss.FFF}] and broadcasting old results.");
+			Log.Debug(
+				$"[{Nexus.UserId}]: Pinging clients at [{DateTime.UtcNow:hh:mm:ss.FFF}] and broadcasting old results.");
 			PingOthers();
 			BroadcastPingResults();
+			AddResultsToBroadcastDataCollections(Nexus.UserId, LocalPingDataAboutUsers.Values);
 		}
 
 		private void PingOthers()
 		{
 			var now = DateTime.UtcNow;
 			Message.ToOthers().Send(PingMessageType.PING, new PingMessage() {ServerLastPingSentUtc = ToTimestamp(now)});
-			var keys = new List<string>(LocalPingDataAboutUsers.Keys);
-			foreach (var key in keys)
+			UpdateSentTimestamps(now);
+		}
+
+		private void UpdateSentTimestamps(DateTime now)
+		{
+			foreach (var key in Participants.Where(key => !key.Equals(Nexus.UserId)))
 			{
-				var item = LocalPingDataAboutUsers[key];
+				if (!LocalPingDataAboutUsers.TryGetValue(key, out var item)) item = new PingData {UserId = key};
+
 				item.MessageSentUtc = now;
 				LocalPingDataAboutUsers[key] = item;
 			}
@@ -96,10 +94,8 @@ namespace NexusClient.HandlerGroups.Ping
 
 		private void BroadcastPingResults()
 		{
-			AddResultsToBroadcastDataCollections(Nexus.UserId, LocalPingDataAboutUsers.Values);
-
-			Message.ToOthers().Send(PingMessageType.BROADCAST,
-				new PingBroadcastMessage() {Data = LocalPingDataAboutUsers.Values.ToArray()});
+			var m = new PingBroadcastMessage() {Data = LocalPingDataAboutUsers.Values.ToArray()};
+			Message.ToOthers().Send(PingMessageType.BROADCAST, m);
 		}
 
 		private static double ToTimestamp(DateTime d)
@@ -123,12 +119,15 @@ namespace NexusClient.HandlerGroups.Ping
 
 		private void PongMessageReceived(PongMessage message, string senderId)
 		{
-			if (!LocalPingDataAboutUsers.TryGetValue(senderId, out var data))
-				data = new PingData() {UserId = senderId};
-
-			data.MessageSentUtc = ToDateTime(message.ServerLastPingSentUtc);
-			data.MessageReceivedUtc = DateTime.UtcNow;
-			data.LastRoundtripTimeInMillis = data.MessageReceivedUtc.Subtract(data.MessageSentUtc).TotalMilliseconds;
+			var now = DateTime.UtcNow;
+			var sent = ToDateTime(message.ServerLastPingSentUtc);
+			var data = new PingData
+			{
+				UserId = senderId,
+				MessageSentUtc = sent,
+				MessageReceivedUtc = now,
+				LastRoundtripTimeInMillis = now.Subtract(sent).TotalMilliseconds
+			};
 			LocalPingDataAboutUsers[senderId] = data;
 
 			Log.Debug(
@@ -143,13 +142,13 @@ namespace NexusClient.HandlerGroups.Ping
 			AddResultsToBroadcastDataCollections(senderId, message.Data);
 		}
 
-		private void AddResultsToBroadcastDataCollections(string fromUserId, IEnumerable<PingData> dataRows)
+		private void AddResultsToBroadcastDataCollections(string senderId, IEnumerable<PingData> dataRows)
 		{
-			var dataFrom = GetCollectionExtendingIfNecessary(BroadcastDataByPingingUsers, fromUserId);
+			var dataFrom = GetCollectionExtendingIfNecessary(BroadcastDataByPingingUsers, senderId);
 			foreach (var data in dataRows)
 			{
 				dataFrom[data.UserId] = data;
-				GetCollectionExtendingIfNecessary(BroadcastDataByPingedUsers, data.UserId)[fromUserId] = data;
+				GetCollectionExtendingIfNecessary(BroadcastDataByPingedUsers, data.UserId)[senderId] = data;
 			}
 		}
 

@@ -56,5 +56,13 @@ namespace HandlerTests.Ping
 		{
 			Iterate(5);
 		}
+
+		[Test]
+		public void JustPingingAroundAndDisplayBroadcastTest()
+		{
+			Iterate(6);
+			var x = clients["user1"].Handlers.Get<PingHandlerGroup>();
+			var y = clients["user1"].Handlers.Get<PingHandlerGroup>();
+		}
 	}
 }
