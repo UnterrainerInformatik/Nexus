@@ -87,7 +87,7 @@ namespace NexusClient.HandlerGroups.Ping
 			{
 				if (!LocalPingDataAboutUsers.TryGetValue(key, out var item)) item = new PingData {UserId = key};
 
-				item.MessageSentUtc = now;
+				item.PingSentUtc = now;
 				LocalPingDataAboutUsers[key] = item;
 			}
 		}
@@ -124,15 +124,15 @@ namespace NexusClient.HandlerGroups.Ping
 			var data = new PingData
 			{
 				UserId = senderId,
-				MessageSentUtc = sent,
-				MessageReceivedUtc = now,
+				PingSentUtc = sent,
+				PongReceivedUtc = now,
 				LastRoundtripTimeInMillis = now.Subtract(sent).TotalMilliseconds
 			};
 			LocalPingDataAboutUsers[senderId] = data;
 
 			Log.Debug(
-				$"[{Nexus.UserId}]: Pong received from [{senderId}] at [{data.MessageReceivedUtc:hh:mm:ss.FFF}] " +
-				$"to ping from [{data.MessageSentUtc:hh:mm:ss.FFF}] -> {data.LastRoundtripTimeInMillis:###,###,###,###}ms.");
+				$"[{Nexus.UserId}]: Pong received from [{senderId}] at [{data.PongReceivedUtc:hh:mm:ss.FFF}] " +
+				$"to ping from [{data.PingSentUtc:hh:mm:ss.FFF}] -> {data.LastRoundtripTimeInMillis:###,###,###,###}ms.");
 		}
 
 		private void BroadcastMessageReceived(PingBroadcastMessage message, string senderId)

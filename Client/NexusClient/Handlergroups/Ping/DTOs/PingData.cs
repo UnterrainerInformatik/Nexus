@@ -38,15 +38,15 @@ namespace NexusClient.HandlerGroups.Ping.DTOs
 		public string UserId { get; set; }
 
 		[Key(1)]
-		public DateTime MessageSentUtc { get; set; }
+		public DateTime PingSentUtc { get; set; }
 
 		[Key(2)]
-		public DateTime MessageReceivedUtc { get; set; }
+		public DateTime PongReceivedUtc { get; set; }
 
 		[Key(3)]
 		public double LastRoundtripTimeInMillis { get; set; }
 
 		[IgnoreMember]
-		public double TotalSecondsSinceLastContact => DateTime.UtcNow.Subtract(MessageReceivedUtc).TotalSeconds;
+		public double TotalSecondsSinceLastContact => DateTime.UtcNow.Subtract(PongReceivedUtc).TotalSeconds;
 	}
 }
