@@ -36,7 +36,6 @@
 #   command is IN the deploy.sh script.
 
 language: csharp
-solution: $SOLUTION_NAME.sln
 mono: latest
 dotnet: none
 git:
