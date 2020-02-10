@@ -8,7 +8,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3EF3160F-999D-4D1D-BC38-1E2981AB3F88}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HandlerTests</RootNamespace>
     <AssemblyName>HandlerTests</AssemblyName>
@@ -45,13 +45,14 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Ping\PingTest.cs" />
     <Compile Include="TestHandlerTests.cs" />
     <Compile Include="Bully\BullyTest.cs" />
-    <Compile Include="Game1.cs" />
     <Compile Include="NetworkTests.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
